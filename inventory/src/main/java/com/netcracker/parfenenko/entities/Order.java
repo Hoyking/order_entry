@@ -1,13 +1,11 @@
 package com.netcracker.parfenenko.entities;
 
-import com.netcracker.parfenenko.content.OrderItem;
-
 import java.util.List;
 
 public class Order {
 
     private List<OrderItem> orderItems;
-    private int totalPrice;
+    private double totalPrice;
     private String customerMail;
     private String orderDate;
     private String paymentSign;
@@ -25,11 +23,11 @@ public class Order {
         this.orderItems = orderItems;
     }
 
-    public int getTotalPrice() {
+    public double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(int totalPrice) {
+    public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
 

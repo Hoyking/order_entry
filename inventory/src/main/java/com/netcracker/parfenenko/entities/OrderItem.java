@@ -1,4 +1,4 @@
-package com.netcracker.parfenenko.content;
+package com.netcracker.parfenenko.entities;
 
 public class OrderItem {
 
