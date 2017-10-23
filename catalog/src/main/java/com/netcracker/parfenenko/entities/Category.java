@@ -1,12 +1,12 @@
-package com.netcracker.parfenenko.content;
+package com.netcracker.parfenenko.entities;
 
-public class Tag {
+public class Category {
 
     private String name;
 
-    public Tag() {}
+    public Category() {}
 
-    public Tag(String name) {
+    public Category(String name) {
         this.name = name;
     }
 

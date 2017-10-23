@@ -1,8 +1,8 @@
-package com.netcracker.parfenenko.content;
+package com.netcracker.parfenenko.entities;
 
 public class Price {
 
-    private int value;
+    private double value;
 
     public Price() {}
 
@@ -10,7 +10,7 @@ public class Price {
         this.value = value;
     }
 
-    public int getValue() {
+    public double getValue() {
         return value;
     }
 

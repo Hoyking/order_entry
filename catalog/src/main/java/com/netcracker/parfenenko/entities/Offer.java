@@ -1,14 +1,12 @@
 package com.netcracker.parfenenko.entities;
 
-import com.netcracker.parfenenko.content.Category;
-import com.netcracker.parfenenko.content.Price;
-import com.netcracker.parfenenko.content.Tag;
+import java.util.List;
 
 public class Offer {
 
     private Price price;
     private Category category;
-    private Tag tag;
+    private List<Tag> tags;
     private long id;
     private String name;
     private String description;
@@ -31,12 +29,12 @@ public class Offer {
         this.category = category;
     }
 
-    public Tag getTag() {
-        return tag;
+    public List<Tag> getTags() {
+        return tags;
     }
 
-    public void setTag(Tag tag) {
-        this.tag = tag;
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
 
     public long getId() {
