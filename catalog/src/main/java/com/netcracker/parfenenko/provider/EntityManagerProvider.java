@@ -1,25 +1,26 @@
 package com.netcracker.parfenenko.provider;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-public class EntityManagerFactoryProvider {
+public class EntityManagerProvider {
 
     private EntityManagerFactory entityManagerFactory;
 
-    private EntityManagerFactoryProvider() {
+    private EntityManagerProvider() {
         entityManagerFactory = Persistence.createEntityManagerFactory("catalog-unit");
     }
 
-    public EntityManagerFactory getEntityManagerFactory() {
-        return entityManagerFactory;
+    public EntityManager createEntityManager() {
+        return entityManagerFactory.createEntityManager();
     }
 
     private static class Holder {
-        public static final EntityManagerFactoryProvider INSTANCE = new EntityManagerFactoryProvider();
+        public static final EntityManagerProvider INSTANCE = new EntityManagerProvider();
     }
 
-    public static EntityManagerFactoryProvider getInstance() {
+    public static EntityManagerProvider getInstance() {
         return Holder.INSTANCE;
     }
 
