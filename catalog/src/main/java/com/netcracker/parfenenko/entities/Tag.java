@@ -1,7 +1,12 @@
 package com.netcracker.parfenenko.entities;
 
+import javax.persistence.*;
+
+@Entity
 public class Tag {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String name;
 

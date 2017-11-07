@@ -1,7 +1,12 @@
 package com.netcracker.parfenenko.entities;
 
+import javax.persistence.*;
+
+@Entity
 public class Price {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private double value;
 

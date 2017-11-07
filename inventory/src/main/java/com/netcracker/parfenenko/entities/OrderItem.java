@@ -1,13 +1,25 @@
 package com.netcracker.parfenenko.entities;
 
+import javax.persistence.*;
 import java.util.List;
 
+@Entity
 public class OrderItem {
 
-    private OrderItemPrice price;
-    private OrderItemCategory category;
-    private List<OrderItemTag> tags;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "priceId", nullable = false)
+    private OrderItemPrice price;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "categoryId", nullable = false)
+    private OrderItemCategory category;
+    @OneToMany
+    @JoinTable(name = "tag_links",
+               joinColumns = @JoinColumn(name = "orderItemId"),
+               inverseJoinColumns = @JoinColumn(name = "tagId"))
+    private List<OrderItemTag> tags;
     private String name;
     private String description;
 

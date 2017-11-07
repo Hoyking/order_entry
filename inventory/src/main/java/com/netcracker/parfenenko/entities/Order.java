@@ -1,15 +1,23 @@
 package com.netcracker.parfenenko.entities;
 
+import javax.persistence.*;
 import java.util.List;
 
+@Entity
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+    @OneToMany
+    @JoinTable(name = "order_item_links",
+            joinColumns = @JoinColumn(name = "orderId"),
+            inverseJoinColumns = @JoinColumn(name = "orederItemId"))
     private List<OrderItem> orderItems;
     private double totalPrice;
     private String customerMail;
     private String orderDate;
     private String paymentSign;
-    private long id;
     private String name;
     private String description;
 
