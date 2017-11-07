@@ -90,4 +90,5 @@ public class Offer {
     public int hashCode() {
         return Objects.hash(id, price, category, name, description);
     }
+
 }

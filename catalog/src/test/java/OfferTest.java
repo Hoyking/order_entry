@@ -174,7 +174,6 @@ public class OfferTest {
         offer.setTags(Arrays.asList(tag1, tag2));
 
         long testOfferId = offerDAO.save(offer);
-
         offerDAO.delete(testOfferId);
 
         Assert.assertNull(offerDAO.findById(testOfferId));
