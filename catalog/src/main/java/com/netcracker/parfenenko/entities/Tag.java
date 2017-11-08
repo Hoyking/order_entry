@@ -11,6 +11,8 @@ public class Tag {
     private long id;
     private String name;
 
+    public Tag() {}
+
     public long getId() {
         return id;
     }
@@ -18,8 +20,6 @@ public class Tag {
     public void setId(long id) {
         this.id = id;
     }
-
-    public Tag() {}
 
     public String getName() {
         return name;
