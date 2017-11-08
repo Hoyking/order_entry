@@ -2,6 +2,7 @@ package com.netcracker.parfenenko.entities;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class OrderItem {
@@ -71,6 +72,23 @@ public class OrderItem {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderItem orderItem = (OrderItem) o;
+        return id == orderItem.id &&
+                Objects.equals(price, orderItem.price) &&
+                Objects.equals(category, orderItem.category) &&
+                Objects.equals(name, orderItem.name) &&
+                Objects.equals(description, orderItem.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, price, category, name, description);
     }
 
 }

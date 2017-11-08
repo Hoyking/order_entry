@@ -66,6 +66,8 @@ public class OfferTest {
         offer.setCategory(category);
         offer.setPrice(price);
         offer.setTags(Arrays.asList(tag1, tag2));
+
+        offerId = offerDAO.save(offer);
     }
 
     @After

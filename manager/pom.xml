@@ -11,5 +11,10 @@
 
     <artifactId>manager</artifactId>
 
+    <properties>
+        <property>
+            <java.version>1.8</java.version>
+        </property>
+    </properties>
 
 </project>
