@@ -9,7 +9,7 @@ public class EntityManagerProvider {
     private EntityManagerFactory entityManagerFactory;
 
     private EntityManagerProvider() {
-        entityManagerFactory = Persistence.createEntityManagerFactory("catalog-unit");
+        entityManagerFactory = Persistence.createEntityManagerFactory("inventory-unit");
     }
 
     public EntityManager createEntityManager() {
