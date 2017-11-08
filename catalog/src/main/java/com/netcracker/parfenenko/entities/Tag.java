@@ -2,13 +2,18 @@ package com.netcracker.parfenenko.entities;
 
 public class Tag {
 
+    private long id;
     private String name;
 
-    public Tag() {}
-
-    public Tag(String name) {
-        this.name = name;
+    public long getId() {
+        return id;
     }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Tag() {}
 
     public String getName() {
         return name;

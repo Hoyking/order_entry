@@ -61,5 +61,4 @@ public class Offer {
         this.description = description;
     }
 
-
 }
