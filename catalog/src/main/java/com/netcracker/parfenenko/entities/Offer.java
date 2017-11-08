@@ -1,13 +1,26 @@
 package com.netcracker.parfenenko.entities;
 
+import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
+@Entity
 public class Offer {
 
-    private Price price;
-    private Category category;
-    private List<Tag> tags;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "priceId", nullable = false)
+    private Price price;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "categoryId", nullable = false)
+    private Category category;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "tag_links",
+               joinColumns = @JoinColumn(name = "offerId"),
+               inverseJoinColumns = @JoinColumn(name = "tagId"))
+    private List<Tag> tags;
     private String name;
     private String description;
 
@@ -59,6 +72,23 @@ public class Offer {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Offer offer = (Offer) o;
+        return id == offer.id &&
+                Objects.equals(price, offer.price) &&
+                Objects.equals(category, offer.category) &&
+                Objects.equals(name, offer.name) &&
+                Objects.equals(description, offer.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, price, category, name, description);
     }
 
 }
