@@ -39,6 +39,8 @@ public class CategoryTest {
 
         Assert.assertEquals(testCategoryId, loadedCategory.getId());
         Assert.assertEquals(NAME_2, loadedCategory.getName());
+
+        categoryDAO.delete(loadedCategory.getId());
     }
 
     @Test

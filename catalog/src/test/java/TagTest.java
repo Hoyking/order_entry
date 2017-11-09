@@ -39,6 +39,8 @@ public class TagTest {
 
         Assert.assertEquals(testTagId, loadedTag.getId());
         Assert.assertEquals(NAME_2, loadedTag.getName());
+
+        tagDAO.delete(loadedTag.getId());
     }
 
     @Test

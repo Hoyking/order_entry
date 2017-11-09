@@ -39,6 +39,8 @@ public class PriceTest {
 
         Assert.assertEquals(testPriceId, loadedPrice.getId());
         Assert.assertEquals(PRICE_2, loadedPrice.getValue(), 0);
+
+        priceDAO.delete(loadedPrice.getId());
     }
 
     @Test
