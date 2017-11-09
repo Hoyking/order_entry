@@ -15,8 +15,7 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
     }
 
     @Override
-    public ID save(T entity) {
-        ID id = null;
+    public void save(T entity) {
         EntityManager entityManager = EntityManagerProvider.getInstance().createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         try {
@@ -30,7 +29,6 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
         } finally {
             entityManager.close();
         }
-        return id;
     }
 
     @Override

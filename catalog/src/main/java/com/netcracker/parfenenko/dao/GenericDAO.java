@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface GenericDAO<T, ID> {
 
-    ID save(T entity);
+    void save(T entity);
 
     T findById(ID id);
 
