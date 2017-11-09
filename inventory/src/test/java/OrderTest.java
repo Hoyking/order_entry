@@ -53,7 +53,8 @@ public class OrderTest {
         order.setPaymentSign(SIGN);
         order.setOrderItems(Arrays.asList(orderItem1, orderItem2));
 
-        orderId = orderDAO.save(order);
+        orderDAO.save(order);
+        orderId = order.getId();
     }
 
     @After
@@ -81,8 +82,8 @@ public class OrderTest {
         order.setOrderDate(DATE);
         order.setPaymentSign(SIGN);
         order.setOrderItems(Arrays.asList(orderItem1, orderItem2));
-        long testOrderId = orderDAO.save(order);
-        order.setId(testOrderId);
+        orderDAO.save(order);
+        long testOrderId = order.getId();
 
         Order loadedOrder = orderDAO.findById(testOrderId);
 
@@ -135,7 +136,8 @@ public class OrderTest {
         order.setCustomerMail(MAIL);
         order.setOrderDate(DATE);
         order.setPaymentSign(SIGN);
-        long testOrderId = orderDAO.save(order);
+        orderDAO.save(order);
+        long testOrderId = order.getId();
 
         Assert.assertEquals(2, orderDAO.findAll().size());
 
@@ -183,7 +185,8 @@ public class OrderTest {
         order.setPaymentSign(SIGN);
         order.setOrderItems(Arrays.asList(orderItem1, orderItem2));
 
-        long testOrderId = orderDAO.save(order);
+        orderDAO.save(order);
+        long testOrderId = order.getId();
         orderDAO.delete(testOrderId);
 
         Assert.assertNull(orderDAO.findById(testOrderId));

@@ -17,9 +17,6 @@ public class Offer {
     @JoinColumn(name = "categoryId", nullable = false)
     private Category category;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "tag_links",
-               joinColumns = @JoinColumn(name = "offerId"),
-               inverseJoinColumns = @JoinColumn(name = "tagId"))
     private List<Tag> tags;
     private String name;
     private String description;

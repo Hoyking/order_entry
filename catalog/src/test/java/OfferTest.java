@@ -40,22 +40,26 @@ public class OfferTest {
     public void initOffer() {
         Price price = new Price();
         price.setValue(PRICE_VALUE);
-        priceId = priceDAO.save(price);
+        priceDAO.save(price);
+        priceId = price.getId();
         price.setId(priceId);
 
         Category category = new Category();
         category.setName(CATEGORY_NAME);
-        categoryId = categoryDAO.save(category);
+        categoryDAO.save(category);
+        categoryId = category.getId();
         category.setId(categoryId);
 
         Tag tag1 = new Tag();
         tag1.setName(TAG_NAME_1);
-        tagId1 = tagDAO.save(tag1);
+        tagDAO.save(tag1);
+        tagId1 = tag1.getId();
         tag1.setId(tagId1);
 
         Tag tag2 = new Tag();
         tag2.setName(TAG_NAME_2);
-        tagId2 = tagDAO.save(tag2);
+        tagDAO.save(tag2);
+        tagId2 = tag2.getId();
         tag2.setId(tagId2);
 
         Offer offer = new Offer();
@@ -67,7 +71,8 @@ public class OfferTest {
         offer.setPrice(price);
         offer.setTags(Arrays.asList(tag1, tag2));
 
-        offerId = offerDAO.save(offer);
+        offerDAO.save(offer);
+        offerId = offer.getId();
     }
 
     @After
@@ -93,8 +98,8 @@ public class OfferTest {
         offer.setPrice(price);
         offer.setTags(Arrays.asList(tag1, tag2));
 
-        long testOfferId = offerDAO.save(offer);
-        offer.setId(testOfferId);
+        offerDAO.save(offer);
+        long testOfferId = offer.getId();
 
         Offer loadedOffer = offerDAO.findById(testOfferId);
 
@@ -137,7 +142,8 @@ public class OfferTest {
         Offer offer = new Offer();
         offer.setName(OFFER_NAME_2);
         offer.setDescription(DESCRIPTION_2);
-        long testOfferId = offerDAO.save(offer);
+        offerDAO.save(offer);
+        long testOfferId = offer.getId();
 
         Assert.assertEquals(2, offerDAO.findAll().size());
 
@@ -175,7 +181,8 @@ public class OfferTest {
         offer.setPrice(price);
         offer.setTags(Arrays.asList(tag1, tag2));
 
-        long testOfferId = offerDAO.save(offer);
+        offerDAO.save(offer);
+        long testOfferId = offer.getId();
         offerDAO.delete(testOfferId);
 
         Assert.assertNull(offerDAO.findById(testOfferId));

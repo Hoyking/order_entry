@@ -19,7 +19,8 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_1);
 
-        priceId = priceDAO.save(price);
+        priceDAO.save(price);
+        priceId = price.getId();
     }
 
     @After
@@ -32,13 +33,15 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_2);
 
-        long testPriceId = priceDAO.save(price);
-        price.setId(testPriceId);
+        priceDAO.save(price);
+        long testPriceId = price.getId();
 
         Price loadedPrice = priceDAO.findById(testPriceId);
 
         Assert.assertEquals(testPriceId, loadedPrice.getId());
         Assert.assertEquals(PRICE_2, loadedPrice.getValue(), 0);
+
+        priceDAO.delete(loadedPrice.getId());
     }
 
     @Test
@@ -54,7 +57,8 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_2);
 
-        long testPriceId = priceDAO.save(price);
+        priceDAO.save(price);
+        long testPriceId = price.getId();
 
         Assert.assertEquals(2, priceDAO.findAll().size());
 
@@ -79,7 +83,8 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_2);
 
-        long testPriceId = priceDAO.save(price);
+        priceDAO.save(price);
+        long testPriceId = price.getId();
         priceDAO.delete(testPriceId);
 
         Assert.assertNull(priceDAO.findById(testPriceId));
