@@ -1,9 +1,7 @@
+import com.netcracker.parfenenko.dao.JPAPriceDAO;
 import com.netcracker.parfenenko.dao.PriceDAO;
 import com.netcracker.parfenenko.entities.Price;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class PriceTest {
 
@@ -13,6 +11,11 @@ public class PriceTest {
     private final double UPDATED_PRICE = 1.49;
 
     private static PriceDAO priceDAO;
+
+    @BeforeClass
+    public static void init() {
+        priceDAO = JPAPriceDAO.getInstance();
+    }
 
     @Before
     public void initPrice() {

@@ -1,10 +1,8 @@
+import com.netcracker.parfenenko.dao.JPAOrderDAO;
 import com.netcracker.parfenenko.dao.OrderDAO;
 import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.Arrays;
 
@@ -30,7 +28,12 @@ public class OrderTest {
     private final String ORDER_ITEM_DESCRIPTION_1 = "Test OrderItem description 1";
     private final String ORDER_ITEM_DESCRIPTION_2 = "Test OrderItem description 2";
 
-    private OrderDAO orderDAO;
+    private static OrderDAO orderDAO;
+
+    @BeforeClass
+    public static void init() {
+        orderDAO = JPAOrderDAO.getInstance();
+    }
 
     @Before
     public void initOrder() {

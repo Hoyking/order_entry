@@ -4,7 +4,7 @@ import com.netcracker.parfenenko.entities.Price;
 
 public class JPAPriceDAO extends JPAGenericDAO<Price, Long> implements PriceDAO {
 
-    public JPAPriceDAO() {
+    private JPAPriceDAO() {
         super(Price.class);
     }
 

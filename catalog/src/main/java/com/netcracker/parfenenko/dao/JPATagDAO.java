@@ -4,7 +4,7 @@ import com.netcracker.parfenenko.entities.Tag;
 
 public class JPATagDAO extends JPANamedEntityDAO<Tag, Long> implements TagDAO {
 
-    public JPATagDAO() {
+    private JPATagDAO() {
         super(Tag.class);
     }
 

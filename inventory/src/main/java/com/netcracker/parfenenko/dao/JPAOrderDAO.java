@@ -4,7 +4,7 @@ import com.netcracker.parfenenko.entities.Order;
 
 public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements OrderDAO {
 
-    public JPAOrderDAO() {
+    private JPAOrderDAO() {
         super(Order.class);
     }
 

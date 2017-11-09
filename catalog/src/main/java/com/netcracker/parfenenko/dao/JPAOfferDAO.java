@@ -4,7 +4,7 @@ import com.netcracker.parfenenko.entities.Offer;
 
 public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements OfferDAO {
 
-    public JPAOfferDAO() {
+    private JPAOfferDAO() {
         super(Offer.class);
     }
 

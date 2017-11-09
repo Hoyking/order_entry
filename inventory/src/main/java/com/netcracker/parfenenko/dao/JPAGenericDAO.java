@@ -15,14 +15,13 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
     }
 
     @Override
-    public ID save(T entity) {
-        ID id = null;
+    public void save(T entity) {
         EntityManager entityManager = EntityManagerProvider.getInstance().createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
             entityManager.persist(entity);
-            entityManager.flush();
+//            entityManager.flush();
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -30,7 +29,6 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
         } finally {
             entityManager.close();
         }
-        return id;
     }
 
     @Override
@@ -58,7 +56,8 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
-            entities = (List<T>)entityManager.createQuery("SELECT * FROM " + persistenceClass.getName()).getResultList();
+            entities = (List<T>)entityManager.createQuery("SELECT e FROM " + persistenceClass.getName() + " e")
+                    .getResultList();
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();

@@ -1,9 +1,7 @@
 import com.netcracker.parfenenko.dao.CategoryDAO;
+import com.netcracker.parfenenko.dao.JPACategoryDAO;
 import com.netcracker.parfenenko.entities.Category;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class CategoryTest {
 
@@ -13,6 +11,11 @@ public class CategoryTest {
     private final String UPDATED_NAME = "Updated category 1";
 
     private static CategoryDAO categoryDAO;
+
+    @BeforeClass
+    public static void init() {
+        categoryDAO = JPACategoryDAO.getInstance();
+    }
 
     @Before
     public void initCategory() {

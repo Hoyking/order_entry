@@ -7,7 +7,7 @@ import java.util.Objects;
 public class Price {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
     private double value;
 

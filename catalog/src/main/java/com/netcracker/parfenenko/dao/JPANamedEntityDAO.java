@@ -22,7 +22,7 @@ public abstract class JPANamedEntityDAO<T, ID> extends JPAGenericDAO<T, ID> impl
         try {
             transaction.begin();
             entity = (T)entityManager.createQuery("SELECT e FROM " + persistenceClass.getName() +
-                    " e WHERE e.name = " + name).getResultList().get(0);
+                    " e WHERE e.name = '" + name + "'").getResultList().get(0);
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
