@@ -1,11 +1,11 @@
 package com.netcracker.parfenenko.dao;
 
-import com.netcracker.parfenenko.entities.Order;
+import com.netcracker.parfenenko.entities.InventoryOrder;
 
-public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements OrderDAO {
+public class JPAOrderDAO extends JPANamedEntityDAO<InventoryOrder, Long> implements OrderDAO {
 
     private JPAOrderDAO() {
-        super(Order.class);
+        super(InventoryOrder.class);
     }
 
     private static class Holder {

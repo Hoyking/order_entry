@@ -4,7 +4,7 @@
     <persistence-unit name="inventory-unit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <class>com.netcracker.parfenenko.entities.Order</class>
+        <class>com.netcracker.parfenenko.entities.InventoryOrder</class>
         <class>com.netcracker.parfenenko.entities.OrderItem</class>
 
         <properties>
@@ -12,8 +12,9 @@
             <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/inventory"/>
             <property name="hibernate.connection.username" value="postgres"/>
             <property name="hibernate.connection.password" value="12344321"/>
-            <property name="hibernate.hbm2ddl.auto" value="drop-and-create"/>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgresPlusDialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
         </properties>
     </persistence-unit>
 

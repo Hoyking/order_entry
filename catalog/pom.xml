@@ -31,20 +31,14 @@
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <id>clojars</id>
-            <url>http://clojars.org/repo/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/postgresql/postgresql -->
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
-            <groupId>postgresql</groupId>
+            <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.3-1102.jdbc41</version>
+            <version>42.1.4</version>
         </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/org.hibernate.javax.persistence/hibernate-jpa-2.1-api -->
         <dependency>
