@@ -1,41 +1,23 @@
 package com.netcracker.parfenenko.entities;
 
+import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
+@Entity
 public class OrderItem {
 
-    private OrderItemPrice price;
-    private OrderItemCategory category;
-    private List<OrderItemTag> tags;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    private double price;
+    private String category;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> tags;
     private String name;
     private String description;
 
     public OrderItem() {}
-
-    public OrderItemPrice getPrice() {
-        return price;
-    }
-
-    public void setPrice(OrderItemPrice price) {
-        this.price = price;
-    }
-
-    public OrderItemCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(OrderItemCategory category) {
-        this.category = category;
-    }
-
-    public List<OrderItemTag> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<OrderItemTag> tags) {
-        this.tags = tags;
-    }
 
     public long getId() {
         return id;
@@ -43,6 +25,30 @@ public class OrderItem {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
     public String getName() {
@@ -59,6 +65,23 @@ public class OrderItem {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderItem orderItem = (OrderItem) o;
+        return id == orderItem.id &&
+                Double.compare(orderItem.price, price) == 0 &&
+                Objects.equals(category, orderItem.category) &&
+                Objects.equals(name, orderItem.name) &&
+                Objects.equals(description, orderItem.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, price, category, name, description);
     }
 
 }
