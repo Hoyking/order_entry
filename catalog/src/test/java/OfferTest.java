@@ -1,15 +1,9 @@
-import com.netcracker.parfenenko.dao.CategoryDAO;
-import com.netcracker.parfenenko.dao.OfferDAO;
-import com.netcracker.parfenenko.dao.PriceDAO;
-import com.netcracker.parfenenko.dao.TagDAO;
+import com.netcracker.parfenenko.dao.*;
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.Arrays;
 
@@ -35,6 +29,14 @@ public class OfferTest {
     private static CategoryDAO categoryDAO;
     private static PriceDAO priceDAO;
     private static TagDAO tagDAO;
+
+    @BeforeClass
+    public static void init() {
+        offerDAO = JPAOfferDAO.getInstance();
+        categoryDAO = JPACategoryDAO.getInstance();
+        priceDAO = JPAPriceDAO.getInstance();
+        tagDAO = JPATagDAO.getInstance();
+    }
 
     @Before
     public void initOffer() {
@@ -77,11 +79,11 @@ public class OfferTest {
 
     @After
     public void destroyOffer() {
+        offerDAO.delete(offerId);
         categoryDAO.delete(categoryId);
         priceDAO.delete(priceId);
         tagDAO.delete(tagId1);
         tagDAO.delete(tagId2);
-        offerDAO.delete(offerId);
     }
 
     @Test

@@ -1,9 +1,7 @@
+import com.netcracker.parfenenko.dao.JPATagDAO;
 import com.netcracker.parfenenko.dao.TagDAO;
 import com.netcracker.parfenenko.entities.Tag;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class TagTest {
 
@@ -13,6 +11,11 @@ public class TagTest {
     private final String UPDATED_NAME = "Updated tag 1";
 
     private static TagDAO tagDAO;
+
+    @BeforeClass
+    public static void init() {
+        tagDAO = JPATagDAO.getInstance();
+    }
 
     @Before
     public void initTag() {
