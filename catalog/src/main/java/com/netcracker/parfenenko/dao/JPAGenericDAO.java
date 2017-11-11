@@ -1,6 +1,7 @@
 package com.netcracker.parfenenko.dao;
 
 import com.netcracker.parfenenko.provider.EntityManagerProvider;
+import com.netcracker.parfenenko.util.Transactions;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -16,90 +17,35 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
 
     @Override
     public void save(T entity) {
-        EntityManager entityManager = EntityManagerProvider.getInstance().createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-            entityManager.persist(entity);
-//            entityManager.flush();
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
-        }
+        Transactions.startTransaction(EntityManagerProvider.getInstance().createEntityManager(),
+                someEntityManager -> someEntityManager.persist(entity));
     }
 
     @Override
     public T findById(ID id) {
-        T entity = null;
-        EntityManager entityManager = EntityManagerProvider.getInstance().createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-            entity = (T)entityManager.find(persistenceClass, id);
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
-        }
-        return entity;
+        return (T) Transactions.startGenericTransaction(EntityManagerProvider.getInstance().createEntityManager(),
+                someEntityManager -> (T)someEntityManager.find(persistenceClass, id));
     }
 
     @Override
     public List<T> findAll() {
-        List<T> entities = null;
-        EntityManager entityManager = EntityManagerProvider.getInstance().createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-            entities = (List<T>)entityManager.createQuery("SELECT e FROM " + persistenceClass.getName() + " e")
-                    .getResultList();
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
-        }
-        return entities;
+        return (List<T>) Transactions.startGenericTransaction(EntityManagerProvider.getInstance().createEntityManager(),
+                someEntityManager -> (List<T>)someEntityManager.createQuery("SELECT e FROM " +
+                        persistenceClass.getName() + " e").getResultList());
     }
 
     @Override
     public void update(T entity) {
-        EntityManager entityManager = EntityManagerProvider.getInstance().createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-            entityManager.merge(entity);
-            entityManager.flush();
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
-        }
+        Transactions.startTransaction(EntityManagerProvider.getInstance().createEntityManager(),
+                someEntityManager -> someEntityManager.merge(entity));
     }
 
     @Override
     public void delete(ID id) {
-        EntityManager entityManager = EntityManagerProvider.getInstance().createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-            T entity = (T)entityManager.find(persistenceClass, id);
-            entityManager.remove(entity);
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
-        }
+        Transactions.startTransaction(EntityManagerProvider.getInstance().createEntityManager(),
+                someEntityManager -> {
+                    T entity = (T)someEntityManager.find(persistenceClass, id);
+                    someEntityManager.remove(entity);});
     }
 
 }
