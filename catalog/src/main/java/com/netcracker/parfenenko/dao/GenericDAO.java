@@ -10,7 +10,7 @@ public interface GenericDAO<T, ID> {
 
     List<T> findAll();
 
-    void update(T entity);
+    T update(T entity);
 
     void delete(ID id);
 

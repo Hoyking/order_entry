@@ -74,10 +74,10 @@ public class PriceTest {
         price.setValue(UPDATED_PRICE);
         price.setId(priceId);
 
-        priceDAO.update(price);
+        price = priceDAO.update(price);
         Price loadedPrice = priceDAO.findById(priceId);
 
-        Assert.assertEquals(priceId, loadedPrice.getId());
+        Assert.assertEquals(price.getId(), loadedPrice.getId());
         Assert.assertEquals(UPDATED_PRICE, loadedPrice.getValue(), 0);
     }
 

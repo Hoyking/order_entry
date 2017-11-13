@@ -82,10 +82,10 @@ public class TagTest {
         tag.setName(UPDATED_NAME);
         tag.setId(tagId);
 
-        tagDAO.update(tag);
+        tag = tagDAO.update(tag);
         Tag loadedTag = tagDAO.findById(tagId);
 
-        Assert.assertEquals(tagId, loadedTag.getId());
+        Assert.assertEquals(tag.getId(), loadedTag.getId());
         Assert.assertEquals(UPDATED_NAME, loadedTag.getName());
     }
 

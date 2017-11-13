@@ -36,9 +36,12 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
     }
 
     @Override
-    public void update(T entity) {
-        Transactions.startTransaction(EntityManagerProvider.getInstance().createEntityManager(),
-                someEntityManager -> someEntityManager.merge(entity));
+    public T update(T entity) {
+        return Transactions.startGenericTransaction(EntityManagerProvider.getInstance().createEntityManager(),
+                someEntityManager -> {
+                    someEntityManager.merge(entity);
+                    return entity;
+                });
     }
 
     @Override

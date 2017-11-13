@@ -82,10 +82,10 @@ public class CategoryTest {
         category.setName(UPDATED_NAME);
         category.setId(categoryId);
 
-        categoryDAO.update(category);
+        category = categoryDAO.update(category);
         Category loadedCategory = categoryDAO.findById(categoryId);
 
-        Assert.assertEquals(categoryId, loadedCategory.getId());
+        Assert.assertEquals(category.getId(), loadedCategory.getId());
         Assert.assertEquals(UPDATED_NAME, loadedCategory.getName());
     }
 

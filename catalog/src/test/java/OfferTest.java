@@ -157,7 +157,7 @@ public class OfferTest {
         Offer offer = offerDAO.findById(offerId);
         offer.setName(UPDATED_OFFER_NAME);
         offer.setDescription(UPDATED_DESCRIPTION);
-        offerDAO.update(offer);
+        offer = offerDAO.update(offer);
 
         Offer loadedOffer = offerDAO.findById(offerId);
 

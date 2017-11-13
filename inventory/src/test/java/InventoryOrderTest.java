@@ -147,11 +147,11 @@ public class InventoryOrderTest {
         order.setName(UPDATED_NAME);
         order.setDescription(UPDATED_DESCRIPTION);
         order.setTotalPrice(UPDATED_TOTAL_PRICE);
-        orderDAO.update(order);
+        order = orderDAO.update(order);
 
         InventoryOrder loadedOrder = orderDAO.findById(orderId);
 
-        Assert.assertEquals(orderId, loadedOrder.getId());
+        Assert.assertEquals(order.getId(), loadedOrder.getId());
         Assert.assertEquals(UPDATED_NAME, loadedOrder.getName());
         Assert.assertEquals(UPDATED_DESCRIPTION, loadedOrder.getDescription());
         Assert.assertEquals(UPDATED_TOTAL_PRICE, loadedOrder.getTotalPrice(), 0);
