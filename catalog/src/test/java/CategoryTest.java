@@ -22,7 +22,7 @@ public class CategoryTest {
         Category category = new Category();
         category.setName(NAME_1);
 
-        categoryDAO.save(category);
+        category = categoryDAO.save(category);
         categoryId = category.getId();
     }
 
@@ -36,7 +36,7 @@ public class CategoryTest {
         Category category = new Category();
         category.setName(NAME_2);
 
-        categoryDAO.save(category);
+        category = categoryDAO.save(category);
         long testCategoryId = category.getId();
 
         Category loadedCategory = categoryDAO.findById(testCategoryId);
@@ -68,7 +68,7 @@ public class CategoryTest {
         Category category = new Category();
         category.setName(NAME_2);
 
-        categoryDAO.save(category);
+        category = categoryDAO.save(category);
         long testCategoryId = category.getId();
 
         Assert.assertEquals(2, categoryDAO.findAll().size());
@@ -94,7 +94,7 @@ public class CategoryTest {
         Category category = new Category();
         category.setName(NAME_2);
 
-        categoryDAO.save(category);
+        category = categoryDAO.save(category);
         long testCategoryId = category.getId();
         categoryDAO.delete(testCategoryId);
 

@@ -4,30 +4,9 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Category {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
-    private String name;
+public class Category extends NamedEntity {
 
     public Category() {}
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public boolean equals(Object o) {

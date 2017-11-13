@@ -4,22 +4,11 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Price {
+public class Price extends IdentifiedEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
     private double value;
 
     public Price() {}
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public double getValue() {
         return value;
@@ -42,4 +31,5 @@ public class Price {
     public int hashCode() {
         return Objects.hash(id, value);
     }
+
 }

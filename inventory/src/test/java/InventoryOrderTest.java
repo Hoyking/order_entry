@@ -52,7 +52,7 @@ public class InventoryOrderTest {
         order.setPaymentSign(SIGN);
         order.setOrderItems(Arrays.asList(orderItem1, orderItem2));
 
-        orderDAO.save(order);
+        order = orderDAO.save(order);
         orderId = order.getId();
     }
 
@@ -79,7 +79,7 @@ public class InventoryOrderTest {
         order.setOrderDate(DATE);
         order.setPaymentSign(SIGN);
         order.setOrderItems(Arrays.asList(orderItem1, orderItem2));
-        orderDAO.save(order);
+        order = orderDAO.save(order);
         long testOrderId = order.getId();
 
         InventoryOrder loadedOrder = orderDAO.findById(testOrderId);
@@ -133,7 +133,7 @@ public class InventoryOrderTest {
         order.setCustomerMail(MAIL);
         order.setOrderDate(DATE);
         order.setPaymentSign(SIGN);
-        orderDAO.save(order);
+        order = orderDAO.save(order);
         long testOrderId = order.getId();
 
         Assert.assertEquals(2, orderDAO.findAll().size());
@@ -180,7 +180,7 @@ public class InventoryOrderTest {
         order.setPaymentSign(SIGN);
         order.setOrderItems(Arrays.asList(orderItem1, orderItem2));
 
-        orderDAO.save(order);
+        order = orderDAO.save(order);
         long testOrderId = order.getId();
         orderDAO.delete(testOrderId);
 
