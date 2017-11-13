@@ -4,30 +4,9 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Tag {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
-    private String name;
+public class Tag extends NamedEntity {
 
     public Tag() {}
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -42,4 +21,5 @@ public class Tag {
     public int hashCode() {
         return Objects.hash(id, name);
     }
+
 }

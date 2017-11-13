@@ -22,7 +22,7 @@ public class TagTest {
         Tag tag = new Tag();
         tag.setName(NAME_1);
 
-        tagDAO.save(tag);
+        tag = tagDAO.save(tag);
         tagId = tag.getId();
     }
 
@@ -36,7 +36,7 @@ public class TagTest {
         Tag tag = new Tag();
         tag.setName(NAME_2);
 
-        tagDAO.save(tag);
+        tag = tagDAO.save(tag);
         long testTagId = tag.getId();
 
         Tag loadedTag = tagDAO.findById(testTagId);
@@ -68,7 +68,7 @@ public class TagTest {
         Tag tag = new Tag();
         tag.setName(NAME_2);
 
-        tagDAO.save(tag);
+        tag = tagDAO.save(tag);
         long testTagId = tag.getId();
 
         Assert.assertEquals(2, tagDAO.findAll().size());
@@ -94,7 +94,7 @@ public class TagTest {
         Tag tag = new Tag();
         tag.setName(NAME_2);
 
-        tagDAO.save(tag);
+        tag = tagDAO.save(tag);
         long testTagId = tag.getId();
         tagDAO.delete(testTagId);
 

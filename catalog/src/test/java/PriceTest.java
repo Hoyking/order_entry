@@ -22,7 +22,7 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_1);
 
-        priceDAO.save(price);
+        price = priceDAO.save(price);
         priceId = price.getId();
     }
 
@@ -36,7 +36,7 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_2);
 
-        priceDAO.save(price);
+        price = priceDAO.save(price);
         long testPriceId = price.getId();
 
         Price loadedPrice = priceDAO.findById(testPriceId);
@@ -60,7 +60,7 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_2);
 
-        priceDAO.save(price);
+        price = priceDAO.save(price);
         long testPriceId = price.getId();
 
         Assert.assertEquals(2, priceDAO.findAll().size());
@@ -86,7 +86,7 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_2);
 
-        priceDAO.save(price);
+        price = priceDAO.save(price);
         long testPriceId = price.getId();
         priceDAO.delete(testPriceId);
 

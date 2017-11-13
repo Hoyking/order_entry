@@ -3,8 +3,6 @@ package com.netcracker.parfenenko.dao;
 import com.netcracker.parfenenko.provider.EntityManagerProvider;
 import com.netcracker.parfenenko.util.Transactions;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import java.util.List;
 
 public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
@@ -16,9 +14,12 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
     }
 
     @Override
-    public void save(T entity) {
-        Transactions.startTransaction(EntityManagerProvider.getInstance().createEntityManager(),
-                someEntityManager -> someEntityManager.persist(entity));
+    public T save(T entity) {
+        return (T) Transactions.startGenericTransaction(EntityManagerProvider.getInstance().createEntityManager(),
+                someEntityManager -> {
+                    someEntityManager.persist(entity);
+                    return entity;
+                });
     }
 
     @Override

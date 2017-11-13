@@ -5,14 +5,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class InventoryOrder {
+public class InventoryOrder extends NamedEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
-    private String name;
     private String description;
     private double totalPrice;
     private String customerMail;
@@ -59,22 +55,6 @@ public class InventoryOrder {
 
     public void setPaymentSign(String paymentSign) {
         this.paymentSign = paymentSign;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDescription() {
