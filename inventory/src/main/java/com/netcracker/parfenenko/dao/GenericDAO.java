@@ -4,14 +4,14 @@ import java.util.List;
 
 public interface GenericDAO<T, ID> {
 
-    ID save(T entity);
+    T save(T entity);
 
     T findById(ID id);
 
     List<T> findAll();
 
-    void update(T entity);
+    T update(T entity);
 
-    void delete(long id);
+    void delete(ID id);
 
 }

@@ -1,9 +1,7 @@
 import com.netcracker.parfenenko.dao.CategoryDAO;
+import com.netcracker.parfenenko.dao.JPACategoryDAO;
 import com.netcracker.parfenenko.entities.Category;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class CategoryTest {
 
@@ -14,12 +12,17 @@ public class CategoryTest {
 
     private static CategoryDAO categoryDAO;
 
+    @BeforeClass
+    public static void init() {
+        categoryDAO = JPACategoryDAO.getInstance();
+    }
+
     @Before
     public void initCategory() {
         Category category = new Category();
         category.setName(NAME_1);
 
-        categoryDAO.save(category);
+        category = categoryDAO.save(category);
         categoryId = category.getId();
     }
 
@@ -33,7 +36,7 @@ public class CategoryTest {
         Category category = new Category();
         category.setName(NAME_2);
 
-        categoryDAO.save(category);
+        category = categoryDAO.save(category);
         long testCategoryId = category.getId();
 
         Category loadedCategory = categoryDAO.findById(testCategoryId);
@@ -65,7 +68,7 @@ public class CategoryTest {
         Category category = new Category();
         category.setName(NAME_2);
 
-        categoryDAO.save(category);
+        category = categoryDAO.save(category);
         long testCategoryId = category.getId();
 
         Assert.assertEquals(2, categoryDAO.findAll().size());
@@ -79,10 +82,10 @@ public class CategoryTest {
         category.setName(UPDATED_NAME);
         category.setId(categoryId);
 
-        categoryDAO.update(category);
+        category = categoryDAO.update(category);
         Category loadedCategory = categoryDAO.findById(categoryId);
 
-        Assert.assertEquals(categoryId, loadedCategory.getId());
+        Assert.assertEquals(category.getId(), loadedCategory.getId());
         Assert.assertEquals(UPDATED_NAME, loadedCategory.getName());
     }
 
@@ -91,7 +94,7 @@ public class CategoryTest {
         Category category = new Category();
         category.setName(NAME_2);
 
-        categoryDAO.save(category);
+        category = categoryDAO.save(category);
         long testCategoryId = category.getId();
         categoryDAO.delete(testCategoryId);
 

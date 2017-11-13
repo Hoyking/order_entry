@@ -1,9 +1,7 @@
+import com.netcracker.parfenenko.dao.JPATagDAO;
 import com.netcracker.parfenenko.dao.TagDAO;
 import com.netcracker.parfenenko.entities.Tag;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class TagTest {
 
@@ -14,12 +12,17 @@ public class TagTest {
 
     private static TagDAO tagDAO;
 
+    @BeforeClass
+    public static void init() {
+        tagDAO = JPATagDAO.getInstance();
+    }
+
     @Before
     public void initTag() {
         Tag tag = new Tag();
         tag.setName(NAME_1);
 
-        tagDAO.save(tag);
+        tag = tagDAO.save(tag);
         tagId = tag.getId();
     }
 
@@ -33,7 +36,7 @@ public class TagTest {
         Tag tag = new Tag();
         tag.setName(NAME_2);
 
-        tagDAO.save(tag);
+        tag = tagDAO.save(tag);
         long testTagId = tag.getId();
 
         Tag loadedTag = tagDAO.findById(testTagId);
@@ -65,7 +68,7 @@ public class TagTest {
         Tag tag = new Tag();
         tag.setName(NAME_2);
 
-        tagDAO.save(tag);
+        tag = tagDAO.save(tag);
         long testTagId = tag.getId();
 
         Assert.assertEquals(2, tagDAO.findAll().size());
@@ -79,10 +82,10 @@ public class TagTest {
         tag.setName(UPDATED_NAME);
         tag.setId(tagId);
 
-        tagDAO.update(tag);
+        tag = tagDAO.update(tag);
         Tag loadedTag = tagDAO.findById(tagId);
 
-        Assert.assertEquals(tagId, loadedTag.getId());
+        Assert.assertEquals(tag.getId(), loadedTag.getId());
         Assert.assertEquals(UPDATED_NAME, loadedTag.getName());
     }
 
@@ -91,7 +94,7 @@ public class TagTest {
         Tag tag = new Tag();
         tag.setName(NAME_2);
 
-        tagDAO.save(tag);
+        tag = tagDAO.save(tag);
         long testTagId = tag.getId();
         tagDAO.delete(testTagId);
 

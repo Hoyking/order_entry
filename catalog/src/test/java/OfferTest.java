@@ -1,15 +1,9 @@
-import com.netcracker.parfenenko.dao.CategoryDAO;
-import com.netcracker.parfenenko.dao.OfferDAO;
-import com.netcracker.parfenenko.dao.PriceDAO;
-import com.netcracker.parfenenko.dao.TagDAO;
+import com.netcracker.parfenenko.dao.*;
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.Arrays;
 
@@ -36,29 +30,37 @@ public class OfferTest {
     private static PriceDAO priceDAO;
     private static TagDAO tagDAO;
 
+    @BeforeClass
+    public static void init() {
+        offerDAO = JPAOfferDAO.getInstance();
+        categoryDAO = JPACategoryDAO.getInstance();
+        priceDAO = JPAPriceDAO.getInstance();
+        tagDAO = JPATagDAO.getInstance();
+    }
+
     @Before
     public void initOffer() {
         Price price = new Price();
         price.setValue(PRICE_VALUE);
-        priceDAO.save(price);
+        price = priceDAO.save(price);
         priceId = price.getId();
         price.setId(priceId);
 
         Category category = new Category();
         category.setName(CATEGORY_NAME);
-        categoryDAO.save(category);
+        category = categoryDAO.save(category);
         categoryId = category.getId();
         category.setId(categoryId);
 
         Tag tag1 = new Tag();
         tag1.setName(TAG_NAME_1);
-        tagDAO.save(tag1);
+        tag1 = tagDAO.save(tag1);
         tagId1 = tag1.getId();
         tag1.setId(tagId1);
 
         Tag tag2 = new Tag();
         tag2.setName(TAG_NAME_2);
-        tagDAO.save(tag2);
+        tag2 = tagDAO.save(tag2);
         tagId2 = tag2.getId();
         tag2.setId(tagId2);
 
@@ -71,17 +73,17 @@ public class OfferTest {
         offer.setPrice(price);
         offer.setTags(Arrays.asList(tag1, tag2));
 
-        offerDAO.save(offer);
+        offer = offerDAO.save(offer);
         offerId = offer.getId();
     }
 
     @After
     public void destroyOffer() {
+        offerDAO.delete(offerId);
         categoryDAO.delete(categoryId);
         priceDAO.delete(priceId);
         tagDAO.delete(tagId1);
         tagDAO.delete(tagId2);
-        offerDAO.delete(offerId);
     }
 
     @Test
@@ -98,7 +100,7 @@ public class OfferTest {
         offer.setPrice(price);
         offer.setTags(Arrays.asList(tag1, tag2));
 
-        offerDAO.save(offer);
+        offer = offerDAO.save(offer);
         long testOfferId = offer.getId();
 
         Offer loadedOffer = offerDAO.findById(testOfferId);
@@ -142,7 +144,7 @@ public class OfferTest {
         Offer offer = new Offer();
         offer.setName(OFFER_NAME_2);
         offer.setDescription(DESCRIPTION_2);
-        offerDAO.save(offer);
+        offer = offerDAO.save(offer);
         long testOfferId = offer.getId();
 
         Assert.assertEquals(2, offerDAO.findAll().size());
@@ -155,7 +157,7 @@ public class OfferTest {
         Offer offer = offerDAO.findById(offerId);
         offer.setName(UPDATED_OFFER_NAME);
         offer.setDescription(UPDATED_DESCRIPTION);
-        offerDAO.update(offer);
+        offer = offerDAO.update(offer);
 
         Offer loadedOffer = offerDAO.findById(offerId);
 
@@ -181,7 +183,7 @@ public class OfferTest {
         offer.setPrice(price);
         offer.setTags(Arrays.asList(tag1, tag2));
 
-        offerDAO.save(offer);
+        offer = offerDAO.save(offer);
         long testOfferId = offer.getId();
         offerDAO.delete(testOfferId);
 

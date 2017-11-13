@@ -17,7 +17,7 @@ public class EntityManagerProvider {
     }
 
     private static class Holder {
-        public static final EntityManagerProvider INSTANCE = new EntityManagerProvider();
+        static final EntityManagerProvider INSTANCE = new EntityManagerProvider();
     }
 
     public static EntityManagerProvider getInstance() {

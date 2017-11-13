@@ -5,21 +5,17 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class Order {
+public class InventoryOrder extends NamedEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
-    private String name;
     private String description;
     private double totalPrice;
     private String customerMail;
     private String orderDate;
     private String paymentSign;
 
-    public Order() {}
+    public InventoryOrder() {}
 
     public List<OrderItem> getOrderItems() {
         return orderItems;
@@ -61,22 +57,6 @@ public class Order {
         this.paymentSign = paymentSign;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -89,7 +69,7 @@ public class Order {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
+        InventoryOrder order = (InventoryOrder) o;
         return id == order.id &&
                 Double.compare(order.totalPrice, totalPrice) == 0 &&
                 Objects.equals(orderItems, order.orderItems) &&

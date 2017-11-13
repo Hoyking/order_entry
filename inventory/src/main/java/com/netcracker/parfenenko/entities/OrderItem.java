@@ -1,31 +1,21 @@
 package com.netcracker.parfenenko.entities;
 
-import javax.persistence.*;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class OrderItem {
+public class OrderItem extends NamedEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
     private double price;
     private String category;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> tags;
-    private String name;
     private String description;
 
     public OrderItem() {}
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public double getPrice() {
         return price;
@@ -49,14 +39,6 @@ public class OrderItem {
 
     public void setTags(List<String> tags) {
         this.tags = tags;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDescription() {

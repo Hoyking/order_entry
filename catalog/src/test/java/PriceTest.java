@@ -1,9 +1,7 @@
+import com.netcracker.parfenenko.dao.JPAPriceDAO;
 import com.netcracker.parfenenko.dao.PriceDAO;
 import com.netcracker.parfenenko.entities.Price;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class PriceTest {
 
@@ -14,12 +12,17 @@ public class PriceTest {
 
     private static PriceDAO priceDAO;
 
+    @BeforeClass
+    public static void init() {
+        priceDAO = JPAPriceDAO.getInstance();
+    }
+
     @Before
     public void initPrice() {
         Price price = new Price();
         price.setValue(PRICE_1);
 
-        priceDAO.save(price);
+        price = priceDAO.save(price);
         priceId = price.getId();
     }
 
@@ -33,7 +36,7 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_2);
 
-        priceDAO.save(price);
+        price = priceDAO.save(price);
         long testPriceId = price.getId();
 
         Price loadedPrice = priceDAO.findById(testPriceId);
@@ -57,7 +60,7 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_2);
 
-        priceDAO.save(price);
+        price = priceDAO.save(price);
         long testPriceId = price.getId();
 
         Assert.assertEquals(2, priceDAO.findAll().size());
@@ -71,10 +74,10 @@ public class PriceTest {
         price.setValue(UPDATED_PRICE);
         price.setId(priceId);
 
-        priceDAO.update(price);
+        price = priceDAO.update(price);
         Price loadedPrice = priceDAO.findById(priceId);
 
-        Assert.assertEquals(priceId, loadedPrice.getId());
+        Assert.assertEquals(price.getId(), loadedPrice.getId());
         Assert.assertEquals(UPDATED_PRICE, loadedPrice.getValue(), 0);
     }
 
@@ -83,7 +86,7 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_2);
 
-        priceDAO.save(price);
+        price = priceDAO.save(price);
         long testPriceId = price.getId();
         priceDAO.delete(testPriceId);
 
