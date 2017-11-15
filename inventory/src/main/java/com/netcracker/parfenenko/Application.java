@@ -3,7 +3,7 @@ package com.netcracker.parfenenko;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.netcracker.parfenenko.dao", "com.netcracker.parfenenko.util"})
 public class Application {
 
     public static void main(String[] args) {
