@@ -1,41 +1,32 @@
 package com.netcracker.parfenenko.util;
 
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@Component
 public class Transactions {
 
-    private Transactions() {}
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public static void startTransaction(EntityManager entityManager, Consumer<EntityManager> consumer) {
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-            consumer.accept(entityManager);
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
-        }
+    public Transactions() {}
+
+    @Transactional
+    public void startTransaction(Consumer<EntityManager> consumer) {
+        consumer.accept(entityManager);
+        entityManager.close();
     }
 
-    public static <T> T startGenericTransaction(EntityManager entityManager, Function<EntityManager, T> function) {
+    @Transactional
+    public <T> T startGenericTransaction(Function<EntityManager, T> function) {
         T result = null;
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-            result = function.apply(entityManager);
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            e.printStackTrace();
-        } finally {
-            entityManager.close();
-        }
+        result = function.apply(entityManager);
+        entityManager.close();
         return result;
     }
 

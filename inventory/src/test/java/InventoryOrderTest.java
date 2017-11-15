@@ -1,12 +1,24 @@
-import com.netcracker.parfenenko.dao.JPAOrderDAO;
+import com.netcracker.parfenenko.Application;
 import com.netcracker.parfenenko.dao.OrderDAO;
 import com.netcracker.parfenenko.entities.InventoryOrder;
 import com.netcracker.parfenenko.entities.OrderItem;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
 public class InventoryOrderTest {
+
+    @Autowired
+    private OrderDAO orderDAO;
 
     private long orderId;
     private final String NAME_1 = "Test InventoryOrder 1";
@@ -25,13 +37,6 @@ public class InventoryOrderTest {
     private final String ORDER_ITEM_NAME_2 = "Test OrderItem 2";
     private final String ORDER_ITEM_DESCRIPTION_1 = "Test OrderItem description 1";
     private final String ORDER_ITEM_DESCRIPTION_2 = "Test OrderItem description 2";
-
-    private static OrderDAO orderDAO;
-
-    @BeforeClass
-    public static void init() {
-        orderDAO = JPAOrderDAO.getInstance();
-    }
 
     @Before
     public void initOrder() {

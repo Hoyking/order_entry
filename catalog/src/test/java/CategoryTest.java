@@ -1,21 +1,24 @@
+import com.netcracker.parfenenko.Application;
 import com.netcracker.parfenenko.dao.CategoryDAO;
 import com.netcracker.parfenenko.dao.JPACategoryDAO;
 import com.netcracker.parfenenko.entities.Category;
 import org.junit.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
 public class CategoryTest {
+
+    @Autowired
+    private CategoryDAO categoryDAO;
 
     private long categoryId;
     private final String NAME_1 = "Test category 1";
     private final String NAME_2 = "Test category 2";
     private final String UPDATED_NAME = "Updated category 1";
-
-    private static CategoryDAO categoryDAO;
-
-    @BeforeClass
-    public static void init() {
-        categoryDAO = JPACategoryDAO.getInstance();
-    }
 
     @Before
     public void initCategory() {
