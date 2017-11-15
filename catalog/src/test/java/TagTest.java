@@ -1,21 +1,24 @@
+import com.netcracker.parfenenko.Application;
 import com.netcracker.parfenenko.dao.JPATagDAO;
 import com.netcracker.parfenenko.dao.TagDAO;
 import com.netcracker.parfenenko.entities.Tag;
 import org.junit.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
 public class TagTest {
+
+    @Autowired
+    private TagDAO tagDAO;
 
     private long tagId;
     private final String NAME_1 = "Test tag 1";
     private final String NAME_2 = "Test tag 2";
     private final String UPDATED_NAME = "Updated tag 1";
-
-    private static TagDAO tagDAO;
-
-    @BeforeClass
-    public static void init() {
-        tagDAO = JPATagDAO.getInstance();
-    }
 
     @Before
     public void initTag() {

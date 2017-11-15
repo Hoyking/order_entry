@@ -1,13 +1,29 @@
+import com.netcracker.parfenenko.Application;
 import com.netcracker.parfenenko.dao.*;
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import org.junit.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
 public class OfferTest {
+
+    @Autowired
+    private OfferDAO offerDAO;
+    @Autowired
+    private CategoryDAO categoryDAO;
+    @Autowired
+    private TagDAO tagDAO;
+    @Autowired
+    private PriceDAO priceDAO;
 
     private long offerId;
     private final String OFFER_NAME_1 = "Test offer 1";
@@ -24,19 +40,6 @@ public class OfferTest {
     private final String TAG_NAME_2 = "Test tag 2";
     private long priceId;
     private final double PRICE_VALUE = 2.99;
-
-    private static OfferDAO offerDAO;
-    private static CategoryDAO categoryDAO;
-    private static PriceDAO priceDAO;
-    private static TagDAO tagDAO;
-
-    @BeforeClass
-    public static void init() {
-        offerDAO = JPAOfferDAO.getInstance();
-        categoryDAO = JPACategoryDAO.getInstance();
-        priceDAO = JPAPriceDAO.getInstance();
-        tagDAO = JPATagDAO.getInstance();
-    }
 
     @Before
     public void initOffer() {

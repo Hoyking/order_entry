@@ -1,21 +1,24 @@
+import com.netcracker.parfenenko.Application;
 import com.netcracker.parfenenko.dao.JPAPriceDAO;
 import com.netcracker.parfenenko.dao.PriceDAO;
 import com.netcracker.parfenenko.entities.Price;
 import org.junit.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
 public class PriceTest {
+
+    @Autowired
+    private PriceDAO priceDAO;
 
     private long priceId;
     private final double PRICE_1 = 0.99;
     private final double PRICE_2 = 1.99;
     private final double UPDATED_PRICE = 1.49;
-
-    private static PriceDAO priceDAO;
-
-    @BeforeClass
-    public static void init() {
-        priceDAO = JPAPriceDAO.getInstance();
-    }
 
     @Before
     public void initPrice() {

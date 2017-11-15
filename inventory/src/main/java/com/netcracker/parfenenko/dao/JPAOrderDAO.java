@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 public class JPAOrderDAO extends JPANamedEntityDAO<InventoryOrder, Long> implements OrderDAO {
 
     public JPAOrderDAO() {
-        setPersistenceClass(InventoryOrder.class);
+        super.setPersistenceClass(InventoryOrder.class);
     }
 
 }

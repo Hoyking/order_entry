@@ -1,19 +1,13 @@
 package com.netcracker.parfenenko.dao;
 
 import com.netcracker.parfenenko.entities.Tag;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class JPATagDAO extends JPANamedEntityDAO<Tag, Long> implements TagDAO {
 
-    private JPATagDAO() {
-        super(Tag.class);
-    }
-
-    private static class Holder {
-        static final JPATagDAO INSTANCE = new JPATagDAO();
-    }
-
-    public static JPATagDAO getInstance() {
-        return Holder.INSTANCE;
+    public JPATagDAO() {
+        super.setPersistenceClass(Tag.class);
     }
 
 }
