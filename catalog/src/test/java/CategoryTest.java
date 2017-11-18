@@ -139,7 +139,7 @@ public class CategoryTest {
         offer3.setCategory(category2);
         offer3 = offerDAO.save(offer3);
 
-        List<Offer> offers = categoryService.findCategoryOffers(category1);
+        List<Offer> offers = categoryService.findCategoryOffers(category1.getId());
 
         String testOfferName = offers.get(0).getName();
 

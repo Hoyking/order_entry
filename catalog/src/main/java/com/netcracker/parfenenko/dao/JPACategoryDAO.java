@@ -18,11 +18,11 @@ public class JPACategoryDAO extends JPANamedEntityDAO<Category, Long> implements
     }
 
     @Override
-    public List<Offer> findCategoryOffers(Category category) {
+    public List<Offer> findCategoryOffers(long id) {
         return (List<Offer>) transactions.startGenericTransaction(entityManager ->
                 (List<Offer>) (entityManager
                         .createQuery(CATEGORY_OFFERS)
-                        .setParameter(1, category.getId())
+                        .setParameter(1, id)
                         .getResultList()));
     }
 

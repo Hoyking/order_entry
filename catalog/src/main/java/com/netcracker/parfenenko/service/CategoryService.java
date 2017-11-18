@@ -50,8 +50,8 @@ public class CategoryService {
     }
 
     @Transactional
-    public List<Offer> findCategoryOffers(Category category) {
-        return categoryDAO.findCategoryOffers(category);
+    public List<Offer> findCategoryOffers(long id) {
+        return categoryDAO.findCategoryOffers(id);
     }
 
 }

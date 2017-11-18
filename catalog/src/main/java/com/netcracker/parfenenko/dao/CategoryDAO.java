@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface CategoryDAO extends NamedEntityDAO<Category, Long> {
 
-    List<Offer> findCategoryOffers(Category category);
+    List<Offer> findCategoryOffers(long id);
 
 }
