@@ -11,9 +11,10 @@ public class Offer extends NamedEntity {
     private Price price;
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     private Category category;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     private List<Tag> tags;
     private String description;
+    private boolean available = true;
 
     public Offer() {}
 
@@ -49,6 +50,14 @@ public class Offer extends NamedEntity {
         this.description = description;
     }
 
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,12 +67,13 @@ public class Offer extends NamedEntity {
                 Objects.equals(price, offer.price) &&
                 Objects.equals(category, offer.category) &&
                 Objects.equals(name, offer.name) &&
-                Objects.equals(description, offer.description);
+                Objects.equals(description, offer.description) &&
+                Objects.equals(available, offer.available);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, price, category, name, description);
+        return Objects.hash(id, price, category, name, description, available);
     }
 
 }

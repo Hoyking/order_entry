@@ -2,6 +2,7 @@ import com.netcracker.parfenenko.Application;
 import com.netcracker.parfenenko.dao.OfferDAO;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.service.OfferService;
 import com.netcracker.parfenenko.service.TagService;
 import org.junit.After;
 import org.junit.Assert;
@@ -22,7 +23,7 @@ public class TagTest {
     @Autowired
     private TagService tagService;
     @Autowired
-    private OfferDAO offerDAO;
+    private OfferService offerService;
 
     private long tagId;
     private final String NAME_1 = "Test tag 1";
@@ -131,17 +132,17 @@ public class TagTest {
         Offer offer1 = new Offer();
         offer1.setName(OFFER_NAME_1);
         offer1.setTags(Arrays.asList(tag1));
-        offer1 = offerDAO.save(offer1);
+        offer1 = offerService.save(offer1);
 
         Offer offer2 = new Offer();
         offer2.setName(OFFER_NAME_2);
         offer2.setTags(Arrays.asList(tag1));
-        offer2 = offerDAO.save(offer2);
+        offer2 = offerService.save(offer2);
 
         Offer offer3 = new Offer();
         offer3.setName(OFFER_NAME_3);
         offer3.setTags(Arrays.asList(tag2));
-        offer3 = offerDAO.save(offer3);
+        offer3 = offerService.save(offer3);
 
         List<Offer> offers = tagService.findTagOffers(tag1.getId());
 
@@ -151,9 +152,9 @@ public class TagTest {
         Assert.assertEquals(OFFER_NAME_1, testOfferName);
         Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
 
-        offerDAO.delete(offer1.getId());
-        offerDAO.delete(offer2.getId());
-        offerDAO.delete(offer3.getId());
+        offerService.delete(offer1.getId());
+        offerService.delete(offer2.getId());
+        offerService.delete(offer3.getId());
         tagService.delete(tag1.getId());
         tagService.delete(tag2.getId());
     }
