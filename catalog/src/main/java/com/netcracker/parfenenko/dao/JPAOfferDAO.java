@@ -33,7 +33,7 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
 
     @Override
     public List<Offer> findOffersByTags(List<Tag> tags) {
-        return findAll().stream().filter(offer -> offer.getTags().contains(tags)).collect(Collectors.toList());
+        return findAll().stream().filter(offer -> offer.getTags().containsAll(tags)).collect(Collectors.toList());
     }
 
     @Override
