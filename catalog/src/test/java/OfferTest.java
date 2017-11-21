@@ -1,11 +1,11 @@
 import com.netcracker.parfenenko.Application;
-import com.netcracker.parfenenko.dao.PriceDAO;
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.service.CategoryService;
 import com.netcracker.parfenenko.service.OfferService;
+import com.netcracker.parfenenko.service.PriceService;
 import com.netcracker.parfenenko.service.TagService;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -28,7 +28,7 @@ public class OfferTest {
     @Autowired
     private TagService tagService;
     @Autowired
-    private PriceDAO priceDAO;
+    private PriceService priceService;
 
     private long offerId;
     private final String OFFER_NAME_1 = "Test offer 1";
@@ -296,7 +296,7 @@ public class OfferTest {
 
         Assert.assertEquals(PRICE_VALUE_2, offer.getPrice().getValue(), 0);
 
-        priceDAO.delete(currentPriceId);
+        priceService.delete(currentPriceId);
     }
 
     @Test

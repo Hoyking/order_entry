@@ -15,8 +15,7 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     private final String AVAILABLE_OFFERS = "SELECT e FROM " + Offer.class.getName() + " e WHERE e.available = true";
     private final String OFFERS_OF_PRICE_INTERVAL = "SELECT e FROM " + Offer.class.getName() +
             " e WHERE e.price.value >= ?1 AND e.price.value <= ?2";
-    private final String ADD_OFFER_TO_CATEGORY = "UPDATE " + Offer.class.getName() + " offer SET offer.category = " +
-            Category.class.getName() + " category WHERE offer.id = ?1 AND category.id = ?2";
+    private final String ADD_OFFER_TO_CATEGORY = "UPDATE Offer SET category_id = ?1 WHERE id = ?2";
     private final String REMOVE_OFFER_FROM_CATEGORY = "UPDATE " + Offer.class.getName() + " offer SET offer.category = NULL " +
             "WHERE offer.id = ?1";
 
@@ -77,20 +76,22 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
 
     @Override
     public Offer addOfferToCategory(long offerId, long categoryId) {
-        transactions.startTransaction(entityManager ->
+       transactions.startGenericTransaction(entityManager ->
                 entityManager
-                        .createQuery(ADD_OFFER_TO_CATEGORY)
-                        .setParameter(1, offerId)
-                        .setParameter(2, categoryId));
+                        .createNativeQuery(ADD_OFFER_TO_CATEGORY)
+                        .setParameter(2, offerId)
+                        .setParameter(1, categoryId)
+                        .executeUpdate());
         return findById(offerId);
     }
 
     @Override
     public Offer removeOfferFromCategory(long offerId) {
         transactions.startTransaction(entityManager ->
-                entityManager
-                        .createQuery(REMOVE_OFFER_FROM_CATEGORY)
-                        .setParameter(1, offerId));
+            entityManager
+                    .createQuery(REMOVE_OFFER_FROM_CATEGORY)
+                    .setParameter(1, offerId)
+                    .executeUpdate());
         return findById(offerId);
     }
 

@@ -1,7 +1,6 @@
 import com.netcracker.parfenenko.Application;
-import com.netcracker.parfenenko.dao.JPAPriceDAO;
-import com.netcracker.parfenenko.dao.PriceDAO;
 import com.netcracker.parfenenko.entities.Price;
+import com.netcracker.parfenenko.service.PriceService;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class PriceTest {
 
     @Autowired
-    private PriceDAO priceDAO;
+    private PriceService priceService;
 
     private long priceId;
     private final double PRICE_1 = 0.99;
@@ -25,13 +24,13 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_1);
 
-        price = priceDAO.save(price);
+        price = priceService.save(price);
         priceId = price.getId();
     }
 
     @After
     public void destroyPrice() {
-        priceDAO.delete(priceId);
+        priceService.delete(priceId);
     }
 
     @Test
@@ -39,20 +38,20 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_2);
 
-        price = priceDAO.save(price);
+        price = priceService.save(price);
         long testPriceId = price.getId();
 
-        Price loadedPrice = priceDAO.findById(testPriceId);
+        Price loadedPrice = priceService.findById(testPriceId);
 
         Assert.assertEquals(testPriceId, loadedPrice.getId());
         Assert.assertEquals(PRICE_2, loadedPrice.getValue(), 0);
 
-        priceDAO.delete(loadedPrice.getId());
+        priceService.delete(loadedPrice.getId());
     }
 
     @Test
     public void findByIdTest() {
-        Price loadedPrice = priceDAO.findById(priceId);
+        Price loadedPrice = priceService.findById(priceId);
 
         Assert.assertEquals(priceId, loadedPrice.getId());
         Assert.assertEquals(PRICE_1, loadedPrice.getValue(), 0);
@@ -63,12 +62,12 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_2);
 
-        price = priceDAO.save(price);
+        price = priceService.save(price);
         long testPriceId = price.getId();
 
-        Assert.assertEquals(2, priceDAO.findAll().size());
+        Assert.assertEquals(2, priceService.findAll().size());
 
-        priceDAO.delete(testPriceId);
+        priceService.delete(testPriceId);
     }
 
     @Test
@@ -77,8 +76,8 @@ public class PriceTest {
         price.setValue(UPDATED_PRICE);
         price.setId(priceId);
 
-        price = priceDAO.update(price);
-        Price loadedPrice = priceDAO.findById(priceId);
+        price = priceService.update(price);
+        Price loadedPrice = priceService.findById(priceId);
 
         Assert.assertEquals(price.getId(), loadedPrice.getId());
         Assert.assertEquals(UPDATED_PRICE, loadedPrice.getValue(), 0);
@@ -89,11 +88,11 @@ public class PriceTest {
         Price price = new Price();
         price.setValue(PRICE_2);
 
-        price = priceDAO.save(price);
+        price = priceService.save(price);
         long testPriceId = price.getId();
-        priceDAO.delete(testPriceId);
+        priceService.delete(testPriceId);
 
-        Assert.assertNull(priceDAO.findById(testPriceId));
+        Assert.assertNull(priceService.findById(testPriceId));
     }
 
 }
