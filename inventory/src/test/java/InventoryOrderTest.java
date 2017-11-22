@@ -1,7 +1,7 @@
 import com.netcracker.parfenenko.Application;
-import com.netcracker.parfenenko.dao.OrderDAO;
 import com.netcracker.parfenenko.entities.InventoryOrder;
 import com.netcracker.parfenenko.entities.OrderItem;
+import com.netcracker.parfenenko.service.OrderService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 public class InventoryOrderTest {
 
     @Autowired
-    private OrderDAO orderDAO;
+    private OrderService orderService;
 
     private long orderId;
     private final String NAME_1 = "Test InventoryOrder 1";
@@ -35,6 +35,8 @@ public class InventoryOrderTest {
 
     private final String ORDER_ITEM_NAME_1 = "Test OrderItem 1";
     private final String ORDER_ITEM_NAME_2 = "Test OrderItem 2";
+    private final String ORDER_ITEM_NAME_3 = "Test OrderItem 3";
+    private final String ORDER_ITEM_DESCRIPTION_3 = "Test OrderItem description 3";
     private final String ORDER_ITEM_DESCRIPTION_1 = "Test OrderItem description 1";
     private final String ORDER_ITEM_DESCRIPTION_2 = "Test OrderItem description 2";
 
@@ -57,13 +59,13 @@ public class InventoryOrderTest {
         order.setPaymentSign(SIGN);
         order.setOrderItems(Arrays.asList(orderItem1, orderItem2));
 
-        order = orderDAO.save(order);
+        order = orderService.save(order);
         orderId = order.getId();
     }
 
     @After
     public void destroyOrder() {
-        orderDAO.delete(orderId);
+        orderService.delete(orderId);
     }
 
     @Test
@@ -84,10 +86,10 @@ public class InventoryOrderTest {
         order.setOrderDate(DATE);
         order.setPaymentSign(SIGN);
         order.setOrderItems(Arrays.asList(orderItem1, orderItem2));
-        order = orderDAO.save(order);
+        order = orderService.save(order);
         long testOrderId = order.getId();
 
-        InventoryOrder loadedOrder = orderDAO.findById(testOrderId);
+        InventoryOrder loadedOrder = orderService.findById(testOrderId);
 
         Assert.assertEquals(testOrderId, loadedOrder.getId());
         Assert.assertEquals(NAME_2, loadedOrder.getName());
@@ -98,12 +100,12 @@ public class InventoryOrderTest {
         Assert.assertEquals(SIGN, loadedOrder.getPaymentSign());
         Assert.assertEquals(2, loadedOrder.getOrderItems().size());
 
-        orderDAO.delete(loadedOrder.getId());
+        orderService.delete(loadedOrder.getId());
     }
 
     @Test
     public void findByIdTest() {
-        InventoryOrder loadedOrder = orderDAO.findById(orderId);
+        InventoryOrder loadedOrder = orderService.findById(orderId);
 
         Assert.assertEquals(orderId, loadedOrder.getId());
         Assert.assertEquals(NAME_1, loadedOrder.getName());
@@ -117,7 +119,7 @@ public class InventoryOrderTest {
 
     @Test
     public void findByNameTest() {
-        InventoryOrder loadedOrder = orderDAO.findByName(NAME_1);
+        InventoryOrder loadedOrder = orderService.findByName(NAME_1);
 
         Assert.assertEquals(orderId, loadedOrder.getId());
         Assert.assertEquals(NAME_1, loadedOrder.getName());
@@ -138,23 +140,23 @@ public class InventoryOrderTest {
         order.setCustomerMail(MAIL);
         order.setOrderDate(DATE);
         order.setPaymentSign(SIGN);
-        order = orderDAO.save(order);
+        order = orderService.save(order);
         long testOrderId = order.getId();
 
-        Assert.assertEquals(2, orderDAO.findAll().size());
+        Assert.assertEquals(2, orderService.findAll().size());
 
-        orderDAO.delete(testOrderId);
+        orderService.delete(testOrderId);
     }
 
     @Test
     public void updateTest() {
-        InventoryOrder order = orderDAO.findById(orderId);
+        InventoryOrder order = orderService.findById(orderId);
         order.setName(UPDATED_NAME);
         order.setDescription(UPDATED_DESCRIPTION);
         order.setTotalPrice(UPDATED_TOTAL_PRICE);
-        order = orderDAO.update(order);
+        order = orderService.update(order);
 
-        InventoryOrder loadedOrder = orderDAO.findById(orderId);
+        InventoryOrder loadedOrder = orderService.findById(orderId);
 
         Assert.assertEquals(order.getId(), loadedOrder.getId());
         Assert.assertEquals(UPDATED_NAME, loadedOrder.getName());
@@ -185,11 +187,39 @@ public class InventoryOrderTest {
         order.setPaymentSign(SIGN);
         order.setOrderItems(Arrays.asList(orderItem1, orderItem2));
 
-        order = orderDAO.save(order);
+        order = orderService.save(order);
         long testOrderId = order.getId();
-        orderDAO.delete(testOrderId);
+        orderService.delete(testOrderId);
 
-        Assert.assertNull(orderDAO.findById(testOrderId));
+        Assert.assertNull(orderService.findById(testOrderId));
+    }
+
+    @Test
+    public void addOrderItemTest() {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setName(ORDER_ITEM_NAME_3);
+        orderItem.setDescription(ORDER_ITEM_DESCRIPTION_3);
+
+        InventoryOrder order = orderService.addOrderItem(orderId, orderItem);
+
+        Assert.assertEquals(3, order.getOrderItems().size());
+        Assert.assertEquals(ORDER_ITEM_NAME_3, order.getOrderItems().get(2).getName());
+        Assert.assertEquals(ORDER_ITEM_DESCRIPTION_3, order.getOrderItems().get(2).getDescription());
+    }
+
+    @Test
+    public void removeOrderItemTest() {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setName(ORDER_ITEM_NAME_3);
+        orderItem.setDescription(ORDER_ITEM_DESCRIPTION_3);
+
+        InventoryOrder order = orderService.addOrderItem(orderId, orderItem);
+
+        Assert.assertEquals(3, order.getOrderItems().size());
+
+        order = orderService.removeOrderItem(orderId, order.getOrderItems().get(2));
+
+        Assert.assertEquals(2, order.getOrderItems().size());
     }
 
 }
