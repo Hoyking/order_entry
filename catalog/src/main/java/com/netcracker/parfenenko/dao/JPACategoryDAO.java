@@ -11,7 +11,8 @@ import java.util.List;
 @Repository
 public class JPACategoryDAO extends JPANamedEntityDAO<Category, Long> implements CategoryDAO {
 
-    private final String CATEGORY_OFFERS = "SELECT e FROM " + Offer.class.getName() + " e WHERE e.category.id = ?1";
+    private final String CATEGORY_OFFERS = String.format("SELECT e FROM %s e WHERE e.category.id = ?1",
+            Offer.class.getName());
 
     public JPACategoryDAO() {
         super.setPersistenceClass(Category.class);

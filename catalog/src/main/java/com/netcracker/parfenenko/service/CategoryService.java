@@ -19,37 +19,37 @@ public class CategoryService {
         this.categoryDAO = categoryDAO;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Category save(Category category) {
         return categoryDAO.save(category);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Category findById(long id) {
         return categoryDAO.findById(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Category findByName(String name) {
         return categoryDAO.findByName(name);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Category> findAll() {
         return categoryDAO.findAll();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Category update(Category category) {
         return categoryDAO.update(category);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public void delete(long id) {
         categoryDAO.delete(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Offer> findCategoryOffers(long id) {
         return categoryDAO.findCategoryOffers(id);
     }
