@@ -1,5 +1,7 @@
 package com.netcracker.parfenenko.entities;
 
+import com.netcracker.parfenenko.util.Payments;
+
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -14,6 +16,7 @@ public class InventoryOrder extends NamedEntity {
     private String customerMail;
     private String orderDate;
     private String paymentSign;
+    private int paymentStatus = Payments.UNPAID.value();
 
     public InventoryOrder() {}
 
@@ -63,6 +66,14 @@ public class InventoryOrder extends NamedEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(int paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 
     @Override
