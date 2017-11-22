@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/inventory
+    url: jdbc:postgresql://localhost:5432/catalog
     username: postgres
     password: 12344321
   jpa:
