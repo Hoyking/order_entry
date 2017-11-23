@@ -19,7 +19,7 @@ public class CategoryService {
         this.categoryDAO = categoryDAO;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Category save(Category category) {
         return categoryDAO.save(category);
     }
@@ -39,12 +39,12 @@ public class CategoryService {
         return categoryDAO.findAll();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Category update(Category category) {
         return categoryDAO.update(category);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void delete(long id) {
         categoryDAO.delete(id);
     }
