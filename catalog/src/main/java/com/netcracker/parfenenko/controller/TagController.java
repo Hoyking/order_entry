@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "order_entry/v1/tags")
+@RequestMapping(value = "/order_entry/v1/tags")
 public class TagController {
 
     private TagService tagService;
@@ -29,14 +29,12 @@ public class TagController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Tag> findTagById(HttpServletRequest request) {
-        Long id = Long.parseLong(request.getParameter("id"));
+    public ResponseEntity<Tag> findTagById(@PathVariable long id) {
         return new ResponseEntity<>(tagService.findById(id), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
-    public ResponseEntity<Tag> findTagByName(HttpServletRequest request) {
-        String name = request.getParameter("name");
+    public ResponseEntity<Tag> findTagByName(@PathVariable String name) {
         return new ResponseEntity<>(tagService.findByName(name), HttpStatus.OK);
     }
 
@@ -51,16 +49,14 @@ public class TagController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Tag> deleteTag(HttpServletRequest request) {
-        Long id = Long.parseLong(request.getParameter("id"));
+    public ResponseEntity<Tag> deleteTag(@PathVariable long id) {
         tagService.delete(id);
         Tag tag = null;
         return new ResponseEntity<>(tag, HttpStatus.NO_CONTENT);
     }
 
     @RequestMapping(value = "/{id}/offers", method = RequestMethod.GET)
-    public ResponseEntity<List<Offer>> findTagOffers(HttpServletRequest request) {
-        Long id = Long.parseLong(request.getParameter("id"));
+    public ResponseEntity<List<Offer>> findTagOffers(@PathVariable long id) {
         return new ResponseEntity<>(tagService.findTagOffers(id), HttpStatus.OK);
     }
 
