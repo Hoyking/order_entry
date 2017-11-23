@@ -28,14 +28,12 @@ public class CategoryController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Category> findCategoryById(HttpServletRequest request) {
-        Long id = Long.parseLong(request.getParameter("id"));
+    public ResponseEntity<Category> findCategoryById(@PathVariable long id) {
         return new ResponseEntity<>(categoryService.findById(id), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
-    public ResponseEntity<Category> findCategoryByName(HttpServletRequest request) {
-        String name = request.getParameter("name");
+    public ResponseEntity<Category> findCategoryByName(@PathVariable String name) {
         return new ResponseEntity<>(categoryService.findByName(name), HttpStatus.OK);
     }
 
@@ -50,16 +48,14 @@ public class CategoryController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Category> deleteCategory(HttpServletRequest request) {
-        Long id = Long.parseLong(request.getParameter("id"));
+    public ResponseEntity<Category> deleteCategory(@PathVariable long id) {
         categoryService.delete(id);
         Category category = null;
         return new ResponseEntity<>(category, HttpStatus.NO_CONTENT);
     }
 
     @RequestMapping(value = "/{id}/offers", method = RequestMethod.GET)
-    public ResponseEntity<List<Offer>> findCategoryOffers(HttpServletRequest request) {
-        Long id = Long.parseLong(request.getParameter("id"));
+    public ResponseEntity<List<Offer>> findCategoryOffers(@PathVariable long id) {
         return new ResponseEntity<>(categoryService.findCategoryOffers(id), HttpStatus.OK);
     }
 
