@@ -7,7 +7,7 @@ import java.util.Objects;
 @Entity
 public class Offer extends NamedEntity {
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     private Price price;
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     private Category category;

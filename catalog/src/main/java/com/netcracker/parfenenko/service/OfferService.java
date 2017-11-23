@@ -25,17 +25,17 @@ public class OfferService {
         return offerDAO.save(offer);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Offer findById(long id) {
         return offerDAO.findById(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Offer findByName(String name) {
         return offerDAO.findByName(name);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Offer> findAll() {
         return offerDAO.findAll();
     }
@@ -55,12 +55,12 @@ public class OfferService {
         return offerDAO.changeAvailability(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Offer> findOffersByTags(List<Tag> tags) {
         return offerDAO.findOffersByTags(tags);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Offer> findAvailableOffers() {
         return offerDAO.findAvailableOffers();
     }
@@ -70,7 +70,7 @@ public class OfferService {
         return offerDAO.addPriceToOffer(id, price);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Offer> findOffersOfPriceInterval(double fromPrice, double toPrice) {
         return offerDAO.findOffersOfPriceInterval(fromPrice, toPrice);
     }

@@ -23,12 +23,12 @@ public class PriceService {
         return priceDAO.save(price);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Price findById(long id) {
         return priceDAO.findById(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Price> findAll() {
         return priceDAO.findAll();
     }
