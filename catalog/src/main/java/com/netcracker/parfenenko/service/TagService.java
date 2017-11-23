@@ -24,17 +24,17 @@ public class TagService {
         return tagDAO.save(tag);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Tag findById(long id) {
         return tagDAO.findById(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Tag findByName(String name) {
         return tagDAO.findByName(name);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Tag> findAll() {
         return tagDAO.findAll();
     }
@@ -49,7 +49,7 @@ public class TagService {
         tagDAO.delete(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Offer> findTagOffers(long id) {
         return tagDAO.findTagOffers(id);
     }
