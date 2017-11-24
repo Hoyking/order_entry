@@ -1,37 +1,51 @@
 import com.netcracker.parfenenko.Application;
-import com.netcracker.parfenenko.dao.JPATagDAO;
-import com.netcracker.parfenenko.dao.TagDAO;
+import com.netcracker.parfenenko.dao.OfferDAO;
+import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Tag;
-import org.junit.*;
+import com.netcracker.parfenenko.service.TagService;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 public class TagTest {
 
     @Autowired
-    private TagDAO tagDAO;
+    private TagService tagService;
+    @Autowired
+    private OfferDAO offerDAO;
 
     private long tagId;
     private final String NAME_1 = "Test tag 1";
     private final String NAME_2 = "Test tag 2";
+    private final String NAME_3 = "Test tag 3";
     private final String UPDATED_NAME = "Updated tag 1";
+
+    private final String OFFER_NAME_1 = "Test offer 1";
+    private final String OFFER_NAME_2 = "Test offer 2";
+    private final String OFFER_NAME_3 = "Test offer 3";
 
     @Before
     public void initTag() {
         Tag tag = new Tag();
         tag.setName(NAME_1);
 
-        tag = tagDAO.save(tag);
+        tag = tagService.save(tag);
         tagId = tag.getId();
     }
 
     @After
     public void destroyTag() {
-        tagDAO.delete(tagId);
+        tagService.delete(tagId);
     }
 
     @Test
@@ -39,20 +53,20 @@ public class TagTest {
         Tag tag = new Tag();
         tag.setName(NAME_2);
 
-        tag = tagDAO.save(tag);
+        tag = tagService.save(tag);
         long testTagId = tag.getId();
 
-        Tag loadedTag = tagDAO.findById(testTagId);
+        Tag loadedTag = tagService.findById(testTagId);
 
         Assert.assertEquals(testTagId, loadedTag.getId());
         Assert.assertEquals(NAME_2, loadedTag.getName());
 
-        tagDAO.delete(loadedTag.getId());
+        tagService.delete(loadedTag.getId());
     }
 
     @Test
     public void findByIdTest() {
-        Tag loadedTag = tagDAO.findById(tagId);
+        Tag loadedTag = tagService.findById(tagId);
 
         Assert.assertEquals(tagId, loadedTag.getId());
         Assert.assertEquals(NAME_1, loadedTag.getName());
@@ -60,7 +74,7 @@ public class TagTest {
 
     @Test
     public void findByNameTest() {
-        Tag loadedTag = tagDAO.findByName(NAME_1);
+        Tag loadedTag = tagService.findByName(NAME_1);
 
         Assert.assertEquals(tagId, loadedTag.getId());
         Assert.assertEquals(NAME_1, loadedTag.getName());
@@ -71,12 +85,12 @@ public class TagTest {
         Tag tag = new Tag();
         tag.setName(NAME_2);
 
-        tag = tagDAO.save(tag);
+        tag = tagService.save(tag);
         long testTagId = tag.getId();
 
-        Assert.assertEquals(2, tagDAO.findAll().size());
+        Assert.assertEquals(2, tagService.findAll().size());
 
-        tagDAO.delete(testTagId);
+        tagService.delete(testTagId);
     }
 
     @Test
@@ -85,8 +99,8 @@ public class TagTest {
         tag.setName(UPDATED_NAME);
         tag.setId(tagId);
 
-        tag = tagDAO.update(tag);
-        Tag loadedTag = tagDAO.findById(tagId);
+        tag = tagService.update(tag);
+        Tag loadedTag = tagService.findById(tagId);
 
         Assert.assertEquals(tag.getId(), loadedTag.getId());
         Assert.assertEquals(UPDATED_NAME, loadedTag.getName());
@@ -97,11 +111,51 @@ public class TagTest {
         Tag tag = new Tag();
         tag.setName(NAME_2);
 
-        tag = tagDAO.save(tag);
+        tag = tagService.save(tag);
         long testTagId = tag.getId();
-        tagDAO.delete(testTagId);
+        tagService.delete(testTagId);
 
-        Assert.assertNull(tagDAO.findById(testTagId));
+        Assert.assertNull(tagService.findById(testTagId));
+    }
+
+    @Test
+    public void findOffersTest() {
+        Tag tag1 = new Tag();
+        tag1.setName(NAME_2);
+        tag1 = tagService.save(tag1);
+
+        Tag tag2 = new Tag();
+        tag2.setName(NAME_3);
+        tag2 = tagService.save(tag2);
+
+        Offer offer1 = new Offer();
+        offer1.setName(OFFER_NAME_1);
+        offer1.setTags(Arrays.asList(tag1));
+        offer1 = offerDAO.save(offer1);
+
+        Offer offer2 = new Offer();
+        offer2.setName(OFFER_NAME_2);
+        offer2.setTags(Arrays.asList(tag1));
+        offer2 = offerDAO.save(offer2);
+
+        Offer offer3 = new Offer();
+        offer3.setName(OFFER_NAME_3);
+        offer3.setTags(Arrays.asList(tag2));
+        offer3 = offerDAO.save(offer3);
+
+        List<Offer> offers = tagService.findTagOffers(tag1.getId());
+
+        String testOfferName = offers.get(0).getName();
+
+        Assert.assertEquals(2, offers.size());
+        Assert.assertEquals(OFFER_NAME_1, testOfferName);
+        Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
+
+        offerDAO.delete(offer1.getId());
+        offerDAO.delete(offer2.getId());
+        offerDAO.delete(offer3.getId());
+        tagService.delete(tag1.getId());
+        tagService.delete(tag2.getId());
     }
 
 }

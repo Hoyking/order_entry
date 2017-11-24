@@ -1,5 +1,12 @@
 package com.netcracker.parfenenko.dao;
 
+import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Tag;
 
-public interface TagDAO extends NamedEntityDAO<Tag, Long> {}
+import java.util.List;
+
+public interface TagDAO extends NamedEntityDAO<Tag, Long> {
+
+    List<Offer> findTagOffers(long id);
+
+}
