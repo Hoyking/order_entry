@@ -1,5 +1,5 @@
 import com.netcracker.parfenenko.Application;
-import com.netcracker.parfenenko.entities.InventoryOrder;
+import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
 import com.netcracker.parfenenko.service.OrderService;
 import org.junit.After;
@@ -15,15 +15,15 @@ import java.util.Arrays;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
-public class InventoryOrderTest {
+public class OrderTest {
 
     @Autowired
     private OrderService orderService;
 
     private long orderId;
-    private final String NAME_1 = "Test InventoryOrder 1";
-    private final String NAME_2 = "Test InventoryOrder 2";
-    private final String UPDATED_NAME = "Updated test InventoryOrder 1";
+    private final String NAME_1 = "Test Order 1";
+    private final String NAME_2 = "Test Order 2";
+    private final String UPDATED_NAME = "Updated test Order 1";
     private final String DESCRIPTION_1 = "Test description 1";
     private final String DESCRIPTION_2 = "Test description 2";
     private final String UPDATED_DESCRIPTION = "Updated test description 1";
@@ -50,7 +50,7 @@ public class InventoryOrderTest {
         orderItem2.setName(ORDER_ITEM_NAME_2);
         orderItem2.setDescription(ORDER_ITEM_DESCRIPTION_2);
 
-        InventoryOrder order = new InventoryOrder();
+        Order order = new Order();
         order.setName(NAME_1);
         order.setDescription(DESCRIPTION_1);
         order.setTotalPrice(TOTAL_PRICE);
@@ -78,7 +78,7 @@ public class InventoryOrderTest {
         orderItem2.setName(ORDER_ITEM_NAME_2);
         orderItem2.setDescription(ORDER_ITEM_DESCRIPTION_2);
 
-        InventoryOrder order = new InventoryOrder();
+        Order order = new Order();
         order.setName(NAME_2);
         order.setDescription(DESCRIPTION_2);
         order.setTotalPrice(TOTAL_PRICE);
@@ -89,7 +89,7 @@ public class InventoryOrderTest {
         order = orderService.save(order);
         long testOrderId = order.getId();
 
-        InventoryOrder loadedOrder = orderService.findById(testOrderId);
+        Order loadedOrder = orderService.findById(testOrderId);
 
         Assert.assertEquals(testOrderId, loadedOrder.getId());
         Assert.assertEquals(NAME_2, loadedOrder.getName());
@@ -105,7 +105,7 @@ public class InventoryOrderTest {
 
     @Test
     public void findByIdTest() {
-        InventoryOrder loadedOrder = orderService.findById(orderId);
+        Order loadedOrder = orderService.findById(orderId);
 
         Assert.assertEquals(orderId, loadedOrder.getId());
         Assert.assertEquals(NAME_1, loadedOrder.getName());
@@ -119,7 +119,7 @@ public class InventoryOrderTest {
 
     @Test
     public void findByNameTest() {
-        InventoryOrder loadedOrder = orderService.findByName(NAME_1);
+        Order loadedOrder = orderService.findByName(NAME_1);
 
         Assert.assertEquals(orderId, loadedOrder.getId());
         Assert.assertEquals(NAME_1, loadedOrder.getName());
@@ -133,7 +133,7 @@ public class InventoryOrderTest {
 
     @Test
     public void findAllTest() {
-        InventoryOrder order = new InventoryOrder();
+        Order order = new Order();
         order.setName(NAME_2);
         order.setDescription(DESCRIPTION_2);
         order.setTotalPrice(TOTAL_PRICE);
@@ -150,13 +150,13 @@ public class InventoryOrderTest {
 
     @Test
     public void updateTest() {
-        InventoryOrder order = orderService.findById(orderId);
+        Order order = orderService.findById(orderId);
         order.setName(UPDATED_NAME);
         order.setDescription(UPDATED_DESCRIPTION);
         order.setTotalPrice(UPDATED_TOTAL_PRICE);
         order = orderService.update(order);
 
-        InventoryOrder loadedOrder = orderService.findById(orderId);
+        Order loadedOrder = orderService.findById(orderId);
 
         Assert.assertEquals(order.getId(), loadedOrder.getId());
         Assert.assertEquals(UPDATED_NAME, loadedOrder.getName());
@@ -178,7 +178,7 @@ public class InventoryOrderTest {
         orderItem2.setName(ORDER_ITEM_NAME_2);
         orderItem2.setDescription(ORDER_ITEM_DESCRIPTION_2);
 
-        InventoryOrder order = new InventoryOrder();
+        Order order = new Order();
         order.setName(NAME_2);
         order.setDescription(DESCRIPTION_2);
         order.setTotalPrice(TOTAL_PRICE);
@@ -200,7 +200,7 @@ public class InventoryOrderTest {
         orderItem.setName(ORDER_ITEM_NAME_3);
         orderItem.setDescription(ORDER_ITEM_DESCRIPTION_3);
 
-        InventoryOrder order = orderService.addOrderItem(orderId, orderItem);
+        Order order = orderService.addOrderItem(orderId, orderItem);
 
         Assert.assertEquals(3, order.getOrderItems().size());
         Assert.assertEquals(ORDER_ITEM_NAME_3, order.getOrderItems().get(2).getName());
@@ -213,7 +213,7 @@ public class InventoryOrderTest {
         orderItem.setName(ORDER_ITEM_NAME_3);
         orderItem.setDescription(ORDER_ITEM_DESCRIPTION_3);
 
-        InventoryOrder order = orderService.addOrderItem(orderId, orderItem);
+        Order order = orderService.addOrderItem(orderId, orderItem);
 
         Assert.assertEquals(3, order.getOrderItems().size());
 

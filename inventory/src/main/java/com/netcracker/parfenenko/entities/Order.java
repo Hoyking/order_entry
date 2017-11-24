@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class InventoryOrder extends NamedEntity {
+@Table(name = "`Order`")
+public class Order extends NamedEntity {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
@@ -18,7 +19,7 @@ public class InventoryOrder extends NamedEntity {
     private String paymentSign;
     private int paymentStatus = Payments.UNPAID.value();
 
-    public InventoryOrder() {}
+    public Order() {}
 
     public List<OrderItem> getOrderItems() {
         return orderItems;
@@ -80,7 +81,7 @@ public class InventoryOrder extends NamedEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        InventoryOrder order = (InventoryOrder) o;
+        Order order = (Order) o;
         return id == order.id &&
                 Double.compare(order.totalPrice, totalPrice) == 0 &&
                 Objects.equals(orderItems, order.orderItems) &&

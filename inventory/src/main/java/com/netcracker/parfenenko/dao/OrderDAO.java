@@ -1,12 +1,12 @@
 package com.netcracker.parfenenko.dao;
 
-import com.netcracker.parfenenko.entities.InventoryOrder;
+import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
 
-public interface OrderDAO extends NamedEntityDAO<InventoryOrder, Long> {
+public interface OrderDAO extends NamedEntityDAO<Order, Long> {
 
-    InventoryOrder addOrderItem(long orderId, OrderItem orderItem);
+    Order addOrderItem(long orderId, OrderItem orderItem);
 
-    InventoryOrder removeOrderItem(long orderId, OrderItem orderItem);
+    Order removeOrderItem(long orderId, OrderItem orderItem);
 
 }
