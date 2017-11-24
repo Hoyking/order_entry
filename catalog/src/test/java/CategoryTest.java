@@ -1,10 +1,12 @@
 import com.netcracker.parfenenko.Application;
-import com.netcracker.parfenenko.dao.OfferDAO;
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.service.CategoryService;
 import com.netcracker.parfenenko.service.OfferService;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
