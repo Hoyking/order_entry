@@ -58,4 +58,14 @@ public class CategoryController {
         return new ResponseEntity<>(categoryService.findCategoryOffers(id), HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/{id}/offer", method = RequestMethod.PUT)
+    public ResponseEntity<Category> addOfferToCategory(@PathVariable long categoryId, @RequestBody long offerId) {
+        return new ResponseEntity<>(categoryService.addOffer(categoryId, offerId), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}/offer", method = RequestMethod.DELETE)
+    public ResponseEntity<Category> removeOfferFromCategory(@PathVariable long categoryId, @RequestBody long offerId) {
+        return new ResponseEntity<>(categoryService.removeOffer(categoryId, offerId), HttpStatus.OK);
+    }
+
 }

@@ -37,10 +37,7 @@ public class OfferTest {
     private final String DESCRIPTION_3 = "Description 3";
     private long categoryId;
     private final String CATEGORY_NAME_1 = "Test category 1";
-    private final String CATEGORY_NAME_2 = "Test category 2";
-    private long tagId1;
     private final String TAG_NAME_1 = "Test tag 1";
-    private long tagId2;
     private final String TAG_NAME_2 = "Test tag 2";
     private final String TAG_NAME_3 = "Test tag 3";
     private final double PRICE_VALUE_1 = 2.99;
@@ -394,40 +391,6 @@ public class OfferTest {
         Assert.assertEquals(1, loadedOffer.getTags().size());
 
         offerService.delete(loadedOffer.getId());
-    }
-
-    @Test
-    public void addOfferToCategoryTest() {
-        Offer offer = offerService.findById(offerId);
-
-        Category category = new Category();
-        category.setName(CATEGORY_NAME_2);
-        category = categoryService.save(category);
-
-        offer = offerService.addOfferToCategory(offer.getId(), category.getId());
-
-        Assert.assertEquals(CATEGORY_NAME_2, offer.getCategory().getName());
-
-        offerService.addOfferToCategory(offer.getId(), categoryId);
-
-        categoryService.delete(category.getId());
-    }
-
-    @Test
-    public void removeOfferFromCategoryTest() {
-        Offer offer = offerService.findById(offerId);
-
-        Category category = new Category();
-        category.setName(CATEGORY_NAME_2);
-        category = categoryService.save(category);
-
-        offer = offerService.removeOfferFromCategory(offer.getId());
-
-        Assert.assertNull(offer.getCategory());
-
-        offerService.addOfferToCategory(offer.getId(), categoryId);
-
-        categoryService.delete(category.getId());
     }
 
 }

@@ -80,7 +80,7 @@ public class OfferController {
         return new ResponseEntity<>(offerService.findOffersOfPriceInterval(fromPrice, toPrice), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{id}/tag", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}/tag", method = RequestMethod.POST)
     public ResponseEntity<Offer> addTagToOffer(@PathVariable long id, @RequestBody Tag tag) {
         return new ResponseEntity<>(offerService.addTagToOffer(id, tag), HttpStatus.OK);
     }
@@ -90,14 +90,4 @@ public class OfferController {
         return new ResponseEntity<>(offerService.removeTagFromOffer(id, tag), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{id}/category", method = RequestMethod.PUT)
-    public ResponseEntity<Offer> addOfferToCategory(@PathVariable long offerId, @RequestBody long categoryId) {
-        return new ResponseEntity<>(offerService.addOfferToCategory(offerId, categoryId), HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/{id}/category", method = RequestMethod.DELETE)
-    public ResponseEntity<Offer> removeOfferFromCategory(@PathVariable long id) {
-        return new ResponseEntity<>(offerService.removeOfferFromCategory(id), HttpStatus.OK);
-    }
-    
 }
