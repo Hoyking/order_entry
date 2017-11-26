@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/order_entry/v1/offers")
+@RequestMapping(value = "/api/v1/offers")
 public class OfferController {
 
     private OfferService offerService;
@@ -74,7 +74,7 @@ public class OfferController {
         return new ResponseEntity<>(offerService.addPriceToOffer(id, price), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/price_interval", method = RequestMethod.GET)
+    @RequestMapping(value = "/price", method = RequestMethod.GET)
     public ResponseEntity<List<Offer>> findOffersOfPriceInterval(@RequestParam(name = "from_price") double fromPrice,
                                                                  @RequestParam(name = "to_price") double toPrice) {
         return new ResponseEntity<>(offerService.findOffersOfPriceInterval(fromPrice, toPrice), HttpStatus.OK);

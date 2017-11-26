@@ -2,10 +2,8 @@ package com.netcracker.parfenenko.dao;
 
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
-import com.netcracker.parfenenko.util.Transactions;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -15,6 +13,10 @@ import java.util.List;
 
 @Repository
 public class JPACategoryDAO extends JPANamedEntityDAO<Category, Long> implements CategoryDAO {
+
+    private final String ADD_OFFER_TO_CATEGORY = "UPDATE Offer SET category_id = ?1 WHERE id = ?2";
+    private final String REMOVE_OFFER_FROM_CATEGORY = "UPDATE " + Offer.class.getName() + " offer SET offer.category = NULL " +
+            "WHERE offer.category.id = ?1 AND offer.id = ?2";
 
     public JPACategoryDAO() {
         super.setPersistenceClass(Category.class);
@@ -33,6 +35,28 @@ public class JPACategoryDAO extends JPANamedEntityDAO<Category, Long> implements
                     query.setParameter(parameter, id);
                     return query.getResultList();
                 });
+    }
+
+    @Override
+    public Category addOffer(long categoryId, long offerId) {
+        transactions.startTransaction(entityManager ->
+                entityManager
+                        .createNativeQuery(ADD_OFFER_TO_CATEGORY)
+                        .setParameter(1, categoryId)
+                        .setParameter(2, offerId)
+                        .executeUpdate());
+        return findById(categoryId);
+    }
+
+    @Override
+    public Category removeOffer(long categoryId, long offerId) {
+        transactions.startTransaction(entityManager ->
+                entityManager
+                        .createQuery(REMOVE_OFFER_FROM_CATEGORY)
+                        .setParameter(1, categoryId)
+                        .setParameter(2, offerId)
+                        .executeUpdate());
+        return findById(categoryId);
     }
 
 }

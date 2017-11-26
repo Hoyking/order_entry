@@ -54,4 +54,14 @@ public class CategoryService {
         return categoryDAO.findCategoryOffers(id);
     }
 
+    @Transactional
+    public Category addOffer(long categoryId, long offerId) {
+        return categoryDAO.addOffer(categoryId, offerId);
+    }
+
+    @Transactional
+    public Category removeOffer(long categoryId, long offerId) {
+        return categoryDAO.removeOffer(categoryId, offerId);
+    }
+
 }

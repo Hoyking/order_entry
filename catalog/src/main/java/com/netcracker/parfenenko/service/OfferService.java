@@ -85,14 +85,4 @@ public class OfferService {
         return offerDAO.removeTagFromOffer(id, tag);
     }
 
-    @Transactional
-    public Offer addOfferToCategory(long offerId, long categoryId) {
-        return offerDAO.addOfferToCategory(offerId, categoryId);
-    }
-
-    @Transactional
-    public Offer removeOfferFromCategory(long offerId) {
-        return offerDAO.removeOfferFromCategory(offerId);
-    }
-
 }

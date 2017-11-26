@@ -13,10 +13,6 @@ import java.util.stream.Collectors;
 @Repository
 public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements OfferDAO {
 
-    private final String ADD_OFFER_TO_CATEGORY = "UPDATE Offer SET category_id = ?1 WHERE id = ?2";
-    private final String REMOVE_OFFER_FROM_CATEGORY = "UPDATE " + Offer.class.getName() + " offer SET offer.category = NULL " +
-            "WHERE offer.id = ?1";
-
     public JPAOfferDAO() {
         super.setPersistenceClass(Offer.class);
     }
@@ -94,27 +90,6 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
         Offer offer = findById(id);
         offer.getTags().remove(tag);
         return update(offer);
-    }
-
-    @Override
-    public Offer addOfferToCategory(long offerId, long categoryId) {
-       transactions.startTransaction(entityManager ->
-                entityManager
-                        .createNativeQuery(ADD_OFFER_TO_CATEGORY)
-                        .setParameter(2, offerId)
-                        .setParameter(1, categoryId)
-                        .executeUpdate());
-        return findById(offerId);
-    }
-
-    @Override
-    public Offer removeOfferFromCategory(long offerId) {
-        transactions.startTransaction(entityManager ->
-            entityManager
-                    .createQuery(REMOVE_OFFER_FROM_CATEGORY)
-                    .setParameter(1, offerId)
-                    .executeUpdate());
-        return findById(offerId);
     }
 
 }
