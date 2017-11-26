@@ -5,12 +5,13 @@ import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/v1/categories")
+@RequestMapping(value = "/api/v1/categories")
 public class CategoryController {
 
     private CategoryService categoryService;
@@ -21,45 +22,50 @@ public class CategoryController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    @ResponseStatus(code = HttpStatus.CREATED)
-    public void saveCategory(@RequestBody Category category) {
-        categoryService.save(category);
+    public ResponseEntity<Category> saveCategory(@RequestBody Category category) {
+        return new ResponseEntity<>(categoryService.save(category), HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/find_by_id", method = RequestMethod.GET)
-    @ResponseStatus(code = HttpStatus.OK)
-    public Category findCategoryById(@RequestParam(name = "category_id") long id) {
-        return categoryService.findById(id);
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Category> findCategoryById(@PathVariable long id) {
+        return new ResponseEntity<>(categoryService.findById(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/find_by_name", method = RequestMethod.GET)
-    @ResponseStatus(code = HttpStatus.OK)
-    public Category findCategoryByName(@RequestParam(name = "name") String name) {
-        return categoryService.findByName(name);
+    @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
+    public ResponseEntity<Category> findCategoryByName(@PathVariable String name) {
+        return new ResponseEntity<>(categoryService.findByName(name), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    @ResponseStatus(code = HttpStatus.OK)
-    public List<Category> findAllCategories() {
-        return categoryService.findAll();
+    public ResponseEntity<List<Category>> findAllCategories() {
+        return new ResponseEntity<>(categoryService.findAll(), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    @ResponseStatus(code = HttpStatus.OK)
-    public void updateCategory(@RequestBody Category category) {
-        categoryService.update(category);
+    public ResponseEntity<Category> updateCategory(@RequestBody Category category) {
+        return new ResponseEntity<>(categoryService.update(category), HttpStatus.OK) ;
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void deleteCategory(@RequestParam(name = "category_id") long id) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Category> deleteCategory(@PathVariable long id) {
         categoryService.delete(id);
+        Category category = null;
+        return new ResponseEntity<>(category, HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/find_offers", method = RequestMethod.GET)
-    @ResponseStatus(code = HttpStatus.OK)
-    public List<Offer> findCategoryOffers(@RequestParam(name = "category_id") long id) {
-        return categoryService.findCategoryOffers(id);
+    @RequestMapping(value = "/{id}/offers", method = RequestMethod.GET)
+    public ResponseEntity<List<Offer>> findCategoryOffers(@PathVariable long id) {
+        return new ResponseEntity<>(categoryService.findCategoryOffers(id), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}/offer", method = RequestMethod.PUT)
+    public ResponseEntity<Category> addOfferToCategory(@PathVariable long categoryId, @RequestBody long offerId) {
+        return new ResponseEntity<>(categoryService.addOffer(categoryId, offerId), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}/offer", method = RequestMethod.DELETE)
+    public ResponseEntity<Category> removeOfferFromCategory(@PathVariable long categoryId, @RequestBody long offerId) {
+        return new ResponseEntity<>(categoryService.removeOffer(categoryId, offerId), HttpStatus.OK);
     }
 
 }

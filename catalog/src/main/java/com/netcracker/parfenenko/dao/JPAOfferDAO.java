@@ -1,26 +1,30 @@
 package com.netcracker.parfenenko.dao;
 
-import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
 public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements OfferDAO {
 
-    private final String AVAILABLE_OFFERS = "SELECT e FROM " + Offer.class.getName() + " e WHERE e.available = true";
-    private final String OFFERS_OF_PRICE_INTERVAL = "SELECT e FROM " + Offer.class.getName() +
-            " e WHERE e.price.value >= ?1 AND e.price.value <= ?2";
-    private final String ADD_OFFER_TO_CATEGORY = "UPDATE Offer SET category_id = ?1 WHERE id = ?2";
-    private final String REMOVE_OFFER_FROM_CATEGORY = "UPDATE " + Offer.class.getName() + " offer SET offer.category = NULL " +
-            "WHERE offer.id = ?1";
-
     public JPAOfferDAO() {
         super.setPersistenceClass(Offer.class);
+    }
+
+    @Override
+    public Offer save(Offer entity) {
+        if(entity.getTags() != null) {
+            for(Tag tag: entity.getTags()) {
+                tag.setId(0);
+            }
+        }
+        return super.save(entity);
     }
 
     @Override
@@ -37,10 +41,15 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
 
     @Override
     public List<Offer> findAvailableOffers() {
-        return (List<Offer>) transactions.startGenericTransaction(entityManager ->
-                (List<Offer>) entityManager
-                        .createQuery(AVAILABLE_OFFERS)
-                        .getResultList());
+        return transactions.startGenericTransaction(entityManager -> {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Offer> criteriaQuery = criteriaBuilder.createQuery(Offer.class);
+            Root<Offer> root = criteriaQuery.from(Offer.class);
+            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("available"), true));
+
+            TypedQuery<Offer> query = entityManager.createQuery(criteriaQuery);
+            return query.getResultList();
+        });
     }
 
     @Override
@@ -52,12 +61,21 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
 
     @Override
     public List<Offer> findOffersOfPriceInterval(double fromPrice, double toPrice) {
-        return (List<Offer>) transactions.startGenericTransaction(entityManager ->
-                (List<Offer>) entityManager
-                        .createQuery(OFFERS_OF_PRICE_INTERVAL)
-                        .setParameter(1, fromPrice)
-                        .setParameter(2, toPrice)
-                        .getResultList());
+        return transactions.startGenericTransaction(entityManager -> {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Offer> criteriaQuery = criteriaBuilder.createQuery(Offer.class);
+            Root<Offer> root = criteriaQuery.from(Offer.class);
+            ParameterExpression<Double> param1 = criteriaBuilder.parameter(Double.class);
+            ParameterExpression<Double> param2 = criteriaBuilder.parameter(Double.class);
+            Expression<Double> expression = root.get("price").get("value");
+            criteriaQuery.select(root).where(criteriaBuilder.and(criteriaBuilder.gt(expression, param1),
+                    criteriaBuilder.le(expression, param2)));
+
+            TypedQuery<Offer> query = entityManager.createQuery(criteriaQuery);
+            query.setParameter(param1, fromPrice);
+            query.setParameter(param2, toPrice);
+            return query.getResultList();
+        });
     }
 
     @Override
@@ -72,27 +90,6 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
         Offer offer = findById(id);
         offer.getTags().remove(tag);
         return update(offer);
-    }
-
-    @Override
-    public Offer addOfferToCategory(long offerId, long categoryId) {
-       transactions.startGenericTransaction(entityManager ->
-                entityManager
-                        .createNativeQuery(ADD_OFFER_TO_CATEGORY)
-                        .setParameter(2, offerId)
-                        .setParameter(1, categoryId)
-                        .executeUpdate());
-        return findById(offerId);
-    }
-
-    @Override
-    public Offer removeOfferFromCategory(long offerId) {
-        transactions.startTransaction(entityManager ->
-            entityManager
-                    .createQuery(REMOVE_OFFER_FROM_CATEGORY)
-                    .setParameter(1, offerId)
-                    .executeUpdate());
-        return findById(offerId);
     }
 
 }

@@ -24,17 +24,17 @@ public class CategoryService {
         return categoryDAO.save(category);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Category findById(long id) {
         return categoryDAO.findById(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Category findByName(String name) {
         return categoryDAO.findByName(name);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Category> findAll() {
         return categoryDAO.findAll();
     }
@@ -49,9 +49,19 @@ public class CategoryService {
         categoryDAO.delete(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Offer> findCategoryOffers(long id) {
         return categoryDAO.findCategoryOffers(id);
+    }
+
+    @Transactional
+    public Category addOffer(long categoryId, long offerId) {
+        return categoryDAO.addOffer(categoryId, offerId);
+    }
+
+    @Transactional
+    public Category removeOffer(long categoryId, long offerId) {
+        return categoryDAO.removeOffer(categoryId, offerId);
     }
 
 }

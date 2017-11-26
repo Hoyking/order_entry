@@ -5,9 +5,10 @@ import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.service.CategoryService;
 import com.netcracker.parfenenko.service.OfferService;
-import com.netcracker.parfenenko.service.PriceService;
-import com.netcracker.parfenenko.service.TagService;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -25,10 +27,6 @@ public class OfferTest {
     private OfferService offerService;
     @Autowired
     private CategoryService categoryService;
-    @Autowired
-    private TagService tagService;
-    @Autowired
-    private PriceService priceService;
 
     private long offerId;
     private final String OFFER_NAME_1 = "Test offer 1";
@@ -39,10 +37,7 @@ public class OfferTest {
     private final String DESCRIPTION_3 = "Description 3";
     private long categoryId;
     private final String CATEGORY_NAME_1 = "Test category 1";
-    private final String CATEGORY_NAME_2 = "Test category 2";
-    private long tagId1;
     private final String TAG_NAME_1 = "Test tag 1";
-    private long tagId2;
     private final String TAG_NAME_2 = "Test tag 2";
     private final String TAG_NAME_3 = "Test tag 3";
     private final double PRICE_VALUE_1 = 2.99;
@@ -62,15 +57,9 @@ public class OfferTest {
 
         Tag tag1 = new Tag();
         tag1.setName(TAG_NAME_1);
-        tag1 = tagService.save(tag1);
-        tagId1 = tag1.getId();
-        tag1.setId(tagId1);
 
         Tag tag2 = new Tag();
         tag2.setName(TAG_NAME_2);
-        tag2 = tagService.save(tag2);
-        tagId2 = tag2.getId();
-        tag2.setId(tagId2);
 
         Offer offer = new Offer();
         offer.setName(OFFER_NAME_1);
@@ -79,7 +68,7 @@ public class OfferTest {
         offer.setDescription(DESCRIPTION_1);
         offer.setCategory(category);
         offer.setPrice(price);
-        offer.setTags(Arrays.asList(tag1, tag2));
+        offer.setTags(new HashSet<>(Arrays.asList(tag1, tag2)));
 
         offer = offerService.save(offer);
         offerId = offer.getId();
@@ -89,8 +78,6 @@ public class OfferTest {
     public void destroyOffer() {
         offerService.delete(offerId);
         categoryService.delete(categoryId);
-        tagService.delete(tagId1);
-        tagService.delete(tagId2);
     }
 
     @Test
@@ -100,15 +87,18 @@ public class OfferTest {
         Price price = new Price();
         price.setValue(PRICE_VALUE_1);
 
-        Tag tag1 = tagService.findById(tagId1);
-        Tag tag2 = tagService.findById(tagId2);
+        Tag tag1 = new Tag();
+        tag1.setName(TAG_NAME_1);
+
+        Tag tag2 = new Tag();
+        tag2.setName(TAG_NAME_2);
 
         Offer offer = new Offer();
         offer.setName(OFFER_NAME_3);
         offer.setDescription(DESCRIPTION_3);
         offer.setCategory(category);
         offer.setPrice(price);
-        offer.setTags(Arrays.asList(tag1, tag2));
+        offer.setTags(new HashSet<>(Arrays.asList(tag1, tag2)));
 
         offer = offerService.save(offer);
         long testOfferId = offer.getId();
@@ -186,15 +176,18 @@ public class OfferTest {
         Price price = new Price();
         price.setValue(PRICE_VALUE_1);
 
-        Tag tag1 = tagService.findById(tagId1);
-        Tag tag2 = tagService.findById(tagId2);
+        Tag tag1 = new Tag();
+        tag1.setName(TAG_NAME_1);
+
+        Tag tag2 = new Tag();
+        tag2.setName(TAG_NAME_2);
 
         Offer offer = new Offer();
         offer.setName(OFFER_NAME_3);
         offer.setDescription(DESCRIPTION_3);
         offer.setCategory(category);
         offer.setPrice(price);
-        offer.setTags(Arrays.asList(tag1, tag2));
+        offer.setTags(new HashSet<>(Arrays.asList(tag1, tag2)));
 
         offer = offerService.save(offer);
         long testOfferId = offer.getId();
@@ -213,23 +206,26 @@ public class OfferTest {
     public void findOffersByTagsTest() {
         Category category = categoryService.findById(categoryId);
 
-        Tag tag1 = tagService.findById(tagId1);
-        Tag tag2 = tagService.findById(tagId2);
+        Tag tag1 = new Tag();
+        tag1.setName(TAG_NAME_1);
+
+        Tag tag2 = new Tag();
+        tag2.setName(TAG_NAME_2);
+
         Tag tag3 = new Tag();
         tag3.setName(TAG_NAME_3);
-        tagService.save(tag3);
 
         Offer offer2 = new Offer();
         offer2.setName(OFFER_NAME_2);
         offer2.setDescription(DESCRIPTION_2);
-        offer2.setTags(Arrays.asList(tag1, tag2, tag3));
+        offer2.setTags(new HashSet<>(Arrays.asList(tag1, tag2, tag3)));
         offer2.setCategory(category);
         offer2 = offerService.save(offer2);
 
         Offer offer3 = new Offer();
         offer3.setName(OFFER_NAME_3);
         offer3.setDescription(DESCRIPTION_3);
-        offer3.setTags(Arrays.asList(tag1, tag3));
+        offer3.setTags(new HashSet<>(Arrays.asList(tag1, tag3)));
         offer3.setCategory(category);
         offer3 = offerService.save(offer3);
 
@@ -246,30 +242,32 @@ public class OfferTest {
 
         offerService.delete(offer2.getId());
         offerService.delete(offer3.getId());
-        tagService.delete(tag3.getId());
     }
 
     @Test
     public void findAvailableOffersTest() {
         Category category = categoryService.findById(categoryId);
 
-        Tag tag1 = tagService.findById(tagId1);
-        Tag tag2 = tagService.findById(tagId2);
+        Tag tag1 = new Tag();
+        tag1.setName(TAG_NAME_1);
+
+        Tag tag2 = new Tag();
+        tag2.setName(TAG_NAME_2);
+
         Tag tag3 = new Tag();
         tag3.setName(TAG_NAME_3);
-        tagService.save(tag3);
 
         Offer offer2 = new Offer();
         offer2.setName(OFFER_NAME_2);
         offer2.setDescription(DESCRIPTION_2);
-        offer2.setTags(Arrays.asList(tag1, tag2, tag3));
+        offer2.setTags(new HashSet<>(Arrays.asList(tag1, tag2, tag3)));
         offer2.setCategory(category);
         offer2 = offerService.save(offer2);
 
         Offer offer3 = new Offer();
         offer3.setName(OFFER_NAME_3);
         offer3.setDescription(DESCRIPTION_3);
-        offer3.setTags(Arrays.asList(tag1, tag3));
+        offer3.setTags(new HashSet<>(Arrays.asList(tag1, tag3)));
         offer3.setCategory(category);
         offer3.setAvailable(false);
         offer3 = offerService.save(offer3);
@@ -282,32 +280,31 @@ public class OfferTest {
 
         offerService.delete(offer2.getId());
         offerService.delete(offer3.getId());
-        tagService.delete(tag3.getId());
     }
 
     @Test
     public void addPriceToOfferTest() {
         Offer offer = offerService.findById(offerId);
-        long currentPriceId = offer.getPrice().getId();
         Price price = new Price();
         price.setValue(PRICE_VALUE_2);
 
         offer = offerService.addPriceToOffer(offer.getId(), price);
 
         Assert.assertEquals(PRICE_VALUE_2, offer.getPrice().getValue(), 0);
-
-        priceService.delete(currentPriceId);
     }
 
     @Test
     public void findOffersOfIntervalTest() {
         Category category = categoryService.findById(categoryId);
 
-        Tag tag1 = tagService.findById(tagId1);
-        Tag tag2 = tagService.findById(tagId2);
+        Tag tag1 = new Tag();
+        tag1.setName(TAG_NAME_1);
+
+        Tag tag2 = new Tag();
+        tag2.setName(TAG_NAME_2);
+
         Tag tag3 = new Tag();
         tag3.setName(TAG_NAME_3);
-        tagService.save(tag3);
 
         Price price1 = new Price();
         price1.setValue(PRICE_VALUE_2);
@@ -317,7 +314,7 @@ public class OfferTest {
         Offer offer2 = new Offer();
         offer2.setName(OFFER_NAME_2);
         offer2.setDescription(DESCRIPTION_2);
-        offer2.setTags(Arrays.asList(tag1, tag2, tag3));
+        offer2.setTags(new HashSet<>(Arrays.asList(tag1, tag2, tag3)));
         offer2.setCategory(category);
         offer2.setPrice(price1);
         offer2 = offerService.save(offer2);
@@ -325,7 +322,7 @@ public class OfferTest {
         Offer offer3 = new Offer();
         offer3.setName(OFFER_NAME_3);
         offer3.setDescription(DESCRIPTION_3);
-        offer3.setTags(Arrays.asList(tag1, tag3));
+        offer3.setTags(new HashSet<>(Arrays.asList(tag1, tag3)));
         offer3.setCategory(category);
         offer3.setPrice(price2);
         offer3 = offerService.save(offer3);
@@ -338,21 +335,23 @@ public class OfferTest {
 
         offerService.delete(offer2.getId());
         offerService.delete(offer3.getId());
-        tagService.delete(tag3.getId());
     }
 
     @Test
     public void addTagToOfferTest() {
         Category category = categoryService.findById(categoryId);
 
-        Tag tag1 = tagService.findById(tagId1);
-        Tag tag2 = tagService.findById(tagId2);
+        Tag tag1 = new Tag();
+        tag1.setName(TAG_NAME_1);
+
+        Tag tag2 = new Tag();
+        tag2.setName(TAG_NAME_2);
 
         Offer offer = new Offer();
         offer.setName(OFFER_NAME_2);
         offer.setDescription(DESCRIPTION_2);
         offer.setCategory(category);
-        offer.setTags(Collections.singletonList(tag1));
+        offer.setTags(new HashSet<>(Collections.singletonList(tag1)));
         offer = offerService.save(offer);
 
         Offer loadedOffer = offerService.findById(offer.getId());
@@ -370,14 +369,17 @@ public class OfferTest {
     public void removeTagFromOfferTest() {
         Category category = categoryService.findById(categoryId);
 
-        Tag tag1 = tagService.findById(tagId1);
-        Tag tag2 = tagService.findById(tagId2);
+        Tag tag1 = new Tag();
+        tag1.setName(TAG_NAME_1);
+
+        Tag tag2 = new Tag();
+        tag2.setName(TAG_NAME_2);
 
         Offer offer = new Offer();
         offer.setName(OFFER_NAME_2);
         offer.setDescription(DESCRIPTION_2);
         offer.setCategory(category);
-        offer.setTags(Arrays.asList(tag1, tag2));
+        offer.setTags(new HashSet<>(Arrays.asList(tag1, tag2)));
         offer = offerService.save(offer);
 
         Offer loadedOffer = offerService.findById(offer.getId());
@@ -389,40 +391,6 @@ public class OfferTest {
         Assert.assertEquals(1, loadedOffer.getTags().size());
 
         offerService.delete(loadedOffer.getId());
-    }
-
-    @Test
-    public void addOfferToCategoryTest() {
-        Offer offer = offerService.findById(offerId);
-
-        Category category = new Category();
-        category.setName(CATEGORY_NAME_2);
-        category = categoryService.save(category);
-
-        offer = offerService.addOfferToCategory(offer.getId(), category.getId());
-
-        Assert.assertEquals(CATEGORY_NAME_2, offer.getCategory().getName());
-
-        offerService.addOfferToCategory(offer.getId(), categoryId);
-
-        categoryService.delete(category.getId());
-    }
-
-    @Test
-    public void removeOfferFromCategoryTest() {
-        Offer offer = offerService.findById(offerId);
-
-        Category category = new Category();
-        category.setName(CATEGORY_NAME_2);
-        category = categoryService.save(category);
-
-        offer = offerService.removeOfferFromCategory(offer.getId());
-
-        Assert.assertNull(offer.getCategory());
-
-        offerService.addOfferToCategory(offer.getId(), categoryId);
-
-        categoryService.delete(category.getId());
     }
 
 }

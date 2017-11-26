@@ -1,16 +1,17 @@
 package com.netcracker.parfenenko.controller;
 
-import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.entities.Offer;
+import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/v1/tags")
+@RequestMapping(value = "/api/v1/tags")
 public class TagController {
 
     private TagService tagService;
@@ -21,45 +22,40 @@ public class TagController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    @ResponseStatus(code = HttpStatus.CREATED)
-    public void saveTag(@RequestBody Tag tag) {
-        tagService.save(tag);
+    public ResponseEntity<Tag> saveTag(@RequestBody Tag tag) {
+        return new ResponseEntity<>(tagService.save(tag), HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/find_by_id", method = RequestMethod.GET)
-    @ResponseStatus(code = HttpStatus.OK)
-    public Tag findTagById(@RequestParam(name = "tag_id") long id) {
-        return tagService.findById(id);
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Tag> findTagById(@PathVariable long id) {
+        return new ResponseEntity<>(tagService.findById(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/find_by_name", method = RequestMethod.GET)
-    @ResponseStatus(code = HttpStatus.OK)
-    public Tag findTagByName(@RequestParam(name = "name") String name) {
-        return tagService.findByName(name);
+    @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
+    public ResponseEntity<Tag> findTagByName(@PathVariable String name) {
+        return new ResponseEntity<>(tagService.findByName(name), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    @ResponseStatus(code = HttpStatus.OK)
-    public List<Tag> findAllTags() {
-        return tagService.findAll();
+    public ResponseEntity<List<Tag>> findAllTags() {
+        return new ResponseEntity<>(tagService.findAll(), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    @ResponseStatus(code = HttpStatus.OK)
-    public void updateTag(@RequestBody Tag tag) {
-        tagService.update(tag);
+    public ResponseEntity<Tag> updateTag(@RequestBody Tag tag) {
+        return new ResponseEntity<>(tagService.update(tag), HttpStatus.OK) ;
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
-    @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void deleteTag(@RequestParam(name = "tag_id") long id) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Tag> deleteTag(@PathVariable long id) {
         tagService.delete(id);
+        Tag tag = null;
+        return new ResponseEntity<>(tag, HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/find_offers", method = RequestMethod.GET)
-    @ResponseStatus(code = HttpStatus.OK)
-    public List<Offer> findTagOffers(@RequestParam(name = "tag_id") long id) {
-        return tagService.findTagOffers(id);
+    @RequestMapping(value = "/{id}/offers", method = RequestMethod.GET)
+    public ResponseEntity<List<Offer>> findTagOffers(@PathVariable long id) {
+        return new ResponseEntity<>(tagService.findTagOffers(id), HttpStatus.OK);
     }
 
 }

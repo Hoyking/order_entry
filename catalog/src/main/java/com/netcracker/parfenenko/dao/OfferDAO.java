@@ -22,8 +22,4 @@ public interface OfferDAO extends NamedEntityDAO<Offer, Long> {
 
     Offer removeTagFromOffer(long id, Tag tag);
 
-    Offer addOfferToCategory(long offerId, long categoryId);
-
-    Offer removeOfferFromCategory(long offerId);
-
 }

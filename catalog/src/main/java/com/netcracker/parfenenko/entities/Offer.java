@@ -3,16 +3,17 @@ package com.netcracker.parfenenko.entities;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Offer extends NamedEntity {
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     private Price price;
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     private Category category;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-    private List<Tag> tags;
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    private Set<Tag> tags;
     private String description;
     private boolean available = true;
 
@@ -34,11 +35,11 @@ public class Offer extends NamedEntity {
         this.category = category;
     }
 
-    public List<Tag> getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
 

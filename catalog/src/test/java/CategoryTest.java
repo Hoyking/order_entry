@@ -1,10 +1,12 @@
 import com.netcracker.parfenenko.Application;
-import com.netcracker.parfenenko.dao.OfferDAO;
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.service.CategoryService;
 import com.netcracker.parfenenko.service.OfferService;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -142,10 +144,8 @@ public class CategoryTest {
 
         List<Offer> offers = categoryService.findCategoryOffers(category1.getId());
 
-        String testOfferName = offers.get(0).getName();
-
         Assert.assertEquals(2, offers.size());
-        Assert.assertEquals(OFFER_NAME_1, testOfferName /*offers.get(0).getName()*/);
+        Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
         Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
 
         offerService.delete(offer1.getId());
@@ -153,6 +153,63 @@ public class CategoryTest {
         offerService.delete(offer3.getId());
         categoryService.delete(category1.getId());
         categoryService.delete(category2.getId());
+    }
+
+    @Test
+    public void addOfferToCategoryTest() {
+        Category category = categoryService.findById(categoryId);
+
+        Offer offer1 = new Offer();
+        offer1.setName(OFFER_NAME_1);
+        offer1.setCategory(category);
+        offer1 = offerService.save(offer1);
+
+        List<Offer> offers = categoryService.findCategoryOffers(categoryId);
+
+        Assert.assertEquals(1, offers.size());
+
+        Offer offer2 = new Offer();
+        offer2.setName(OFFER_NAME_2);
+        offer2 = offerService.save(offer2);
+        categoryService.addOffer(category.getId(), offer2.getId());
+
+        offers = categoryService.findCategoryOffers(categoryId);
+
+        Assert.assertEquals(2, offers.size());
+        Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
+        Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
+
+        offerService.delete(offer1.getId());
+        offerService.delete(offer2.getId());
+    }
+
+    @Test
+    public void removeOfferFromCategoryTest() {
+        Category category = categoryService.findById(categoryId);
+
+        Offer offer1 = new Offer();
+        offer1.setName(OFFER_NAME_1);
+        offer1.setCategory(category);
+        offer1 = offerService.save(offer1);
+
+        Offer offer2 = new Offer();
+        offer2.setName(OFFER_NAME_2);
+        offer2.setCategory(category);
+        offer2 = offerService.save(offer2);
+
+        List<Offer> offers = categoryService.findCategoryOffers(categoryId);
+
+        Assert.assertEquals(2, offers.size());
+
+        categoryService.removeOffer(categoryId, offer2.getId());
+
+        offers = categoryService.findCategoryOffers(categoryId);
+
+        Assert.assertEquals(1, offers.size());
+        Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
+
+        offerService.delete(offer1.getId());
+        offerService.delete(offer2.getId());
     }
 
 }
