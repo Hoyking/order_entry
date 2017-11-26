@@ -2,6 +2,8 @@ package com.netcracker.parfenenko.controller;
 
 import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
+import com.netcracker.parfenenko.exception.PayForOrderException;
+import com.netcracker.parfenenko.exception.PaymentStatusException;
 import com.netcracker.parfenenko.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/v1/orders")
+@RequestMapping(value = "/api/v1/orders")
 public class OrderController {
 
     private OrderService orderService;
@@ -53,14 +55,37 @@ public class OrderController {
         return new ResponseEntity<>(order, HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/{id}/order_item", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}/orderItem", method = RequestMethod.POST)
     public ResponseEntity<Order> addOrderItemToOrder(@PathVariable long id, @RequestBody OrderItem orderItem) {
         return new ResponseEntity<>(orderService.addOrderItem(id, orderItem), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{id}/order_item", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}/orderItem", method = RequestMethod.DELETE)
     public ResponseEntity<Order> removeOrderItemFromOrder(@PathVariable long id, @RequestBody OrderItem orderItem) {
         return new ResponseEntity<>(orderService.removeOrderItem(id, orderItem), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/status/{status}", method = RequestMethod.GET)
+    public ResponseEntity<List<Order>> findOrdersByPaymentStatus(@PathVariable int status) {
+        List<Order> orders = null;
+        try {
+            orders = orderService.findOrdersByPaymentStatus(status);
+            return new ResponseEntity<>(orders, HttpStatus.OK);
+        } catch (PaymentStatusException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(orders, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/{id}/status", method = RequestMethod.PUT)
+    public ResponseEntity<Order> payForOrder(@PathVariable long id) {
+        try {
+            return new ResponseEntity<>(orderService.payForOrder(id), HttpStatus.OK);
+        } catch (PayForOrderException e) {
+            e.printStackTrace();
+            Order nullOrder = null;
+            return new ResponseEntity<>(nullOrder, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

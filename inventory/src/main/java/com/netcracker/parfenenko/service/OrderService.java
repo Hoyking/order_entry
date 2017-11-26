@@ -3,6 +3,8 @@ package com.netcracker.parfenenko.service;
 import com.netcracker.parfenenko.dao.OrderDAO;
 import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
+import com.netcracker.parfenenko.exception.PayForOrderException;
+import com.netcracker.parfenenko.exception.PaymentStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +59,16 @@ public class OrderService {
     @Transactional
     public Order removeOrderItem(long orderId, OrderItem orderItem) {
         return orderDAO.removeOrderItem(orderId, orderItem);
+    }
+
+    @Transactional
+    public List<Order> findOrdersByPaymentStatus(int paymentStatus) throws PaymentStatusException {
+        return orderDAO.findOrdersByPaymentStatus(paymentStatus);
+    }
+
+    @Transactional
+    public Order payForOrder(long id) throws PayForOrderException {
+        return orderDAO.payForOrder(id);
     }
 
 }
