@@ -1,12 +1,20 @@
 package com.netcracker.parfenenko.dao;
 
-import com.netcracker.parfenenko.entities.InventoryOrder;
+import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
+import com.netcracker.parfenenko.exception.PayForOrderException;
+import com.netcracker.parfenenko.exception.PaymentStatusException;
 
-public interface OrderDAO extends NamedEntityDAO<InventoryOrder, Long> {
+import java.util.List;
 
-    InventoryOrder addOrderItem(long orderId, OrderItem orderItem);
+public interface OrderDAO extends NamedEntityDAO<Order, Long> {
 
-    InventoryOrder removeOrderItem(long orderId, OrderItem orderItem);
+    Order addOrderItem(long orderId, OrderItem orderItem);
+
+    Order removeOrderItem(long orderId, OrderItem orderItem);
+
+    List<Order> findOrdersByPaymentStatus(int paymentStatus) throws PaymentStatusException;
+
+    Order payForOrder(long id) throws PayForOrderException;
 
 }

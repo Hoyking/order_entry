@@ -1,8 +1,10 @@
 package com.netcracker.parfenenko.service;
 
 import com.netcracker.parfenenko.dao.OrderDAO;
-import com.netcracker.parfenenko.entities.InventoryOrder;
+import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
+import com.netcracker.parfenenko.exception.PayForOrderException;
+import com.netcracker.parfenenko.exception.PaymentStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,27 +22,27 @@ public class OrderService {
     }
 
     @Transactional
-    public InventoryOrder save(InventoryOrder order) {
+    public Order save(Order order) {
         return orderDAO.save(order);
     }
 
     @Transactional
-    public InventoryOrder findById(long id) {
+    public Order findById(long id) {
         return orderDAO.findById(id);
     }
 
     @Transactional
-    public InventoryOrder findByName(String name) {
+    public Order findByName(String name) {
         return orderDAO.findByName(name);
     }
 
     @Transactional
-    public List<InventoryOrder> findAll() {
+    public List<Order> findAll() {
         return orderDAO.findAll();
     }
 
     @Transactional
-    public InventoryOrder update(InventoryOrder order) {
+    public Order update(Order order) {
         return orderDAO.update(order);
     }
 
@@ -50,13 +52,23 @@ public class OrderService {
     }
 
     @Transactional
-    public InventoryOrder addOrderItem(long orderId, OrderItem orderItem) {
+    public Order addOrderItem(long orderId, OrderItem orderItem) {
         return orderDAO.addOrderItem(orderId, orderItem);
     }
 
     @Transactional
-    public InventoryOrder removeOrderItem(long orderId, OrderItem orderItem) {
+    public Order removeOrderItem(long orderId, OrderItem orderItem) {
         return orderDAO.removeOrderItem(orderId, orderItem);
+    }
+
+    @Transactional
+    public List<Order> findOrdersByPaymentStatus(int paymentStatus) throws PaymentStatusException {
+        return orderDAO.findOrdersByPaymentStatus(paymentStatus);
+    }
+
+    @Transactional
+    public Order payForOrder(long id) throws PayForOrderException {
+        return orderDAO.payForOrder(id);
     }
 
 }

@@ -18,4 +18,8 @@ public enum Payments {
         return VALUE;
     }
 
+    public static boolean consists(int value) {
+        return value == UNPAID.VALUE || value == PAID.VALUE || value == REJECTED.VALUE;
+    }
+
 }
