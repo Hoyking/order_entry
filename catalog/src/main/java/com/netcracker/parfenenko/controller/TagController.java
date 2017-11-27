@@ -1,19 +1,17 @@
 package com.netcracker.parfenenko.controller;
 
-import com.netcracker.parfenenko.entities.Tag;
-import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.entities.Offer;
+import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/order_entry/v1/tags")
+@RequestMapping(value = "/api/v1/tags")
 public class TagController {
 
     private TagService tagService;

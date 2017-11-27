@@ -8,11 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/order_entry/v1/categories")
+@RequestMapping(value = "/api/v1/categories")
 public class CategoryController {
 
     private CategoryService categoryService;
@@ -57,6 +56,16 @@ public class CategoryController {
     @RequestMapping(value = "/{id}/offers", method = RequestMethod.GET)
     public ResponseEntity<List<Offer>> findCategoryOffers(@PathVariable long id) {
         return new ResponseEntity<>(categoryService.findCategoryOffers(id), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}/offer", method = RequestMethod.PUT)
+    public ResponseEntity<Category> addOfferToCategory(@PathVariable long categoryId, @RequestBody long offerId) {
+        return new ResponseEntity<>(categoryService.addOffer(categoryId, offerId), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}/offer", method = RequestMethod.DELETE)
+    public ResponseEntity<Category> removeOfferFromCategory(@PathVariable long categoryId, @RequestBody long offerId) {
+        return new ResponseEntity<>(categoryService.removeOffer(categoryId, offerId), HttpStatus.OK);
     }
 
 }
