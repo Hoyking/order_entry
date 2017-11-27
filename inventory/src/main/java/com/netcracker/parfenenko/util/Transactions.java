@@ -1,7 +1,6 @@
 package com.netcracker.parfenenko.util;
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,13 +15,11 @@ public class Transactions {
 
     public Transactions() {}
 
-    @Transactional
     public void startTransaction(Consumer<EntityManager> consumer) {
         consumer.accept(entityManager);
         entityManager.close();
     }
 
-    @Transactional
     public <T> T startGenericTransaction(Function<EntityManager, T> function) {
         T result = null;
         result = function.apply(entityManager);
