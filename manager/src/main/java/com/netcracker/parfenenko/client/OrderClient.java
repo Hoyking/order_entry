@@ -100,7 +100,11 @@ public class OrderClient {
         return putRequest(BASE_ORDERS_URI, new HttpEntity<>(order), Order.class);
     }
 
-    public ResponseEntity<Order> payForOrder(long orderId) {
+    public ResponseEntity<Order> payForOrder(long orderId) throws UpdateOrderException {
+        Order order = findOrderById(orderId).getBody();
+        if (order.getPaymentStatus() == Payments.PAID.value()) {
+            throw new UpdateOrderException("Fail to pay for order. Order is already paid");
+        }
         return putRequest(String.format(PAY_URI, orderId), Order.class);
     }
 
