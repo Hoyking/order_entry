@@ -75,8 +75,8 @@ public class OfferController {
     }
 
     @RequestMapping(value = "/price", method = RequestMethod.GET)
-    public ResponseEntity<List<Offer>> findOffersOfPriceInterval(@RequestParam(name = "from_price") double fromPrice,
-                                                                 @RequestParam(name = "to_price") double toPrice) {
+    public ResponseEntity<List<Offer>> findOffersOfPriceInterval(@RequestParam(name = "from") double fromPrice,
+                                                                 @RequestParam(name = "to") double toPrice) {
         return new ResponseEntity<>(offerService.findOffersOfPriceInterval(fromPrice, toPrice), HttpStatus.OK);
     }
 

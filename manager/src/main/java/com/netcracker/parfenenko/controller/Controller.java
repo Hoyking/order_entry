@@ -24,7 +24,7 @@ public class Controller {
         this.orderClient = orderClient;
     }
 
-    @RequestMapping(value = "/offers", method = RequestMethod.GET)
+    @RequestMapping(value = "/offers", method = RequestMethod.POST)
     public ResponseEntity findOffers(@RequestParam(name = "tags") List<Tag> tags,
                                      @RequestParam(name = "categories") List<Category> categories,
                                      @RequestParam(name = "fromPrice") double fromPrice,
