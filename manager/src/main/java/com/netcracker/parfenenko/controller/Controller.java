@@ -77,11 +77,7 @@ public class Controller {
 
     @RequestMapping(value = "/orders/{id}/price", method = RequestMethod.PUT)
     public ResponseEntity countTotalPrice(@PathVariable long id) {
-        try {
-            return orderClient.payForOrder(id);
-        } catch (UpdateOrderException e) {
-            return new ResponseEntity(HttpStatus.CONFLICT);
-        }
+        return orderClient.countTotalPrice(id);
     }
 
 }
