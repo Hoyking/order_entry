@@ -19,7 +19,7 @@ public class OrderClient {
     private final String OFFERS_WITH_TAGS_URI = "http://localhost:8081/api/v1/offers/tags";
     private final String CATEGORY_OFFERS_URI = "http://localhost:8081/api/v1/categories/%d/offers";
     private final String OFFERS_URI = "http://localhost:8081/api/v1/offers";
-    private final String OFFERS_WITH_PRICE_URI = "http://localhost:8081/api/v1/offers/price?from=%s?to=%s";
+    private final String OFFERS_WITH_PRICE_URI = "http://localhost:8081/api/v1/offers/price?from=%s&to=%s";
     private final String BASE_ORDERS_URI = "http://localhost:8082/api/v1/orders";
     private final String FIND_ORDER_BY_ID_URI = "http://localhost:8082/api/v1/orders/%s";
     private final String FIND_ORDER_BY_NAME_URI = "http://localhost:8082/api/v1/orders/name/%s";
@@ -52,7 +52,7 @@ public class OrderClient {
         ResponseEntity<Offer[]> tagResponseEntity = postRequest(OFFERS_WITH_TAGS_URI, new HttpEntity<>(tags), Offer[].class);
         offers.retainAll(Arrays.asList(tagResponseEntity.getBody()));
 
-        ResponseEntity<Offer[]> priceResponseEntity = getRequest(String.format(OFFERS_WITH_PRICE_URI, fromPrice, toPrice),
+        ResponseEntity<Offer[]> priceResponseEntity = getRequest(String.format(OFFERS_WITH_PRICE_URI, "" + fromPrice, "" + toPrice),
                 Offer[].class);
         offers.retainAll(Arrays.asList(priceResponseEntity.getBody()));
 

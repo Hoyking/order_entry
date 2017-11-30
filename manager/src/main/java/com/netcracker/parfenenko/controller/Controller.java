@@ -2,10 +2,7 @@ package com.netcracker.parfenenko.controller;
 
 import com.netcracker.parfenenko.client.OrderClient;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
-import com.netcracker.parfenenko.model.Category;
-import com.netcracker.parfenenko.model.Order;
-import com.netcracker.parfenenko.model.OrderItem;
-import com.netcracker.parfenenko.model.Tag;
+import com.netcracker.parfenenko.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +22,11 @@ public class Controller {
     }
 
     @RequestMapping(value = "/offers", method = RequestMethod.POST)
-    public ResponseEntity findOffers(@RequestParam(name = "tags") List<Tag> tags,
-                                     @RequestParam(name = "categories") List<Category> categories,
-                                     @RequestParam(name = "fromPrice") double fromPrice,
-                                     @RequestParam(name = "toPrice") double toPrice) {
-        return orderClient.findOffers(tags, categories, fromPrice, toPrice);
+    public ResponseEntity findOffers(@RequestBody ConfigurableOffersSearch configurableOffersSearch) {
+        return orderClient.findOffers(configurableOffersSearch.getTags(),
+                configurableOffersSearch.getCategories(),
+                configurableOffersSearch.getFrom(),
+                configurableOffersSearch.getTo());
     }
 
     @RequestMapping(value = "/orders", method = RequestMethod.POST)
