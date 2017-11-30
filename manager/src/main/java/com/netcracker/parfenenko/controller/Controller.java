@@ -24,7 +24,7 @@ public class Controller {
         this.orderClient = orderClient;
     }
 
-    @RequestMapping(value = "/offers", method = RequestMethod.GET)
+    @RequestMapping(value = "/offers", method = RequestMethod.POST)
     public ResponseEntity findOffers(@RequestParam(name = "tags") List<Tag> tags,
                                      @RequestParam(name = "categories") List<Category> categories,
                                      @RequestParam(name = "fromPrice") double fromPrice,
@@ -78,6 +78,15 @@ public class Controller {
     @RequestMapping(value = "/orders/{id}/price", method = RequestMethod.PUT)
     public ResponseEntity countTotalPrice(@PathVariable long id) {
         return orderClient.countTotalPrice(id);
+    }
+
+    @RequestMapping(value = "/orders/{id}/status", method = RequestMethod.PUT)
+    public ResponseEntity payForOrder(@PathVariable long id) {
+        try {
+            return orderClient.payForOrder(id);
+        } catch (UpdateOrderException e) {
+            return new ResponseEntity(HttpStatus.CONFLICT);
+        }
     }
 
 }
