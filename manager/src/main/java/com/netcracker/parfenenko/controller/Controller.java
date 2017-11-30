@@ -80,4 +80,13 @@ public class Controller {
         return orderClient.countTotalPrice(id);
     }
 
+    @RequestMapping(value = "/orders/{id}/status", method = RequestMethod.PUT)
+    public ResponseEntity payForOrder(@PathVariable long id) {
+        try {
+            return orderClient.payForOrder(id);
+        } catch (UpdateOrderException e) {
+            return new ResponseEntity(HttpStatus.CONFLICT);
+        }
+    }
+
 }
