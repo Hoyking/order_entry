@@ -48,7 +48,7 @@ public class OrderController {
         return new ResponseEntity<>(orderService.update(order), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Order> deleteOrder(@PathVariable long id) {
         Order order = null;
         orderService.delete(id);
