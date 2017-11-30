@@ -1,13 +1,8 @@
 package com.netcracker.parfenenko.model;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import java.util.Objects;
 import java.util.Set;
 
-@Component
-@Scope("prototype")
 public class Offer extends NamedEntity {
 
     private Price price;

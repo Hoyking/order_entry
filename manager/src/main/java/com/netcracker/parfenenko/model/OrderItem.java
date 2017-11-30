@@ -1,13 +1,8 @@
 package com.netcracker.parfenenko.model;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Objects;
 
-@Component
-@Scope("prototype")
 public class OrderItem extends NamedEntity {
 
     private double price;

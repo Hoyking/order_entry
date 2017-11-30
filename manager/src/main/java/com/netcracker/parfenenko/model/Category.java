@@ -1,12 +1,7 @@
 package com.netcracker.parfenenko.model;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import java.util.Objects;
 
-@Component
-@Scope("prototype")
 public class Category extends NamedEntity {
 
     public Category() {}
