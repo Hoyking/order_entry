@@ -1,8 +1,13 @@
-package com.netcracker.parfenenko.model;
+package com.netcracker.parfenenko.entity;
+
+import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Objects;
 
+@Data
+@ToString
 public class OrderItem extends NamedEntity {
 
     private double price;

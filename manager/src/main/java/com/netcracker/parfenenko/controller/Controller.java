@@ -1,14 +1,14 @@
 package com.netcracker.parfenenko.controller;
 
 import com.netcracker.parfenenko.client.OrderClient;
+import com.netcracker.parfenenko.entity.util.ConfigurableOffersSearch;
+import com.netcracker.parfenenko.exception.EntityNotFoundException;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
-import com.netcracker.parfenenko.model.*;
+import com.netcracker.parfenenko.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -45,11 +45,13 @@ public class Controller {
     }
 
     @RequestMapping(value = "/orders/{id}/orderItem", method = RequestMethod.POST)
-    public ResponseEntity addOrderItem(@PathVariable long id, @RequestBody OrderItem orderItem) {
+    public ResponseEntity addOrderItem(@PathVariable long id, @RequestBody long offerId) {
         try {
-            return orderClient.addOrderItem(id, orderItem);
+            return orderClient.addOrderItem(id, offerId);
         } catch (UpdateOrderException e) {
             return new ResponseEntity(HttpStatus.CONFLICT);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
     }
 

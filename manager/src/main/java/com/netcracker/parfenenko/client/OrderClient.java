@@ -1,7 +1,8 @@
 package com.netcracker.parfenenko.client;
 
+import com.netcracker.parfenenko.exception.EntityNotFoundException;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
-import com.netcracker.parfenenko.model.*;
+import com.netcracker.parfenenko.entity.*;
 import com.netcracker.parfenenko.util.Payments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -12,10 +13,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class OrderClient {
 
+    private final String BASE_OFFER_URI = "http://localhost:8081/api/v1/offers/%s";
     private final String OFFERS_WITH_TAGS_URI = "http://localhost:8081/api/v1/offers/tags";
     private final String CATEGORY_OFFERS_URI = "http://localhost:8081/api/v1/categories/%d/offers";
     private final String OFFERS_URI = "http://localhost:8081/api/v1/offers";
@@ -52,7 +55,7 @@ public class OrderClient {
         ResponseEntity<Offer[]> tagResponseEntity = postRequest(OFFERS_WITH_TAGS_URI, new HttpEntity<>(tags), Offer[].class);
         offers.retainAll(Arrays.asList(tagResponseEntity.getBody()));
 
-        ResponseEntity<Offer[]> priceResponseEntity = getRequest(String.format(OFFERS_WITH_PRICE_URI, "" + fromPrice, "" + toPrice),
+        ResponseEntity<Offer[]> priceResponseEntity = getRequest(String.format(OFFERS_WITH_PRICE_URI, fromPrice, toPrice),
                 Offer[].class);
         offers.retainAll(Arrays.asList(priceResponseEntity.getBody()));
 
@@ -71,12 +74,16 @@ public class OrderClient {
         return getRequest(String.format(FIND_ORDER_BY_NAME_URI, name), Order.class);
     }
 
-    public ResponseEntity<Order> addOrderItem(long orderId, OrderItem orderItem) throws UpdateOrderException {
+    public ResponseEntity<Order> addOrderItem(long orderId, long offerId) throws UpdateOrderException, EntityNotFoundException {
         Order order = findOrderById(orderId).getBody();
         if (order.getPaymentStatus() == Payments.PAID.value()) {
             throw new UpdateOrderException("Fail to add new order item to the paid order");
         }
-        return postRequest(String.format(ORDER_ITEM_URI, orderId), new HttpEntity<>(orderItem), Order.class);
+        Offer offer = getRequest(String.format(BASE_OFFER_URI, offerId), Offer.class).getBody();
+        if (offer == null) {
+            throw new EntityNotFoundException("Can't find Offer entity with id " + offerId);
+        }
+        return postRequest(String.format(ORDER_ITEM_URI, orderId), new HttpEntity<>(convertFromOffer(offer)), Order.class);
     }
 
     public ResponseEntity<Order> removeOrderItem(long orderId, OrderItem orderItem) throws UpdateOrderException {
@@ -114,6 +121,16 @@ public class OrderClient {
 
     private <T> ResponseEntity<T> getRequest(String uri, Class<T> responseType) {
         return restTemplate.getForEntity(uri, responseType);
+    }
+
+    private OrderItem convertFromOffer(Offer offer) {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setName(offer.getName());
+        orderItem.setDescription(offer.getDescription());
+        orderItem.setCategory(offer.getCategory().getName());
+        orderItem.setTags(offer.getTags().stream().map(Tag::getName).collect(Collectors.toList()));
+        orderItem.setPrice(offer.getPrice().getValue());
+        return orderItem;
     }
 
     private <T, R> ResponseEntity<T> postRequest(String uri, HttpEntity<R> httpEntity, Class<T> responseType) {

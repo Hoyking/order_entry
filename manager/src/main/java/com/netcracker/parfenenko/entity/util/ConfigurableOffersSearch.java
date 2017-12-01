@@ -1,4 +1,7 @@
-package com.netcracker.parfenenko.model;
+package com.netcracker.parfenenko.entity.util;
+
+import com.netcracker.parfenenko.entity.Category;
+import com.netcracker.parfenenko.entity.Tag;
 
 import java.util.List;
 
