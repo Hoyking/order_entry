@@ -7,7 +7,6 @@ import java.util.List;
 
 public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
     
-    @Autowired
     protected Transactions transactions;
     private Class persistenceClass;
 
@@ -19,6 +18,11 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
 
     protected void setPersistenceClass(Class persistenceClass) {
         this.persistenceClass = persistenceClass;
+    }
+
+    @Autowired
+    private void setTransactions(Transactions transactions) {
+        this.transactions = transactions;
     }
 
     @Override

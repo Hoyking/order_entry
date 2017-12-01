@@ -1,8 +1,13 @@
-package com.netcracker.parfenenko.model;
+package com.netcracker.parfenenko.entity;
+
+import lombok.Data;
+import lombok.ToString;
 
 import java.util.Objects;
 import java.util.Set;
 
+@Data
+@ToString
 public class Offer extends NamedEntity {
 
     private Price price;

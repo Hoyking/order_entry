@@ -1,7 +1,12 @@
-package com.netcracker.parfenenko.model;
+package com.netcracker.parfenenko.entity;
+
+import lombok.Data;
+import lombok.ToString;
 
 import java.util.Objects;
 
+@Data
+@ToString
 public class Tag extends NamedEntity {
 
     public Tag() {}

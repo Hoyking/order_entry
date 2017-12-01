@@ -1,12 +1,14 @@
-package com.netcracker.parfenenko.model;
+package com.netcracker.parfenenko.entity;
 
 import com.netcracker.parfenenko.util.Payments;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Objects;
 
+@Data
+@ToString
 public class Order extends NamedEntity {
 
     private List<OrderItem> orderItems;
