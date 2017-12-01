@@ -3,15 +3,15 @@ package com.netcracker.parfenenko.entities;
 import com.netcracker.parfenenko.util.Payments;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "`Order`")
 public class Order extends NamedEntity {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<OrderItem> orderItems;
+    private Set<OrderItem> orderItems;
     private String description;
     private double totalPrice;
     private String customerMail;
@@ -21,11 +21,11 @@ public class Order extends NamedEntity {
 
     public Order() {}
 
-    public List<OrderItem> getOrderItems() {
+    public Set<OrderItem> getOrderItems() {
         return orderItems;
     }
 
-    public void setOrderItems(List<OrderItem> orderItems) {
+    public void setOrderItems(Set<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
 
