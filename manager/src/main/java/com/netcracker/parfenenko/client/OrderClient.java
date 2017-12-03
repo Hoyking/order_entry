@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class OrderClient {
 
     private final String BASE_OFFER_URI = "http://localhost:8081/api/v1/offers/%s";
-    private final String OFFERS_WITH_TAGS_URI = "http://localhost:8081/api/v1/offers?tags=%s";
+    private final String OFFERS_WITH_TAGS_URI = "http://localhost:8081/api/v1/offers/tags?values=%s";
     private final String CATEGORY_OFFERS_URI = "http://localhost:8081/api/v1/categories/%d/offers";
     private final String OFFERS_URI = "http://localhost:8081/api/v1/offers";
     private final String OFFERS_WITH_PRICE_URI = "http://localhost:8081/api/v1/offers/price?from=%s&to=%s";
