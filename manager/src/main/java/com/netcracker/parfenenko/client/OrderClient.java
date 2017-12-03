@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class OrderClient {
 
     private final String BASE_OFFER_URI = "http://localhost:8081/api/v1/offers/%s";
-    private final String OFFERS_WITH_TAGS_URI = "http://localhost:8081/api/v1/offers/tags";
+    private final String OFFERS_WITH_TAGS_URI = "http://localhost:8081/api/v1/offers?tags=%s";
     private final String CATEGORY_OFFERS_URI = "http://localhost:8081/api/v1/categories/%d/offers";
     private final String OFFERS_URI = "http://localhost:8081/api/v1/offers";
     private final String OFFERS_WITH_PRICE_URI = "http://localhost:8081/api/v1/offers/price?from=%s&to=%s";
@@ -56,10 +56,12 @@ public class OrderClient {
             }
         }
 
-        List<Tag> tags = offerFilter.getTags().stream().map(this::createTag).collect(Collectors.toList());
+        StringBuilder builder = new StringBuilder();
+        offerFilter.getTags().forEach(tag -> builder.append(tag).append(","));
+        builder.deleteCharAt(builder.length() - 1);
 
-        ResponseEntity<Offer[]> tagResponseEntity = postRequest(OFFERS_WITH_TAGS_URI,
-                new HttpEntity<>(tags), Offer[].class);
+        ResponseEntity<Offer[]> tagResponseEntity = getRequest(String.format(OFFERS_WITH_TAGS_URI, builder.toString()),
+                Offer[].class);
         offers.retainAll(Arrays.asList(tagResponseEntity.getBody()));
 
         ResponseEntity<Offer[]> priceResponseEntity = getRequest(String.format(OFFERS_WITH_PRICE_URI,
@@ -124,12 +126,6 @@ public class OrderClient {
             throw new UpdateOrderException("Fail to pay for order. Order is already paid");
         }
         return putRequest(String.format(PAY_URI, orderId), Order.class);
-    }
-
-    private Tag createTag(String tagName) {
-        Tag tag = context.getBean(Tag.class);
-        tag.setName(tagName);
-        return tag;
     }
 
     private OrderItem convertFromOffer(Offer offer) {
