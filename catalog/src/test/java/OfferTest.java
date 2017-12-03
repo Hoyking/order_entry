@@ -229,8 +229,8 @@ public class OfferTest {
         offer3.setCategory(category);
         offer3 = offerService.save(offer3);
 
-        List<Offer> loadedOffers1 = offerService.findOffersByTags(Arrays.asList(tag1, tag2));
-        List<Offer> loadedOffers2 = offerService.findOffersByTags(Arrays.asList(tag1, tag3));
+        List<Offer> loadedOffers1 = offerService.findOffersByTags(Arrays.asList(tag1.getName(), tag2.getName()));
+        List<Offer> loadedOffers2 = offerService.findOffersByTags(Arrays.asList(tag1.getName(), tag3.getName()));
 
         Assert.assertEquals(2, loadedOffers1.size());
         Assert.assertEquals(OFFER_NAME_1, loadedOffers1.get(0).getName());
