@@ -61,8 +61,8 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/{id}/orderItem", method = RequestMethod.DELETE)
-    public ResponseEntity<Order> removeOrderItemFromOrder(@PathVariable long id, @RequestBody OrderItem orderItem) {
-        return new ResponseEntity<>(orderService.removeOrderItem(id, orderItem), HttpStatus.OK);
+    public ResponseEntity<Order> removeOrderItemFromOrder(@PathVariable long id, @RequestBody long orderItemId) {
+        return new ResponseEntity<>(orderService.removeOrderItem(id, orderItemId), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/status/{status}", method = RequestMethod.GET)

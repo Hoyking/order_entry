@@ -17,6 +17,9 @@ import java.util.List;
 @Repository
 public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements OrderDAO {
 
+    private final String REMOVE_ORDER_ITEM = "DELETE FROM " + OrderItem.class + " e WHERE e.id = ?1 JOIN " + Order.class +
+            " e1 ON e1.id = ?2 AND e MEMBER OF e1.orderItems";
+
     public JPAOrderDAO() {
         super.setPersistenceClass(Order.class);
     }
@@ -30,10 +33,14 @@ public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements Order
     }
 
     @Override
-    public Order removeOrderItem(long orderId, OrderItem orderItem) {
-        Order order = findById(orderId);
-        order.getOrderItems().remove(orderItem);
-        return update(order);
+    public Order removeOrderItem(long orderId, long orderItemId) {
+        transactions.startTransaction(entityManager -> {
+            entityManager.createQuery(REMOVE_ORDER_ITEM)
+                    .setParameter(1, orderItemId)
+                    .setParameter(2, orderId)
+                    .executeUpdate();
+        });
+        return findById(orderId);
     }
 
     @Override

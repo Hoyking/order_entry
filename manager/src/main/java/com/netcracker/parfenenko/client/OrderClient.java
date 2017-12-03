@@ -1,9 +1,11 @@
 package com.netcracker.parfenenko.client;
 
+import com.netcracker.parfenenko.entity.Offer;
+import com.netcracker.parfenenko.entity.Order;
+import com.netcracker.parfenenko.entity.OrderItem;
+import com.netcracker.parfenenko.entity.Tag;
 import com.netcracker.parfenenko.exception.EntityNotFoundException;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
-import com.netcracker.parfenenko.entity.*;
-import com.netcracker.parfenenko.filter.OfferFilter;
 import com.netcracker.parfenenko.util.Payments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -14,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -41,15 +45,15 @@ public class OrderClient {
         this.context = context;
     }
 
-    public ResponseEntity<List<Offer>> findOffers(OfferFilter offerFilter) {
+    public ResponseEntity<List<Offer>> findOffers(List<Long> categories, List<String> tags, double from, double to) {
         List<Offer> offers = new ArrayList<>();
 
-        if (offerFilter.getCategories().size() == 0) {
+        if (categories.size() == 0) {
             ResponseEntity<Offer[]> categoryResponseEntity = getRequest(OFFERS_URI,
                     Offer[].class);
             offers.addAll(Arrays.asList(categoryResponseEntity.getBody()));
         } else {
-            for(Long categoryId: offerFilter.getCategories()) {
+            for(Long categoryId: categories) {
                 ResponseEntity<Offer[]> categoryResponseEntity = getRequest(String.format(CATEGORY_OFFERS_URI, categoryId),
                         Offer[].class);
                 offers.addAll(Arrays.asList(categoryResponseEntity.getBody()));
@@ -57,7 +61,7 @@ public class OrderClient {
         }
 
         StringBuilder builder = new StringBuilder();
-        offerFilter.getTags().forEach(tag -> builder.append(tag).append(","));
+        tags.forEach(tag -> builder.append(tag).append(","));
         builder.deleteCharAt(builder.length() - 1);
 
         ResponseEntity<Offer[]> tagResponseEntity = getRequest(String.format(OFFERS_WITH_TAGS_URI, builder.toString()),
@@ -65,7 +69,7 @@ public class OrderClient {
         offers.retainAll(Arrays.asList(tagResponseEntity.getBody()));
 
         ResponseEntity<Offer[]> priceResponseEntity = getRequest(String.format(OFFERS_WITH_PRICE_URI,
-                offerFilter.getFrom(), offerFilter.getTo()), Offer[].class);
+                from, to), Offer[].class);
         offers.retainAll(Arrays.asList(priceResponseEntity.getBody()));
 
         return new ResponseEntity<>(offers, HttpStatus.OK);
@@ -95,12 +99,12 @@ public class OrderClient {
         return postRequest(String.format(ORDER_ITEM_URI, orderId), new HttpEntity<>(convertFromOffer(offer)), Order.class);
     }
 
-    public ResponseEntity<Order> removeOrderItem(long orderId, OrderItem orderItem) throws UpdateOrderException {
+    public ResponseEntity<Order> removeOrderItem(long orderId, long orderItemId) throws UpdateOrderException {
         Order order = findOrderById(orderId).getBody();
         if (order.getPaymentStatus() == Payments.PAID.value()) {
             throw new UpdateOrderException("Fail to remove order item from the paid order");
         }
-        return deleteRequest(String.format(ORDER_ITEM_URI, orderId), new HttpEntity<>(orderItem), Order.class);
+        return deleteRequest(String.format(ORDER_ITEM_URI, orderId), new HttpEntity<>(orderItemId), Order.class);
     }
 
     public ResponseEntity<Order[]> findAll() {
