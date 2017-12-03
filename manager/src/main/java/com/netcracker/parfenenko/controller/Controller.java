@@ -1,7 +1,7 @@
 package com.netcracker.parfenenko.controller;
 
 import com.netcracker.parfenenko.client.OrderClient;
-import com.netcracker.parfenenko.entity.util.ConfigurableOffersSearch;
+import com.netcracker.parfenenko.filter.OfferFilter;
 import com.netcracker.parfenenko.exception.EntityNotFoundException;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
 import com.netcracker.parfenenko.entity.*;
@@ -21,12 +21,9 @@ public class Controller {
         this.orderClient = orderClient;
     }
 
-    @RequestMapping(value = "/offers", method = RequestMethod.POST)
-    public ResponseEntity findOffers(@RequestBody ConfigurableOffersSearch configurableOffersSearch) {
-        return orderClient.findOffers(configurableOffersSearch.getTags(),
-                configurableOffersSearch.getCategories(),
-                configurableOffersSearch.getFrom(),
-                configurableOffersSearch.getTo());
+    @RequestMapping(value = "/offers", method = RequestMethod.GET)
+    public ResponseEntity findOffers(@RequestParam(name = "filters") OfferFilter offerFilter) {
+        return orderClient.findOffers(offerFilter);
     }
 
     @RequestMapping(value = "/orders", method = RequestMethod.POST)

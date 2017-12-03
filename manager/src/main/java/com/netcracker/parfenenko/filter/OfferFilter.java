@@ -1,32 +1,29 @@
-package com.netcracker.parfenenko.entity.util;
-
-import com.netcracker.parfenenko.entity.Category;
-import com.netcracker.parfenenko.entity.Tag;
+package com.netcracker.parfenenko.filter;
 
 import java.util.List;
 
-public class ConfigurableOffersSearch {
+public class OfferFilter {
     
-    private List<Category> categories;
-    private List<Tag> tags;
+    private List<Long> categories;
+    private List<String> tags;
     private double from;
     private double to;
 
-    public ConfigurableOffersSearch() {}
+    public OfferFilter() {}
 
-    public List<Category> getCategories() {
+    public List<Long> getCategories() {
         return categories;
     }
 
-    public void setCategories(List<Category> categories) {
+    public void setCategories(List<Long> categories) {
         this.categories = categories;
     }
 
-    public List<Tag> getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 

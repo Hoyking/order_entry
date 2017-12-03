@@ -3,8 +3,10 @@ package com.netcracker.parfenenko.client;
 import com.netcracker.parfenenko.exception.EntityNotFoundException;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
 import com.netcracker.parfenenko.entity.*;
+import com.netcracker.parfenenko.filter.OfferFilter;
 import com.netcracker.parfenenko.util.Payments;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -30,33 +32,38 @@ public class OrderClient {
     private final String FIND_ORDERS_BY_STATUS_URI = "http://localhost:8082/api/v1/orders/status/%s";
     private final String PAY_URI = "http://localhost:8082/api/v1/orders/%s/status";
 
+    private ApplicationContext context;
     private RestTemplate restTemplate;
 
     @Autowired
-    public OrderClient(RestTemplate restTemplate) {
+    public OrderClient(RestTemplate restTemplate, ApplicationContext context) {
         this.restTemplate = restTemplate;
+        this.context = context;
     }
 
-    public ResponseEntity<List<Offer>> findOffers(List<Tag> tags, List<Category> categories, double fromPrice, double toPrice) {
+    public ResponseEntity<List<Offer>> findOffers(OfferFilter offerFilter) {
         List<Offer> offers = new ArrayList<>();
 
-        if (categories.size() == 0) {
+        if (offerFilter.getCategories().size() == 0) {
             ResponseEntity<Offer[]> categoryResponseEntity = getRequest(OFFERS_URI,
                     Offer[].class);
             offers.addAll(Arrays.asList(categoryResponseEntity.getBody()));
         } else {
-            for(Category category: categories) {
-                ResponseEntity<Offer[]> categoryResponseEntity = getRequest(String.format(CATEGORY_OFFERS_URI, category.getId()),
+            for(Long categoryId: offerFilter.getCategories()) {
+                ResponseEntity<Offer[]> categoryResponseEntity = getRequest(String.format(CATEGORY_OFFERS_URI, categoryId),
                         Offer[].class);
                 offers.addAll(Arrays.asList(categoryResponseEntity.getBody()));
             }
         }
 
-        ResponseEntity<Offer[]> tagResponseEntity = postRequest(OFFERS_WITH_TAGS_URI, new HttpEntity<>(tags), Offer[].class);
+        List<Tag> tags = offerFilter.getTags().stream().map(this::createTag).collect(Collectors.toList());
+
+        ResponseEntity<Offer[]> tagResponseEntity = postRequest(OFFERS_WITH_TAGS_URI,
+                new HttpEntity<>(tags), Offer[].class);
         offers.retainAll(Arrays.asList(tagResponseEntity.getBody()));
 
-        ResponseEntity<Offer[]> priceResponseEntity = getRequest(String.format(OFFERS_WITH_PRICE_URI, fromPrice, toPrice),
-                Offer[].class);
+        ResponseEntity<Offer[]> priceResponseEntity = getRequest(String.format(OFFERS_WITH_PRICE_URI,
+                offerFilter.getFrom(), offerFilter.getTo()), Offer[].class);
         offers.retainAll(Arrays.asList(priceResponseEntity.getBody()));
 
         return new ResponseEntity<>(offers, HttpStatus.OK);
@@ -119,18 +126,24 @@ public class OrderClient {
         return putRequest(String.format(PAY_URI, orderId), Order.class);
     }
 
-    private <T> ResponseEntity<T> getRequest(String uri, Class<T> responseType) {
-        return restTemplate.getForEntity(uri, responseType);
+    private Tag createTag(String tagName) {
+        Tag tag = context.getBean(Tag.class);
+        tag.setName(tagName);
+        return tag;
     }
 
     private OrderItem convertFromOffer(Offer offer) {
-        OrderItem orderItem = new OrderItem();
+        OrderItem orderItem = context.getBean(OrderItem.class);
         orderItem.setName(offer.getName());
         orderItem.setDescription(offer.getDescription());
         orderItem.setCategory(offer.getCategory().getName());
         orderItem.setTags(offer.getTags().stream().map(Tag::getName).collect(Collectors.toList()));
         orderItem.setPrice(offer.getPrice().getValue());
         return orderItem;
+    }
+
+    private <T> ResponseEntity<T> getRequest(String uri, Class<T> responseType) {
+        return restTemplate.getForEntity(uri, responseType);
     }
 
     private <T, R> ResponseEntity<T> postRequest(String uri, HttpEntity<R> httpEntity, Class<T> responseType) {

@@ -2,10 +2,14 @@ package com.netcracker.parfenenko.entity;
 
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 import java.util.Set;
 
+@Component
+@Scope(value = "prototype")
 @Data
 @ToString
 public class Offer extends NamedEntity {
