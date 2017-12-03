@@ -57,8 +57,8 @@ public class OrderService {
     }
 
     @Transactional
-    public Order removeOrderItem(long orderId, OrderItem orderItem) {
-        return orderDAO.removeOrderItem(orderId, orderItem);
+    public Order removeOrderItem(long orderId, long orderItemId) {
+        return orderDAO.removeOrderItem(orderId, orderItemId);
     }
 
     @Transactional

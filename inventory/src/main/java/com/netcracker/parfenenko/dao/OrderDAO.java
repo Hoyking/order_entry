@@ -11,7 +11,7 @@ public interface OrderDAO extends NamedEntityDAO<Order, Long> {
 
     Order addOrderItem(long orderId, OrderItem orderItem);
 
-    Order removeOrderItem(long orderId, OrderItem orderItem);
+    Order removeOrderItem(long orderId, long orderItemId);
 
     List<Order> findOrdersByPaymentStatus(int paymentStatus) throws PaymentStatusException;
 

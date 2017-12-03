@@ -1,14 +1,15 @@
 package com.netcracker.parfenenko.controller;
 
 import com.netcracker.parfenenko.client.OrderClient;
-import com.netcracker.parfenenko.filter.OfferFilter;
+import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.exception.EntityNotFoundException;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
-import com.netcracker.parfenenko.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -22,8 +23,11 @@ public class Controller {
     }
 
     @RequestMapping(value = "/offers", method = RequestMethod.GET)
-    public ResponseEntity findOffers(@RequestParam(name = "filters") OfferFilter offerFilter) {
-        return orderClient.findOffers(offerFilter);
+    public ResponseEntity findOffers(@RequestParam(name = "categories") List<Long> categories,
+            @RequestParam(name = "tags") List<String> tags,
+            @RequestParam(name = "from") double from,
+            @RequestParam(name = "to") double to) {
+        return orderClient.findOffers(categories, tags, from, to);
     }
 
     @RequestMapping(value = "/orders", method = RequestMethod.POST)
@@ -53,9 +57,9 @@ public class Controller {
     }
 
     @RequestMapping(value = "/orders/{id}/orderItem", method = RequestMethod.DELETE)
-    public ResponseEntity removeOrderItem(@PathVariable long id, @RequestBody OrderItem orderItem) {
+    public ResponseEntity removeOrderItem(@PathVariable long id, @RequestBody long orderItemId) {
         try {
-            return orderClient.removeOrderItem(id, orderItem);
+            return orderClient.removeOrderItem(id, orderItemId);
         } catch (UpdateOrderException e) {
             return new ResponseEntity(HttpStatus.CONFLICT);
         }

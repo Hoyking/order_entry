@@ -220,7 +220,7 @@ public class OrderTest {
 
         Assert.assertEquals(3, order.getOrderItems().size());
 
-        order = orderService.removeOrderItem(orderId, orderItem);
+        order = orderService.removeOrderItem(orderId, orderItem.getId());
 
         Assert.assertEquals(2, order.getOrderItems().size());
     }
