@@ -59,8 +59,8 @@ public class OfferController {
         return new ResponseEntity<>(offerService.changeAvailability(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/tags", method = RequestMethod.GET)
-    public ResponseEntity<List<Offer>> findOffersByTags(@RequestBody List<Tag> tags) {
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<List<Offer>> findOffersByTags(@RequestParam(value = "tags") List<String> tags) {
         return new ResponseEntity<>(offerService.findOffersByTags(tags), HttpStatus.OK);
     }
 

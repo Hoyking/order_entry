@@ -5,19 +5,23 @@ import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OfferService {
 
     private OfferDAO offerDAO;
+    private ApplicationContext context;
 
     @Autowired
-    public OfferService(OfferDAO offerDAO) {
+    public OfferService(OfferDAO offerDAO, ApplicationContext context) {
         this.offerDAO = offerDAO;
+        this.context = context;
     }
 
     @Transactional
@@ -56,8 +60,9 @@ public class OfferService {
     }
 
     @Transactional(readOnly = true)
-    public List<Offer> findOffersByTags(List<Tag> tags) {
-        return offerDAO.findOffersByTags(tags);
+    public List<Offer> findOffersByTags(List<String> tags) {
+        List<Tag> tagList = tags.stream().map(this::createTag).collect(Collectors.toList());
+        return offerDAO.findOffersByTags(tagList);
     }
 
     @Transactional(readOnly = true)
@@ -83,6 +88,12 @@ public class OfferService {
     @Transactional
     public Offer removeTagFromOffer(long id, Tag tag) {
         return offerDAO.removeTagFromOffer(id, tag);
+    }
+
+    private Tag createTag(String tagName) {
+        Tag tag = context.getBean(Tag.class);
+        tag.setName(tagName);
+        return tag;
     }
 
 }
