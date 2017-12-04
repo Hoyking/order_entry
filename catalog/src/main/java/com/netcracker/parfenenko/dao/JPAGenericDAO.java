@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
-    
+
     protected Transactions transactions;
     private Class persistenceClass;
 
