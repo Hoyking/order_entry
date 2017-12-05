@@ -1,14 +1,9 @@
 package com.netcracker.parfenenko.entities;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Component
-@Scope(value = "prototype")
 public class Tag extends NamedEntity {
 
     public Tag() {}

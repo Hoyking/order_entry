@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "`Order`")
+@Table(name = "inventory_order")
 public class Order extends NamedEntity {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

@@ -1,5 +1,6 @@
 package com.netcracker.parfenenko.client;
 
+import com.netcracker.parfenenko.config.AppConfig;
 import com.netcracker.parfenenko.entity.Offer;
 import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.entity.OrderItem;
@@ -9,6 +10,7 @@ import com.netcracker.parfenenko.exception.UpdateOrderException;
 import com.netcracker.parfenenko.util.Payments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -36,13 +38,11 @@ public class OrderClient {
     private final String FIND_ORDERS_BY_STATUS_URI = "http://localhost:8082/api/v1/orders/status/%s";
     private final String PAY_URI = "http://localhost:8082/api/v1/orders/%s/status";
 
-    private ApplicationContext context;
     private RestTemplate restTemplate;
 
     @Autowired
-    public OrderClient(RestTemplate restTemplate, ApplicationContext context) {
+    public OrderClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.context = context;
     }
 
     public ResponseEntity<List<Offer>> findOffers(List<Long> categories, List<String> tags, double from, double to) {
@@ -133,6 +133,7 @@ public class OrderClient {
     }
 
     private OrderItem convertFromOffer(Offer offer) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
         OrderItem orderItem = context.getBean(OrderItem.class);
         orderItem.setName(offer.getName());
         orderItem.setDescription(offer.getDescription());

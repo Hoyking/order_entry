@@ -141,13 +141,15 @@ public class OfferTest {
 
     @Test
     public void findAllTest() {
+        int currentSize = offerService.findAll().size();
+
         Offer offer = new Offer();
         offer.setName(OFFER_NAME_3);
         offer.setDescription(DESCRIPTION_3);
         offer = offerService.save(offer);
         long testOfferId = offer.getId();
 
-        Assert.assertEquals(2, offerService.findAll().size());
+        Assert.assertEquals(currentSize + 1, offerService.findAll().size());
 
         offerService.delete(testOfferId);
     }
@@ -246,6 +248,8 @@ public class OfferTest {
 
     @Test
     public void findAvailableOffersTest() {
+        int currentSize = offerService.findAvailableOffers().size();
+
         Category category = categoryService.findById(categoryId);
 
         Tag tag1 = new Tag();
@@ -274,9 +278,7 @@ public class OfferTest {
 
         List<Offer> offers = offerService.findAvailableOffers();
 
-        Assert.assertEquals(2, offers.size());
-        Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
-        Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
+        Assert.assertEquals(currentSize + 1, offers.size());
 
         offerService.delete(offer2.getId());
         offerService.delete(offer3.getId());
@@ -295,6 +297,8 @@ public class OfferTest {
 
     @Test
     public void findOffersOfIntervalTest() {
+        int currentSize = offerService.findOffersOfPriceInterval(2, 4).size();
+
         Category category = categoryService.findById(categoryId);
 
         Tag tag1 = new Tag();
@@ -329,9 +333,7 @@ public class OfferTest {
 
         List<Offer> offers = offerService.findOffersOfPriceInterval(2, 4);
 
-        Assert.assertEquals(2, offers.size());
-        Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
-        Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
+        Assert.assertEquals(currentSize + 1, offers.size());
 
         offerService.delete(offer2.getId());
         offerService.delete(offer3.getId());

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class OrderService {
 
     private OrderDAO orderDAO;
@@ -21,52 +22,46 @@ public class OrderService {
         this.orderDAO = orderDAO;
     }
 
-    @Transactional
     public Order save(Order order) {
         return orderDAO.save(order);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Order findById(long id) {
         return orderDAO.findById(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Order findByName(String name) {
         return orderDAO.findByName(name);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Order> findAll() {
         return orderDAO.findAll();
     }
 
-    @Transactional
     public Order update(Order order) {
         return orderDAO.update(order);
     }
 
-    @Transactional
     public void delete(long id) {
         orderDAO.delete(id);
     }
 
-    @Transactional
     public Order addOrderItem(long orderId, OrderItem orderItem) {
         return orderDAO.addOrderItem(orderId, orderItem);
     }
 
-    @Transactional
     public Order removeOrderItem(long orderId, long orderItemId) {
         return orderDAO.removeOrderItem(orderId, orderItemId);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Order> findOrdersByPaymentStatus(int paymentStatus) throws PaymentStatusException {
         return orderDAO.findOrdersByPaymentStatus(paymentStatus);
     }
 
-    @Transactional
     public Order payForOrder(long id) throws PayForOrderException {
         return orderDAO.payForOrder(id);
     }

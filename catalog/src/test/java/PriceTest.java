@@ -59,13 +59,15 @@ public class PriceTest {
 
     @Test
     public void findAllTest() {
+        int currentSize = priceService.findAll().size();
+
         Price price = new Price();
         price.setValue(PRICE_2);
 
         price = priceService.save(price);
         long testPriceId = price.getId();
 
-        Assert.assertEquals(2, priceService.findAll().size());
+        Assert.assertEquals(currentSize + 1, priceService.findAll().size());
 
         priceService.delete(testPriceId);
     }

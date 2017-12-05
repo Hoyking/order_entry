@@ -22,11 +22,11 @@ public class JPATagDAO extends JPANamedEntityDAO<Tag, Long> implements TagDAO {
     }
 
     @Override
-    public List<Offer> findTagOffers(long id) {
-        return (List<Offer>) transactions.startGenericTransaction(entityManager ->
+    public List<Offer> findTagOffers(String name) {
+        return (List<Offer>) persistenceMethodsProvider.functionalMethod(entityManager ->
             (List<Offer>) entityManager
                     .createQuery(query)
-                    .setParameter(1, findById(id).getName())
+                    .setParameter(1, name)
                     .getResultList()
         );
     }

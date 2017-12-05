@@ -81,13 +81,15 @@ public class CategoryTest {
 
     @Test
     public void findAllTest() {
+        int currentSize = categoryService.findAll().size();
+
         Category category = new Category();
         category.setName(NAME_2);
 
         category = categoryService.save(category);
         long testCategoryId = category.getId();
 
-        Assert.assertEquals(2, categoryService.findAll().size());
+        Assert.assertEquals(currentSize + 1, categoryService.findAll().size());
 
         categoryService.delete(testCategoryId);
     }
