@@ -13,16 +13,28 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements OrderDAO {
 
     private final String REMOVE_ORDER_ITEM = "DELETE FROM inventory_order_order_items WHERE order_items_id = ?" +
             " AND order_id = ?";
+    private final String FIND_ORDER_ITEMS = "SELECT e.orderItems FROM " + Order.class.getName() + " e WHERE e.id = ?1";
 
     public JPAOrderDAO() {
         super.setPersistenceClass(Order.class);
+    }
+
+    @Override
+    public Set<OrderItem> findOrderItems(long orderId) {
+        return (Set<OrderItem>) persistenceMethodsProvider.functionalMethod(entityManager ->
+            new HashSet<OrderItem>(entityManager
+                    .createQuery(FIND_ORDER_ITEMS)
+                    .setParameter(1, orderId)
+                    .getResultList()));
     }
 
     @Override

@@ -10,7 +10,7 @@ import java.util.Set;
 @Table(name = "inventory_order")
 public class Order extends NamedEntity {
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<OrderItem> orderItems;
     private String description;
     private double totalPrice;

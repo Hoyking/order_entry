@@ -101,7 +101,7 @@ public class OrderTest {
         Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
         Assert.assertEquals(DATE, loadedOrder.getOrderDate());
         Assert.assertEquals(SIGN, loadedOrder.getPaymentSign());
-        Assert.assertEquals(2, loadedOrder.getOrderItems().size());
+        Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
 
         orderService.delete(loadedOrder.getId());
     }
@@ -117,7 +117,7 @@ public class OrderTest {
         Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
         Assert.assertEquals(DATE, loadedOrder.getOrderDate());
         Assert.assertEquals(SIGN, loadedOrder.getPaymentSign());
-        Assert.assertEquals(2, loadedOrder.getOrderItems().size());
+        Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
     }
 
     @Test
@@ -131,7 +131,7 @@ public class OrderTest {
         Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
         Assert.assertEquals(DATE, loadedOrder.getOrderDate());
         Assert.assertEquals(SIGN, loadedOrder.getPaymentSign());
-        Assert.assertEquals(2, loadedOrder.getOrderItems().size());
+        Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
     }
 
     @Test
@@ -170,7 +170,7 @@ public class OrderTest {
         Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
         Assert.assertEquals(DATE, loadedOrder.getOrderDate());
         Assert.assertEquals(SIGN, loadedOrder.getPaymentSign());
-        Assert.assertEquals(2, loadedOrder.getOrderItems().size());
+        Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
     }
 
     @Test
@@ -222,7 +222,7 @@ public class OrderTest {
 
         order = orderService.removeOrderItem(orderId, order.getOrderItems().iterator().next().getId());
 
-        Assert.assertEquals(2, order.getOrderItems().size());
+        Assert.assertEquals(2, orderService.findOrderItems(order.getId()).size());
     }
 
     @Test
