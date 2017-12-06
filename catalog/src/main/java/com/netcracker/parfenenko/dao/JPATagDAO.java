@@ -9,8 +9,6 @@ import java.util.List;
 @Repository
 public class JPATagDAO extends JPANamedEntityDAO<Tag, Long> implements TagDAO {
 
-    private final String query = "SELECT e FROM Offer e JOIN Tag c ON c.name = ?1 AND c MEMBER OF e.tags";
-
     public JPATagDAO() {
         super.setPersistenceClass(Tag.class);
     }
@@ -25,7 +23,7 @@ public class JPATagDAO extends JPANamedEntityDAO<Tag, Long> implements TagDAO {
     public List<Offer> findTagOffers(String name) {
         return (List<Offer>) persistenceMethodsProvider.functionalMethod(entityManager ->
             (List<Offer>) entityManager
-                    .createQuery(query)
+                    .createNamedQuery("findOffersByTag")
                     .setParameter(1, name)
                     .getResultList()
         );

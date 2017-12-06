@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "/api/v1/offers")
@@ -50,8 +51,12 @@ public class OfferController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Offer> deleteOffer(@PathVariable long id) {
         offerService.delete(id);
-        Offer offer = null;
-        return new ResponseEntity<>(offer, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/{id}/tags", method = RequestMethod.GET)
+    public ResponseEntity<Set<Tag>> findTagsOfOffer(@PathVariable long id) {
+        return new ResponseEntity<>(offerService.findTags(id), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/availability", method = RequestMethod.PUT)

@@ -20,19 +20,15 @@ import java.util.Set;
 @Repository
 public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements OrderDAO {
 
-    private final String REMOVE_ORDER_ITEM = "DELETE FROM inventory_order_order_items WHERE order_items_id = ?" +
-            " AND order_id = ?";
-    private final String FIND_ORDER_ITEMS = "SELECT e.orderItems FROM " + Order.class.getName() + " e WHERE e.id = ?1";
-
     public JPAOrderDAO() {
         super.setPersistenceClass(Order.class);
     }
 
     @Override
     public Set<OrderItem> findOrderItems(long orderId) {
-        return (Set<OrderItem>) persistenceMethodsProvider.functionalMethod(entityManager ->
-            new HashSet<OrderItem>(entityManager
-                    .createQuery(FIND_ORDER_ITEMS)
+        return persistenceMethodsProvider.functionalMethod(entityManager ->
+            new HashSet<>(entityManager
+                    .createNamedQuery("findOrderItems")
                     .setParameter(1, orderId)
                     .getResultList()));
     }
@@ -47,13 +43,8 @@ public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements Order
 
     @Override
     public Order removeOrderItem(long orderId, long orderItemId) {
-        persistenceMethodsProvider.consumerMethod(entityManager -> {
-            entityManager.createNativeQuery(REMOVE_ORDER_ITEM)
-                    .setParameter(1, orderItemId)
-                    .setParameter(2, orderId)
-                    .executeUpdate();
-        });
-        return findById(orderId);
+        return persistenceMethodsProvider.functionalMethod(entityManager ->
+                removeOrderItemQuery(entityManager, orderId, orderItemId));
     }
 
     @Override
@@ -62,7 +53,7 @@ public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements Order
             throw new PaymentStatusException();
         }
         return persistenceMethodsProvider
-                .functionalMethod(entityManager -> ordersWithPaymentStatus(entityManager, paymentStatus));
+                .functionalMethod(entityManager -> ordersWithPaymentStatusCriteriaQuery(entityManager, paymentStatus));
     }
 
     @Override
@@ -81,16 +72,26 @@ public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements Order
         return order;
     }
 
-    private List<Order> ordersWithPaymentStatus(EntityManager entityManager, int paymentStatus) {
+    private List<Order> ordersWithPaymentStatusCriteriaQuery(EntityManager entityManager, int paymentStatus) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> query = criteriaBuilder.createQuery(Order.class);
         Root<Order> root = query.from(Order.class);
         ParameterExpression<Integer> parameter = criteriaBuilder.parameter(Integer.class);
         query.select(root).where(criteriaBuilder.equal(root.get("paymentStatus"), parameter));
 
-        TypedQuery<Order>  typedQuery = entityManager.createQuery(query);
+        TypedQuery<Order> typedQuery = entityManager.createQuery(query);
         typedQuery.setParameter(parameter, paymentStatus);
         return typedQuery.getResultList();
+    }
+
+    private Order removeOrderItemQuery(EntityManager entityManager, long orderId, long orderItemId) {
+        Order order = findById(orderId);
+        OrderItem orderItem = entityManager
+                .createNamedQuery("findOrderItem", OrderItem.class)
+                .setParameter(1, orderItemId)
+                .getSingleResult();
+        order.getOrderItems().remove(orderItem);
+        return update(order);
     }
 
 }

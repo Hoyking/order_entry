@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,6 +51,11 @@ public class OfferService {
 
     public void delete(long id) {
         offerDAO.delete(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Set<Tag> findTags(long offerId) {
+        return offerDAO.findTags(offerId);
     }
 
     public Offer changeAvailability(long id) {

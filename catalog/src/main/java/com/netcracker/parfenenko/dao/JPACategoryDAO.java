@@ -16,8 +16,6 @@ import java.util.List;
 public class JPACategoryDAO extends JPANamedEntityDAO<Category, Long> implements CategoryDAO {
 
     private final String ADD_OFFER_TO_CATEGORY = "UPDATE Offer SET category_id = ?1 WHERE id = ?2";
-    private final String REMOVE_OFFER_FROM_CATEGORY = "UPDATE " + Offer.class.getName() + " offer SET offer.category = NULL " +
-            "WHERE offer.category.id = ?1 AND offer.id = ?2";
 
     public JPACategoryDAO() {
         super.setPersistenceClass(Category.class);
@@ -43,7 +41,7 @@ public class JPACategoryDAO extends JPANamedEntityDAO<Category, Long> implements
     public Category removeOffer(long categoryId, long offerId) {
         persistenceMethodsProvider.consumerMethod(entityManager ->
                 entityManager
-                        .createQuery(REMOVE_OFFER_FROM_CATEGORY)
+                        .createNamedQuery("removeOfferFromCategory")
                         .setParameter(1, categoryId)
                         .setParameter(2, offerId)
                         .executeUpdate());

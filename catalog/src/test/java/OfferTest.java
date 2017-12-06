@@ -110,7 +110,7 @@ public class OfferTest {
         Assert.assertEquals(DESCRIPTION_3, loadedOffer.getDescription());
         Assert.assertEquals(category.getName(), loadedOffer.getCategory().getName());
         Assert.assertEquals(price.getValue(), loadedOffer.getPrice().getValue(), 0);
-        Assert.assertEquals(2, loadedOffer.getTags().size());
+        Assert.assertEquals(2, offerService.findTags(loadedOffer.getId()).size());
 
         offerService.delete(loadedOffer.getId());
     }
@@ -124,7 +124,7 @@ public class OfferTest {
         Assert.assertEquals(DESCRIPTION_1, loadedOffer.getDescription());
         Assert.assertEquals(CATEGORY_NAME_1, loadedOffer.getCategory().getName());
         Assert.assertEquals(PRICE_VALUE_1, loadedOffer.getPrice().getValue(), 0);
-        Assert.assertEquals(2, loadedOffer.getTags().size());
+        Assert.assertEquals(2, offerService.findTags(loadedOffer.getId()).size());
     }
 
     @Test
@@ -136,7 +136,7 @@ public class OfferTest {
         Assert.assertEquals(DESCRIPTION_1, loadedOffer.getDescription());
         Assert.assertEquals(CATEGORY_NAME_1, loadedOffer.getCategory().getName());
         Assert.assertEquals(PRICE_VALUE_1, loadedOffer.getPrice().getValue(), 0);
-        Assert.assertEquals(2, loadedOffer.getTags().size());
+        Assert.assertEquals(2, offerService.findTags(loadedOffer.getId()).size());
     }
 
     @Test
@@ -168,7 +168,7 @@ public class OfferTest {
         Assert.assertEquals(DESCRIPTION_2, loadedOffer.getDescription());
         Assert.assertEquals(CATEGORY_NAME_1, loadedOffer.getCategory().getName());
         Assert.assertEquals(PRICE_VALUE_1, loadedOffer.getPrice().getValue(), 0);
-        Assert.assertEquals(2, loadedOffer.getTags().size());
+        Assert.assertEquals(2, offerService.findTags(loadedOffer.getId()).size());
     }
 
     @Test
@@ -358,11 +358,11 @@ public class OfferTest {
 
         Offer loadedOffer = offerService.findById(offer.getId());
 
-        Assert.assertEquals(1, loadedOffer.getTags().size());
+        Assert.assertEquals(1, offerService.findTags(loadedOffer.getId()).size());
 
         loadedOffer = offerService.addTagToOffer(loadedOffer.getId(), tag2);
 
-        Assert.assertEquals(2, loadedOffer.getTags().size());
+        Assert.assertEquals(2, offerService.findTags(loadedOffer.getId()).size());
 
         offerService.delete(loadedOffer.getId());
     }
@@ -386,11 +386,11 @@ public class OfferTest {
 
         Offer loadedOffer = offerService.findById(offer.getId());
 
-        Assert.assertEquals(2, loadedOffer.getTags().size());
+        Assert.assertEquals(2, offerService.findTags(loadedOffer.getId()).size());
 
         loadedOffer = offerService.removeTagFromOffer(loadedOffer.getId(), tag2);
 
-        Assert.assertEquals(1, loadedOffer.getTags().size());
+        Assert.assertEquals(1, offerService.findTags(loadedOffer.getId()).size());
 
         offerService.delete(loadedOffer.getId());
     }

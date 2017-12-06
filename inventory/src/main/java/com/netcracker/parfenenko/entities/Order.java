@@ -8,9 +8,17 @@ import java.util.Set;
 
 @Entity
 @Table(name = "inventory_order")
+@NamedQueries({
+        @NamedQuery(name = "findOrderItems",
+                query = "SELECT e.orderItems FROM com.netcracker.parfenenko.entities.Order e WHERE e.id = ?1"
+        ),
+        @NamedQuery(name = "findOrderItem",
+                query = "SELECT e FROM OrderItem e WHERE e.id = ?1"
+        )
+})
 public class Order extends NamedEntity {
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderItem> orderItems;
     private String description;
     private double totalPrice;
