@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class CategoryService {
 
     private CategoryDAO categoryDAO;
@@ -19,7 +20,6 @@ public class CategoryService {
         this.categoryDAO = categoryDAO;
     }
 
-    @Transactional
     public Category save(Category category) {
         return categoryDAO.save(category);
     }
@@ -39,12 +39,10 @@ public class CategoryService {
         return categoryDAO.findAll();
     }
 
-    @Transactional
     public Category update(Category category) {
         return categoryDAO.update(category);
     }
 
-    @Transactional
     public void delete(long id) {
         categoryDAO.delete(id);
     }
@@ -54,12 +52,10 @@ public class CategoryService {
         return categoryDAO.findCategoryOffers(id);
     }
 
-    @Transactional
     public Category addOffer(long categoryId, long offerId) {
         return categoryDAO.addOffer(categoryId, offerId);
     }
 
-    @Transactional
     public Category removeOffer(long categoryId, long offerId) {
         return categoryDAO.removeOffer(categoryId, offerId);
     }

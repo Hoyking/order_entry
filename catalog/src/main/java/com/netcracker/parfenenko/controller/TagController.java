@@ -53,9 +53,9 @@ public class TagController {
         return new ResponseEntity<>(tag, HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/{id}/offers", method = RequestMethod.GET)
-    public ResponseEntity<List<Offer>> findTagOffers(@PathVariable long id) {
-        return new ResponseEntity<>(tagService.findTagOffers(id), HttpStatus.OK);
+    @RequestMapping(value = "/name/{name}/offers", method = RequestMethod.GET)
+    public ResponseEntity<List<Offer>> findTagOffers(@PathVariable String name) {
+        return new ResponseEntity<>(tagService.findTagOffers(name), HttpStatus.OK);
     }
 
 }

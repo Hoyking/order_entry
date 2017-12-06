@@ -83,13 +83,15 @@ public class TagTest {
 
     @Test
     public void findAllTest() {
+        int currentSize = tagService.findAll().size();
+
         Tag tag = new Tag();
         tag.setName(NAME_2);
 
         tag = tagService.save(tag);
         long testTagId = tag.getId();
 
-        Assert.assertEquals(2, tagService.findAll().size());
+        Assert.assertEquals(currentSize + 1, tagService.findAll().size());
 
         tagService.delete(testTagId);
     }
@@ -142,7 +144,7 @@ public class TagTest {
         offer3.setTags(new HashSet<>(Collections.singletonList(tag2)));
         offer3 = offerService.save(offer3);
 
-        List<Offer> offers = tagService.findTagOffers(tag1.getId());
+        List<Offer> offers = tagService.findTagOffers(tag1.getName());
 
         Assert.assertEquals(2, offers.size());
         Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());

@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -103,7 +101,7 @@ public class OrderTest {
         Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
         Assert.assertEquals(DATE, loadedOrder.getOrderDate());
         Assert.assertEquals(SIGN, loadedOrder.getPaymentSign());
-        Assert.assertEquals(2, loadedOrder.getOrderItems().size());
+        Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
 
         orderService.delete(loadedOrder.getId());
     }
@@ -119,7 +117,7 @@ public class OrderTest {
         Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
         Assert.assertEquals(DATE, loadedOrder.getOrderDate());
         Assert.assertEquals(SIGN, loadedOrder.getPaymentSign());
-        Assert.assertEquals(2, loadedOrder.getOrderItems().size());
+        Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
     }
 
     @Test
@@ -133,11 +131,13 @@ public class OrderTest {
         Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
         Assert.assertEquals(DATE, loadedOrder.getOrderDate());
         Assert.assertEquals(SIGN, loadedOrder.getPaymentSign());
-        Assert.assertEquals(2, loadedOrder.getOrderItems().size());
+        Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
     }
 
     @Test
     public void findAllTest() {
+        int currentSize = orderService.findAll().size();
+
         Order order = new Order();
         order.setName(NAME_2);
         order.setDescription(DESCRIPTION_2);
@@ -148,7 +148,7 @@ public class OrderTest {
         order = orderService.save(order);
         long testOrderId = order.getId();
 
-        Assert.assertEquals(2, orderService.findAll().size());
+        Assert.assertEquals(currentSize + 1, orderService.findAll().size());
 
         orderService.delete(testOrderId);
     }
@@ -170,7 +170,7 @@ public class OrderTest {
         Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
         Assert.assertEquals(DATE, loadedOrder.getOrderDate());
         Assert.assertEquals(SIGN, loadedOrder.getPaymentSign());
-        Assert.assertEquals(2, loadedOrder.getOrderItems().size());
+        Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
     }
 
     @Test
@@ -220,13 +220,22 @@ public class OrderTest {
 
         Assert.assertEquals(3, order.getOrderItems().size());
 
-        order = orderService.removeOrderItem(orderId, orderItem.getId());
+        order = orderService.removeOrderItem(orderId, order.getOrderItems().iterator().next().getId());
 
         Assert.assertEquals(2, order.getOrderItems().size());
     }
 
     @Test
     public void findOrdersByPaymentStatusTest() {
+        int currentPaidOrders = 0;
+        int currentUnpaidOrders = 0;
+        try {
+            currentPaidOrders = orderService.findOrdersByPaymentStatus(Payments.PAID.value()).size();
+            currentUnpaidOrders = orderService.findOrdersByPaymentStatus(Payments.UNPAID.value()).size();
+        } catch (PaymentStatusException e) {
+            e.printStackTrace();
+        }
+
         OrderItem orderItem1 = new OrderItem();
         orderItem1.setName(ORDER_ITEM_NAME_1);
         orderItem1.setDescription(ORDER_ITEM_DESCRIPTION_1);
@@ -274,11 +283,8 @@ public class OrderTest {
             e.printStackTrace();
         }
 
-        Assert.assertEquals(1, paidOrders.size());
-        Assert.assertEquals(2, unpaidOrders.size());
-        /*Assert.assertEquals(NAME_3, paidOrders.get(0).getName());
-        Assert.assertEquals(NAME_1, unpaidOrders.get(0).getName());
-        Assert.assertEquals(NAME_2, unpaidOrders.get(1).getName());*/
+        Assert.assertEquals(currentPaidOrders + 1, paidOrders.size());
+        Assert.assertEquals(currentUnpaidOrders + 1, unpaidOrders.size());
 
         orderService.delete(order1.getId());
         orderService.delete(order2.getId());

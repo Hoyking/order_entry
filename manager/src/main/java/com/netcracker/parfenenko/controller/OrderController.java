@@ -13,12 +13,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1")
-public class Controller {
+public class OrderController {
 
     private OrderClient orderClient;
 
     @Autowired
-    public Controller(OrderClient orderClient) {
+    public OrderController(OrderClient orderClient) {
         this.orderClient = orderClient;
     }
 

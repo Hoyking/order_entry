@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "/api/v1/orders")
@@ -53,6 +54,11 @@ public class OrderController {
         Order order = null;
         orderService.delete(id);
         return new ResponseEntity<>(order, HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/{id}/orderItems", method = RequestMethod.GET)
+    public ResponseEntity<Set<OrderItem>> findOrderItemsOfOrder(@PathVariable long orderId) {
+        return new ResponseEntity<>(orderService.findOrderItems(orderId), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/orderItem", method = RequestMethod.POST)
