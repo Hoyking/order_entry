@@ -5,13 +5,17 @@ import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
 import com.netcracker.parfenenko.exception.PayForOrderException;
 import com.netcracker.parfenenko.exception.PaymentStatusException;
+import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Set;
 
 @Service
+@Transactional
 public class OrderService {
 
     private OrderDAO orderDAO;
@@ -21,53 +25,53 @@ public class OrderService {
         this.orderDAO = orderDAO;
     }
 
-    @Transactional
-    public Order save(Order order) {
+    public Order save(Order order) throws PersistenceMethodException {
         return orderDAO.save(order);
     }
 
-    @Transactional
-    public Order findById(long id) {
+    @Transactional(readOnly = true)
+    public Order findById(long id) throws PersistenceMethodException, EntityNotFoundException {
         return orderDAO.findById(id);
     }
 
-    @Transactional
-    public Order findByName(String name) {
+    @Transactional(readOnly = true)
+    public Order findByName(String name) throws PersistenceMethodException, EntityNotFoundException {
         return orderDAO.findByName(name);
     }
 
-    @Transactional
-    public List<Order> findAll() {
+    @Transactional(readOnly = true)
+    public List<Order> findAll() throws PersistenceMethodException, EntityNotFoundException {
         return orderDAO.findAll();
     }
 
-    @Transactional
-    public Order update(Order order) {
+    public Order update(Order order) throws PersistenceMethodException, EntityNotFoundException {
         return orderDAO.update(order);
     }
 
-    @Transactional
-    public void delete(long id) {
+    public void delete(long id) throws PersistenceMethodException, EntityNotFoundException {
         orderDAO.delete(id);
     }
 
-    @Transactional
-    public Order addOrderItem(long orderId, OrderItem orderItem) {
+    @Transactional(readOnly = true)
+    public Set<OrderItem> findOrderItems(long orderId) throws PersistenceMethodException, EntityNotFoundException {
+        return orderDAO.findOrderItems(orderId);
+    }
+
+    public Order addOrderItem(long orderId, OrderItem orderItem) throws PersistenceMethodException, EntityNotFoundException {
         return orderDAO.addOrderItem(orderId, orderItem);
     }
 
-    @Transactional
-    public Order removeOrderItem(long orderId, long orderItemId) {
+    public Order removeOrderItem(long orderId, long orderItemId) throws PersistenceMethodException, EntityNotFoundException {
         return orderDAO.removeOrderItem(orderId, orderItemId);
     }
 
-    @Transactional
-    public List<Order> findOrdersByPaymentStatus(int paymentStatus) throws PaymentStatusException {
+    @Transactional(readOnly = true)
+    public List<Order> findOrdersByPaymentStatus(int paymentStatus) throws PaymentStatusException, PersistenceMethodException,
+            EntityNotFoundException {
         return orderDAO.findOrdersByPaymentStatus(paymentStatus);
     }
 
-    @Transactional
-    public Order payForOrder(long id) throws PayForOrderException {
+    public Order payForOrder(long id) throws PayForOrderException, PersistenceMethodException, EntityNotFoundException {
         return orderDAO.payForOrder(id);
     }
 

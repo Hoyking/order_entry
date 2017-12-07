@@ -2,12 +2,17 @@ package com.netcracker.parfenenko.controller;
 
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
+import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import com.netcracker.parfenenko.service.CategoryService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @RestController
@@ -22,50 +27,166 @@ public class CategoryController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
+    @ApiOperation(httpMethod = "POST",
+            value = "Saving a new category",
+            response = Category.class,
+            code = 201)
+    @ApiResponses({
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
+    })
     public ResponseEntity<Category> saveCategory(@RequestBody Category category) {
-        return new ResponseEntity<>(categoryService.save(category), HttpStatus.CREATED);
+        try {
+            return new ResponseEntity<>(categoryService.save(category), HttpStatus.CREATED);
+        } catch (PersistenceMethodException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ApiOperation(httpMethod = "GET",
+            value = "Searching for a category by id",
+            response = Category.class)
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "There is now category with such id"),
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
+    })
     public ResponseEntity<Category> findCategoryById(@PathVariable long id) {
-        return new ResponseEntity<>(categoryService.findById(id), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(categoryService.findById(id), HttpStatus.OK);
+        } catch (PersistenceMethodException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
     @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
+    @ApiOperation(httpMethod = "GET",
+            value = "Searching for a category by name",
+            response = Category.class)
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "There is now category with such name"),
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
+    })
     public ResponseEntity<Category> findCategoryByName(@PathVariable String name) {
-        return new ResponseEntity<>(categoryService.findByName(name), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(categoryService.findByName(name), HttpStatus.OK);
+        } catch (PersistenceMethodException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
     @RequestMapping(method = RequestMethod.GET)
+    @ApiOperation(httpMethod = "GET",
+            value = "Searching for all categories",
+            response = Category.class,
+            responseContainer = "List")
+    @ApiResponses({
+            @ApiResponse(code = 500, message = "Oops, something went wrong"),
+            @ApiResponse(code = 204, message = "There are no existing categories")
+    })
     public ResponseEntity<List<Category>> findAllCategories() {
-        return new ResponseEntity<>(categoryService.findAll(), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(categoryService.findAll(), HttpStatus.OK);
+        } catch (PersistenceMethodException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
     @RequestMapping(method = RequestMethod.PUT)
+    @ApiOperation(httpMethod = "PUT",
+            value = "Updating an existing category",
+            response = Category.class)
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "Category doesn't exist"),
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
+    })
     public ResponseEntity<Category> updateCategory(@RequestBody Category category) {
-        return new ResponseEntity<>(categoryService.update(category), HttpStatus.OK) ;
+        try {
+            return new ResponseEntity<>(categoryService.update(category), HttpStatus.OK) ;
+        } catch (PersistenceMethodException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ApiOperation(httpMethod = "DELETE",
+            value = "Deleting an existing category")
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "Category doesn't exist"),
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
+    })
     public ResponseEntity<Category> deleteCategory(@PathVariable long id) {
-        categoryService.delete(id);
-        Category category = null;
-        return new ResponseEntity<>(category, HttpStatus.NO_CONTENT);
+        try {
+            categoryService.delete(id);
+        } catch (PersistenceMethodException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @RequestMapping(value = "/{id}/offers", method = RequestMethod.GET)
+    @ApiOperation(httpMethod = "GET",
+            value = "Searching for offers of a category",
+            response = Offer.class,
+            responseContainer = "List")
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "Category not found"),
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
+    })
     public ResponseEntity<List<Offer>> findCategoryOffers(@PathVariable long id) {
-        return new ResponseEntity<>(categoryService.findCategoryOffers(id), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(categoryService.findCategoryOffers(id), HttpStatus.OK);
+        } catch (PersistenceMethodException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @RequestMapping(value = "/{id}/offer", method = RequestMethod.PUT)
-    public ResponseEntity<Category> addOfferToCategory(@PathVariable long categoryId, @RequestBody long offerId) {
-        return new ResponseEntity<>(categoryService.addOffer(categoryId, offerId), HttpStatus.OK);
+    @ApiOperation(httpMethod = "PUT",
+            value = "Adding an offer to the category",
+            response = Category.class)
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "Either Category or offer not found"),
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
+    })
+    public ResponseEntity<Category> addOfferToCategory(@PathVariable(name = "id") long categoryId, @RequestBody long offerId) {
+        try {
+            return new ResponseEntity<>(categoryService.addOffer(categoryId, offerId), HttpStatus.OK);
+        } catch (PersistenceMethodException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @RequestMapping(value = "/{id}/offer", method = RequestMethod.DELETE)
-    public ResponseEntity<Category> removeOfferFromCategory(@PathVariable long categoryId, @RequestBody long offerId) {
-        return new ResponseEntity<>(categoryService.removeOffer(categoryId, offerId), HttpStatus.OK);
+    @ApiOperation(httpMethod = "DELETE",
+            value = "Deleting an offer from the category",
+            response = Category.class)
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "Either category or offer not found"),
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
+    })
+    public ResponseEntity<Category> removeOfferFromCategory(@PathVariable(name = "id") long categoryId,
+                                                            @RequestBody long offerId) {
+        try {
+            return new ResponseEntity<>(categoryService.removeOffer(categoryId, offerId), HttpStatus.OK);
+        } catch (PersistenceMethodException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
 }

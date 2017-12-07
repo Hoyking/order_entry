@@ -1,17 +1,11 @@
 package com.netcracker.parfenenko.entity;
 
 import lombok.Data;
-import lombok.ToString;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
 
-@Component
-@Scope(value = "prototype")
 @Data
-@ToString
 public class OrderItem extends NamedEntity {
 
     private double price;

@@ -3,13 +3,16 @@ package com.netcracker.parfenenko.service;
 import com.netcracker.parfenenko.dao.TagDAO;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.entities.Offer;
+import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
+@Transactional
 public class TagService {
 
     private TagDAO tagDAO;
@@ -19,39 +22,36 @@ public class TagService {
         this.tagDAO = tagDAO;
     }
 
-    @Transactional
-    public Tag save(Tag tag) {
+    public Tag save(Tag tag) throws PersistenceMethodException {
         return tagDAO.save(tag);
     }
 
     @Transactional(readOnly = true)
-    public Tag findById(long id) {
+    public Tag findById(long id) throws PersistenceMethodException, EntityNotFoundException {
         return tagDAO.findById(id);
     }
 
     @Transactional(readOnly = true)
-    public Tag findByName(String name) {
+    public Tag findByName(String name) throws PersistenceMethodException, EntityNotFoundException {
         return tagDAO.findByName(name);
     }
 
     @Transactional(readOnly = true)
-    public List<Tag> findAll() {
+    public List<Tag> findAll() throws PersistenceMethodException, EntityNotFoundException {
         return tagDAO.findAll();
     }
 
-    @Transactional
-    public Tag update(Tag tag) {
+    public Tag update(Tag tag) throws PersistenceMethodException, EntityNotFoundException {
         return tagDAO.update(tag);
     }
 
-    @Transactional
-    public void delete(long id) {
+    public void delete(long id) throws PersistenceMethodException, EntityNotFoundException {
         tagDAO.delete(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Offer> findTagOffers(long id) {
-        return tagDAO.findTagOffers(id);
+    public List<Offer> findTagOffers(String name) throws PersistenceMethodException, EntityNotFoundException {
+        return tagDAO.findTagOffers(name);
     }
     
 }

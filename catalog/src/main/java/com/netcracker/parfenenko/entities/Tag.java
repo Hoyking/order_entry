@@ -1,14 +1,16 @@
 package com.netcracker.parfenenko.entities;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import java.util.Objects;
 
 @Entity
-@Component
-@Scope(value = "prototype")
+@NamedQueries(
+        @NamedQuery(name = "findOffersByTag",
+                query = "SELECT e FROM Offer e JOIN Tag c ON c.name = ?1 AND c MEMBER OF e.tags"
+        )
+)
 public class Tag extends NamedEntity {
 
     public Tag() {}
