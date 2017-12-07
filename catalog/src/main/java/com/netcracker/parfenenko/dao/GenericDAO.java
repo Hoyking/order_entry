@@ -15,6 +15,6 @@ public interface GenericDAO<T, ID> {
 
     T update(T entity) throws PersistenceMethodException, EntityNotFoundException;
 
-    void delete(ID id) throws PersistenceMethodException;
+    void delete(ID id) throws PersistenceMethodException, EntityNotFoundException;
 
 }

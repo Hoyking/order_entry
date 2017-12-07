@@ -47,7 +47,7 @@ public class OfferController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(httpMethod = "GET",
             value = "Searching for an offer by id",
-            response = Tag.class)
+            response = Offer.class)
     @ApiResponses({
             @ApiResponse(code = 204, message = "There is no offer with such id"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
@@ -65,7 +65,7 @@ public class OfferController {
     @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
     @ApiOperation(httpMethod = "GET",
             value = "Searching for an offer by name",
-            response = Tag.class)
+            response = Offer.class)
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 204, message = "There is no offer with such name")
