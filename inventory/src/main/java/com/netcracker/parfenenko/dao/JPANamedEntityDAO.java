@@ -6,7 +6,7 @@ public abstract class JPANamedEntityDAO<T, ID> extends JPAGenericDAO<T, ID> impl
 
     @Override
     public T findByName(String name) {
-        return (T) transactions.startGenericTransaction(entityManager ->
+        return (T) persistenceMethodsProvider.functionalMethod(entityManager ->
                 (T)entityManager.createQuery("SELECT e FROM " + getPersistenceClass().getName() +
                         " e WHERE e.name = '" + name + "'").getResultList().get(0));
     }

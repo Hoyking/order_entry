@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class PriceService {
 
     private PriceDAO priceDAO;
@@ -18,7 +19,6 @@ public class PriceService {
         this.priceDAO = priceDAO;
     }
 
-    @Transactional
     public Price save(Price price) {
         return priceDAO.save(price);
     }
@@ -33,12 +33,10 @@ public class PriceService {
         return priceDAO.findAll();
     }
 
-    @Transactional
     public Price update(Price price) {
         return priceDAO.update(price);
     }
 
-    @Transactional
     public void delete(long id) {
         priceDAO.delete(id);
     }

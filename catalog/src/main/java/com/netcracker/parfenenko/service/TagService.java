@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class TagService {
 
     private TagDAO tagDAO;
@@ -19,7 +20,6 @@ public class TagService {
         this.tagDAO = tagDAO;
     }
 
-    @Transactional
     public Tag save(Tag tag) {
         return tagDAO.save(tag);
     }
@@ -39,19 +39,17 @@ public class TagService {
         return tagDAO.findAll();
     }
 
-    @Transactional
     public Tag update(Tag tag) {
         return tagDAO.update(tag);
     }
 
-    @Transactional
     public void delete(long id) {
         tagDAO.delete(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Offer> findTagOffers(long id) {
-        return tagDAO.findTagOffers(id);
+    public List<Offer> findTagOffers(String name) {
+        return tagDAO.findTagOffers(name);
     }
     
 }

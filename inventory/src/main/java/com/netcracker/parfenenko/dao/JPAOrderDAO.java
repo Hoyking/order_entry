@@ -7,18 +7,30 @@ import com.netcracker.parfenenko.exception.PaymentStatusException;
 import com.netcracker.parfenenko.util.Payments;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements OrderDAO {
 
     public JPAOrderDAO() {
         super.setPersistenceClass(Order.class);
+    }
+
+    @Override
+    public Set<OrderItem> findOrderItems(long orderId) {
+        return persistenceMethodsProvider.functionalMethod(entityManager ->
+            new HashSet<>(entityManager
+                    .createNamedQuery("findOrderItems")
+                    .setParameter(1, orderId)
+                    .getResultList()));
     }
 
     @Override
@@ -30,10 +42,9 @@ public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements Order
     }
 
     @Override
-    public Order removeOrderItem(long orderId, OrderItem orderItem) {
-        Order order = findById(orderId);
-        order.getOrderItems().remove(orderItem);
-        return update(order);
+    public Order removeOrderItem(long orderId, long orderItemId) {
+        return persistenceMethodsProvider.functionalMethod(entityManager ->
+                removeOrderItemQuery(entityManager, orderId, orderItemId));
     }
 
     @Override
@@ -41,17 +52,8 @@ public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements Order
         if (!Payments.consists(paymentStatus)) {
             throw new PaymentStatusException();
         }
-        return transactions.startGenericTransaction(entityManager -> {
-            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-            CriteriaQuery<Order> query = criteriaBuilder.createQuery(Order.class);
-            Root<Order> root = query.from(Order.class);
-            ParameterExpression<Integer> parameter = criteriaBuilder.parameter(Integer.class);
-            query.select(root).where(criteriaBuilder.equal(root.get("paymentStatus"), parameter));
-
-            TypedQuery<Order>  typedQuery = entityManager.createQuery(query);
-            typedQuery.setParameter(parameter, paymentStatus);
-            return typedQuery.getResultList();
-        });
+        return persistenceMethodsProvider
+                .functionalMethod(entityManager -> ordersWithPaymentStatusCriteriaQuery(entityManager, paymentStatus));
     }
 
     @Override
@@ -68,6 +70,28 @@ public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements Order
             throw new PayForOrderException("Fail to pay for order with id " + id);
         }
         return order;
+    }
+
+    private List<Order> ordersWithPaymentStatusCriteriaQuery(EntityManager entityManager, int paymentStatus) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Order> query = criteriaBuilder.createQuery(Order.class);
+        Root<Order> root = query.from(Order.class);
+        ParameterExpression<Integer> parameter = criteriaBuilder.parameter(Integer.class);
+        query.select(root).where(criteriaBuilder.equal(root.get("paymentStatus"), parameter));
+
+        TypedQuery<Order> typedQuery = entityManager.createQuery(query);
+        typedQuery.setParameter(parameter, paymentStatus);
+        return typedQuery.getResultList();
+    }
+
+    private Order removeOrderItemQuery(EntityManager entityManager, long orderId, long orderItemId) {
+        Order order = findById(orderId);
+        OrderItem orderItem = entityManager
+                .createNamedQuery("findOrderItem", OrderItem.class)
+                .setParameter(1, orderItemId)
+                .getSingleResult();
+        order.getOrderItems().remove(orderItem);
+        return update(order);
     }
 
 }

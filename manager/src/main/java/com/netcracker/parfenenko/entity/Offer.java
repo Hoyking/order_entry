@@ -1,22 +1,15 @@
-package com.netcracker.parfenenko.entities;
+package com.netcracker.parfenenko.entity;
 
-import javax.persistence.*;
+import lombok.Data;
+
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
-@NamedQueries(
-        @NamedQuery(name = "findTags",
-                query = "SELECT e.tags FROM Offer e WHERE e.id = ?1"
-        )
-)
+@Data
 public class Offer extends NamedEntity {
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     private Price price;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     private Category category;
-    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     private Set<Tag> tags;
     private String description;
     private boolean available = true;

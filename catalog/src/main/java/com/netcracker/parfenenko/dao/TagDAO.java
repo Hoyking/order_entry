@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface TagDAO extends NamedEntityDAO<Tag, Long> {
 
-    List<Offer> findTagOffers(long id);
+    List<Offer> findTagOffers(String name);
 
 }

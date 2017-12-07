@@ -1,25 +1,16 @@
-package com.netcracker.parfenenko.entities;
+package com.netcracker.parfenenko.entity;
 
 import com.netcracker.parfenenko.util.Payments;
+import lombok.Data;
+import lombok.ToString;
 
-import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
-@Entity
-@Table(name = "inventory_order")
-@NamedQueries({
-        @NamedQuery(name = "findOrderItems",
-                query = "SELECT e.orderItems FROM com.netcracker.parfenenko.entities.Order e WHERE e.id = ?1"
-        ),
-        @NamedQuery(name = "findOrderItem",
-                query = "SELECT e FROM OrderItem e WHERE e.id = ?1"
-        )
-})
+@Data
 public class Order extends NamedEntity {
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<OrderItem> orderItems;
+    private List<OrderItem> orderItems;
     private String description;
     private double totalPrice;
     private String customerMail;
@@ -29,11 +20,11 @@ public class Order extends NamedEntity {
 
     public Order() {}
 
-    public Set<OrderItem> getOrderItems() {
+    public List<OrderItem> getOrderItems() {
         return orderItems;
     }
 
-    public void setOrderItems(Set<OrderItem> orderItems) {
+    public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
 

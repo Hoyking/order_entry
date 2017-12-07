@@ -8,19 +8,19 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Component
-public class Transactions {
+public class PersistenceMethodsProvider {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Transactions() {}
+    public PersistenceMethodsProvider() {}
 
-    public void startTransaction(Consumer<EntityManager> consumer) {
+    public void consumerMethod(Consumer<EntityManager> consumer) {
         consumer.accept(entityManager);
         entityManager.close();
     }
 
-    public <T> T startGenericTransaction(Function<EntityManager, T> function) {
+    public <T> T functionalMethod(Function<EntityManager, T> function) {
         T result = null;
         result = function.apply(entityManager);
         entityManager.close();

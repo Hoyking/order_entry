@@ -4,6 +4,7 @@ import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -15,8 +16,6 @@ import java.util.List;
 public class JPACategoryDAO extends JPANamedEntityDAO<Category, Long> implements CategoryDAO {
 
     private final String ADD_OFFER_TO_CATEGORY = "UPDATE Offer SET category_id = ?1 WHERE id = ?2";
-    private final String REMOVE_OFFER_FROM_CATEGORY = "UPDATE " + Offer.class.getName() + " offer SET offer.category = NULL " +
-            "WHERE offer.category.id = ?1 AND offer.id = ?2";
 
     public JPACategoryDAO() {
         super.setPersistenceClass(Category.class);
@@ -24,22 +23,12 @@ public class JPACategoryDAO extends JPANamedEntityDAO<Category, Long> implements
 
     @Override
     public List<Offer> findCategoryOffers(long id) {
-        return transactions.startGenericTransaction(entityManager -> {
-                    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-                    CriteriaQuery<Offer> criteriaQuery = criteriaBuilder.createQuery(Offer.class);
-                    Root<Offer> root = criteriaQuery.from(Offer.class);
-                    ParameterExpression<Long> parameter = criteriaBuilder.parameter(Long.class);
-                    criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("category").get("id"), parameter));
-
-                    TypedQuery<Offer> query = entityManager.createQuery(criteriaQuery);
-                    query.setParameter(parameter, id);
-                    return query.getResultList();
-                });
+        return persistenceMethodsProvider.functionalMethod(entityManager -> categoryOffers(entityManager, id));
     }
 
     @Override
     public Category addOffer(long categoryId, long offerId) {
-        transactions.startTransaction(entityManager ->
+        persistenceMethodsProvider.consumerMethod(entityManager ->
                 entityManager
                         .createNativeQuery(ADD_OFFER_TO_CATEGORY)
                         .setParameter(1, categoryId)
@@ -50,13 +39,25 @@ public class JPACategoryDAO extends JPANamedEntityDAO<Category, Long> implements
 
     @Override
     public Category removeOffer(long categoryId, long offerId) {
-        transactions.startTransaction(entityManager ->
+        persistenceMethodsProvider.consumerMethod(entityManager ->
                 entityManager
-                        .createQuery(REMOVE_OFFER_FROM_CATEGORY)
+                        .createNamedQuery("removeOfferFromCategory")
                         .setParameter(1, categoryId)
                         .setParameter(2, offerId)
                         .executeUpdate());
         return findById(categoryId);
+    }
+
+    private List<Offer> categoryOffers(EntityManager entityManager, long categoryId) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Offer> criteriaQuery = criteriaBuilder.createQuery(Offer.class);
+        Root<Offer> root = criteriaQuery.from(Offer.class);
+        ParameterExpression<Long> parameter = criteriaBuilder.parameter(Long.class);
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("category").get("id"), parameter));
+
+        TypedQuery<Offer> query = entityManager.createQuery(criteriaQuery);
+        query.setParameter(parameter, categoryId);
+        return query.getResultList();
     }
 
 }

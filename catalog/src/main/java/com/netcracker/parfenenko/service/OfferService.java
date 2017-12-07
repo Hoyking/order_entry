@@ -1,16 +1,22 @@
 package com.netcracker.parfenenko.service;
 
+import com.netcracker.parfenenko.config.AppConfig;
 import com.netcracker.parfenenko.dao.OfferDAO;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class OfferService {
 
     private OfferDAO offerDAO;
@@ -20,7 +26,6 @@ public class OfferService {
         this.offerDAO = offerDAO;
     }
 
-    @Transactional
     public Offer save(Offer offer) {
         return offerDAO.save(offer);
     }
@@ -40,24 +45,27 @@ public class OfferService {
         return offerDAO.findAll();
     }
 
-    @Transactional
     public Offer update(Offer offer) {
         return offerDAO.update(offer);
     }
 
-    @Transactional
     public void delete(long id) {
         offerDAO.delete(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public Set<Tag> findTags(long offerId) {
+        return offerDAO.findTags(offerId);
+    }
+
     public Offer changeAvailability(long id) {
         return offerDAO.changeAvailability(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Offer> findOffersByTags(List<Tag> tags) {
-        return offerDAO.findOffersByTags(tags);
+    public List<Offer> findOffersByTags(List<String> tags) {
+        List<Tag> tagList = tags.stream().map(this::createTag).collect(Collectors.toList());
+        return offerDAO.findOffersByTags(tagList);
     }
 
     @Transactional(readOnly = true)
@@ -65,7 +73,6 @@ public class OfferService {
         return offerDAO.findAvailableOffers();
     }
 
-    @Transactional
     public Offer addPriceToOffer(long id, Price price) {
         return offerDAO.addPriceToOffer(id, price);
     }
@@ -75,14 +82,19 @@ public class OfferService {
         return offerDAO.findOffersOfPriceInterval(fromPrice, toPrice);
     }
 
-    @Transactional
     public Offer addTagToOffer(long id, Tag tag) {
         return offerDAO.addTagToOffer(id, tag);
     }
 
-    @Transactional
     public Offer removeTagFromOffer(long id, Tag tag) {
         return offerDAO.removeTagFromOffer(id, tag);
+    }
+
+    private Tag createTag(String tagName) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+        Tag tag = context.getBean(Tag.class);
+        tag.setName(tagName);
+        return tag;
     }
 
 }

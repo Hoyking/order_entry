@@ -5,8 +5,11 @@ import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 
 import java.util.List;
+import java.util.Set;
 
 public interface OfferDAO extends NamedEntityDAO<Offer, Long> {
+
+    Set<Tag> findTags(long offerId);
 
     Offer changeAvailability(long id);
 

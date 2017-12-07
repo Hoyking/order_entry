@@ -1,14 +1,13 @@
 package com.netcracker.parfenenko.dao;
 
-import com.netcracker.parfenenko.util.Transactions;
+import com.netcracker.parfenenko.util.PersistenceMethodsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
     
-    @Autowired
-    protected Transactions transactions;
+    protected PersistenceMethodsProvider persistenceMethodsProvider;
     private Class persistenceClass;
 
     protected JPAGenericDAO() {}
@@ -21,9 +20,14 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
         this.persistenceClass = persistenceClass;
     }
 
+    @Autowired
+    private void setPersistenceMethodsProvider(PersistenceMethodsProvider persistenceMethodsProvider) {
+        this.persistenceMethodsProvider = persistenceMethodsProvider;
+    }
+
     @Override
     public T save(T entity) {
-        return (T) transactions.startGenericTransaction(entityManager -> {
+        return (T) persistenceMethodsProvider.functionalMethod(entityManager -> {
                     entityManager.persist(entity);
                     return entity;
         });
@@ -31,20 +35,20 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
 
     @Override
     public T findById(ID id) {
-        return (T) transactions.startGenericTransaction(entityManager ->
+        return (T) persistenceMethodsProvider.functionalMethod(entityManager ->
                 (T)entityManager.find(persistenceClass, id));
     }
 
     @Override
     public List<T> findAll() {
-        return (List<T>) transactions.startGenericTransaction(entityManager ->
+        return (List<T>) persistenceMethodsProvider.functionalMethod(entityManager ->
                 (List<T>)entityManager.createQuery("SELECT e FROM " +
                         persistenceClass.getName() + " e").getResultList());
     }
 
     @Override
     public T update(T entity) {
-        return transactions.startGenericTransaction(entityManager -> {
+        return persistenceMethodsProvider.functionalMethod(entityManager -> {
                     entityManager.merge(entity);
                     return entity;
         });
@@ -52,7 +56,7 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
 
     @Override
     public void delete(ID id) {
-        transactions.startTransaction(entityManager -> {
+        persistenceMethodsProvider.consumerMethod(entityManager -> {
                     T entity = (T)entityManager.find(persistenceClass, id);
                     entityManager.remove(entity);
         });
