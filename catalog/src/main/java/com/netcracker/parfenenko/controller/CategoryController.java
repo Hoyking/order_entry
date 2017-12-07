@@ -49,8 +49,7 @@ public class CategoryController {
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Category> deleteCategory(@PathVariable long id) {
         categoryService.delete(id);
-        Category category = null;
-        return new ResponseEntity<>(category, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @RequestMapping(value = "/{id}/offers", method = RequestMethod.GET)
@@ -59,12 +58,12 @@ public class CategoryController {
     }
 
     @RequestMapping(value = "/{id}/offer", method = RequestMethod.PUT)
-    public ResponseEntity<Category> addOfferToCategory(@PathVariable long categoryId, @RequestBody long offerId) {
+    public ResponseEntity<Category> addOfferToCategory(@PathVariable(name = "id") long categoryId, @RequestBody long offerId) {
         return new ResponseEntity<>(categoryService.addOffer(categoryId, offerId), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/offer", method = RequestMethod.DELETE)
-    public ResponseEntity<Category> removeOfferFromCategory(@PathVariable long categoryId, @RequestBody long offerId) {
+    public ResponseEntity<Category> removeOfferFromCategory(@PathVariable(name = "id") long categoryId, @RequestBody long offerId) {
         return new ResponseEntity<>(categoryService.removeOffer(categoryId, offerId), HttpStatus.OK);
     }
 

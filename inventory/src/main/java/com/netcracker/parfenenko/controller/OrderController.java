@@ -51,14 +51,13 @@ public class OrderController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Order> deleteOrder(@PathVariable long id) {
-        Order order = null;
         orderService.delete(id);
-        return new ResponseEntity<>(order, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @RequestMapping(value = "/{id}/orderItems", method = RequestMethod.GET)
-    public ResponseEntity<Set<OrderItem>> findOrderItemsOfOrder(@PathVariable long orderId) {
-        return new ResponseEntity<>(orderService.findOrderItems(orderId), HttpStatus.OK);
+    public ResponseEntity<Set<OrderItem>> findOrderItemsOfOrder(@PathVariable long id) {
+        return new ResponseEntity<>(orderService.findOrderItems(id), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/orderItem", method = RequestMethod.POST)
@@ -73,13 +72,13 @@ public class OrderController {
 
     @RequestMapping(value = "/status/{status}", method = RequestMethod.GET)
     public ResponseEntity<List<Order>> findOrdersByPaymentStatus(@PathVariable int status) {
-        List<Order> orders = null;
+        List<Order> orders;
         try {
             orders = orderService.findOrdersByPaymentStatus(status);
             return new ResponseEntity<>(orders, HttpStatus.OK);
         } catch (PaymentStatusException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(orders, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -89,8 +88,7 @@ public class OrderController {
             return new ResponseEntity<>(orderService.payForOrder(id), HttpStatus.OK);
         } catch (PayForOrderException e) {
             e.printStackTrace();
-            Order nullOrder = null;
-            return new ResponseEntity<>(nullOrder, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
