@@ -27,12 +27,6 @@ public class PersistenceMethodsProvider {
         } catch (Exception e) {
             e.printStackTrace();
             throw new PersistenceMethodException();
-        } finally {
-            try {
-                entityManager.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -46,12 +40,6 @@ public class PersistenceMethodsProvider {
         } catch (Exception e) {
             e.printStackTrace();
             throw new PersistenceMethodException();
-        } finally {
-            try {
-                entityManager.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
         if (result == null) {
             throw new EntityNotFoundException("Entity doesn't exist");

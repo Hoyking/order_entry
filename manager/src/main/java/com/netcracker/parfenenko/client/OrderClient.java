@@ -2,7 +2,6 @@ package com.netcracker.parfenenko.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.netcracker.parfenenko.config.AppConfig;
 import com.netcracker.parfenenko.entity.Offer;
 import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.entity.OrderItem;
@@ -10,8 +9,6 @@ import com.netcracker.parfenenko.entity.Tag;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
 import com.netcracker.parfenenko.util.Payments;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -147,8 +144,7 @@ public class OrderClient {
     }
 
     private OrderItem convertFromOffer(Offer offer) {
-        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-        OrderItem orderItem = context.getBean(OrderItem.class);
+        OrderItem orderItem = new OrderItem();
         orderItem.setName(offer.getName());
         orderItem.setDescription(offer.getDescription());
         orderItem.setCategory(offer.getCategory().getName());

@@ -155,7 +155,7 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/orders/{id}/status", method = RequestMethod.PUT)
-    @ApiOperation(httpMethod = "GET",
+    @ApiOperation(httpMethod = "PUT",
             value = "Payment for the order",
             response = Order.class)
     @ApiResponses({

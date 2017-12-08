@@ -1,14 +1,11 @@
 package com.netcracker.parfenenko.service;
 
-import com.netcracker.parfenenko.config.AppConfig;
 import com.netcracker.parfenenko.dao.OfferDAO;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,8 +91,7 @@ public class OfferService {
     }
 
     private Tag createTag(String tagName) {
-        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-        Tag tag = context.getBean(Tag.class);
+        Tag tag = new Tag();
         tag.setName(tagName);
         return tag;
     }
