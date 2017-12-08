@@ -103,7 +103,8 @@ public class OrderClient {
         if (offer == null) {
             throw new EntityNotFoundException("Can't find Offer entity with id " + offerId);
         }
-        return postRequest(String.format(uriMap.get("orderItemURI"), orderId), new HttpEntity<>(convertFromOffer(offer)), Order.class);
+        postRequest(String.format(uriMap.get("orderItemURI"), orderId), new HttpEntity<>(convertFromOffer(offer)), Order.class);
+        return payForOrder(orderId);
     }
 
     public ResponseEntity<Order> removeOrderItem(long orderId, long orderItemId) throws UpdateOrderException {
@@ -111,7 +112,8 @@ public class OrderClient {
         if (order.getPaymentStatus() == Payments.PAID.value()) {
             throw new UpdateOrderException("Fail to remove order item from the paid order");
         }
-        return deleteRequest(String.format(uriMap.get("orderItemURI"), orderId), new HttpEntity<>(orderItemId), Order.class);
+        deleteRequest(String.format(uriMap.get("orderItemURI"), orderId), new HttpEntity<>(orderItemId), Order.class);
+        return payForOrder(orderId);
     }
 
     public ResponseEntity<Order[]> findAll() {
