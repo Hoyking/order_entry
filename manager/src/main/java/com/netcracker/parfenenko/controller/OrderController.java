@@ -50,8 +50,9 @@ public class OrderController {
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        return orderClient.createOrder(order);
+    public ResponseEntity<Order> createOrder(@RequestBody Order order,
+            @RequestParam(name = "offers", required = false, defaultValue = "") List<Long> offers) {
+        return orderClient.createOrder(order, offers);
     }
 
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.GET)

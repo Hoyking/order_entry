@@ -82,8 +82,17 @@ public class OrderClient {
         }
     }
 
-    public ResponseEntity<Order> createOrder(Order order) {
-        return postRequest(uriMap.get("baseOrdersURI"), new HttpEntity<>(order), Order.class);
+    public ResponseEntity<Order> createOrder(Order order, List<Long> offers) {
+        order = postRequest(uriMap.get("baseOrdersURI"), new HttpEntity<>(order), Order.class).getBody();
+        final long orderId = order.getId();
+        offers.forEach(id -> {
+            try {
+                addOrderItem(orderId, id);
+            } catch (UpdateOrderException e) {
+                e.printStackTrace();
+            }
+        });
+        return findOrderById(orderId);
     }
 
     public ResponseEntity<Order> findOrderById(long orderId) {
