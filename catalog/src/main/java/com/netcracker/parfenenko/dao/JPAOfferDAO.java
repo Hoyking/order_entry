@@ -3,9 +3,11 @@ package com.netcracker.parfenenko.dao;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.HashSet;
@@ -21,7 +23,7 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     }
 
     @Override
-    public Offer save(Offer entity) {
+    public Offer save(Offer entity) throws PersistenceMethodException, EntityNotFoundException {
         if(entity.getTags() != null) {
             for(Tag tag: entity.getTags()) {
                 tag.setId(0);
@@ -31,47 +33,43 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     }
 
     @Override
-    public Set<Tag> findTags(long offerId) {
-        return persistenceMethodsProvider.functionalMethod(entityManager ->
-                new HashSet<>(entityManager
-                        .createNamedQuery("findTags")
-                        .setParameter(1, offerId)
-                        .getResultList()));
+    public Set<Tag> findTags(long offerId) throws PersistenceMethodException, EntityNotFoundException {
+        return persistenceMethodsProvider.functionalMethod(entityManager -> findTagsQuery(entityManager, offerId));
     }
 
     @Override
-    public Offer changeAvailability(long id) {
+    public Offer changeAvailability(long id) throws PersistenceMethodException, EntityNotFoundException {
         Offer offer = findById(id);
         offer.setAvailable(!offer.isAvailable());
         return update(offer);
     }
 
     @Override
-    public List<Offer> findOffersByTags(List<Tag> tags) {
-        return findAll().stream().filter(offer -> findTags(offer.getId()).containsAll(tags))
-                .collect(Collectors.toList());
+    public List<Offer> findOffersByTags(List<Tag> tags) throws PersistenceMethodException, EntityNotFoundException {
+        return findAll().stream().filter(offer -> checkTagsEntrance(offer, tags)).collect(Collectors.toList());
     }
 
     @Override
-    public List<Offer> findAvailableOffers() {
+    public List<Offer> findAvailableOffers() throws PersistenceMethodException, EntityNotFoundException {
         return persistenceMethodsProvider.functionalMethod(this::availableOffers);
     }
 
     @Override
-    public Offer addPriceToOffer(long id, Price price) {
+    public Offer addPriceToOffer(long id, Price price) throws PersistenceMethodException, EntityNotFoundException {
         Offer offer = findById(id);
         offer.setPrice(price);
         return update(offer);
     }
 
     @Override
-    public List<Offer> findOffersOfPriceInterval(double fromPrice, double toPrice) {
+    public List<Offer> findOffersOfPriceInterval(double fromPrice, double toPrice) throws PersistenceMethodException,
+            EntityNotFoundException {
         return persistenceMethodsProvider
                 .functionalMethod(entityManager -> offersOfPriceInterval(entityManager, fromPrice, toPrice));
     }
 
     @Override
-    public Offer addTagToOffer(long id, Tag tag) {
+    public Offer addTagToOffer(long id, Tag tag) throws PersistenceMethodException, EntityNotFoundException {
         Offer offer = findById(id);
         tag.setId(0);
         offer.getTags().add(tag);
@@ -79,10 +77,27 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     }
 
     @Override
-    public Offer removeTagFromOffer(long id, Tag tag) {
+    public Offer removeTagFromOffer(long id, Tag tag) throws PersistenceMethodException, EntityNotFoundException {
         Offer offer = findById(id);
         offer.getTags().remove(tag);
         return update(offer);
+    }
+
+    private boolean checkTagsEntrance(Offer offer, List<Tag> tags) {
+        Set<Tag> offerTags = null;
+        try {
+            offerTags =  findTags(offer.getId());
+        } catch (PersistenceMethodException e) {
+            e.printStackTrace();
+        }
+        return offerTags.containsAll(tags);
+    }
+
+    private Set<Tag> findTagsQuery(EntityManager entityManager, long offerId) {
+        return new HashSet<>(entityManager
+                .createNamedQuery("findTags")
+                .setParameter(1, offerId)
+                .getResultList());
     }
 
     private List<Offer> availableOffers(EntityManager entityManager) {

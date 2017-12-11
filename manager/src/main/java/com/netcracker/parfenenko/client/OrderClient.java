@@ -2,17 +2,13 @@ package com.netcracker.parfenenko.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.netcracker.parfenenko.config.AppConfig;
 import com.netcracker.parfenenko.entity.Offer;
 import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.entity.Tag;
-import com.netcracker.parfenenko.exception.EntityNotFoundException;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
 import com.netcracker.parfenenko.util.Payments;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -20,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,7 +63,9 @@ public class OrderClient {
 
         StringBuilder builder = new StringBuilder();
         tags.forEach(tag -> builder.append(tag).append(","));
-        builder.deleteCharAt(builder.length() - 1);
+        if (builder.length() != 0) {
+            builder.deleteCharAt(builder.length() - 1);
+        }
 
         ResponseEntity<Offer[]> tagResponseEntity = getRequest(String.format(uriMap.get("offersWithTagsURI"), builder.toString()),
                 Offer[].class);
@@ -76,7 +75,11 @@ public class OrderClient {
                 from, to), Offer[].class);
         offers.retainAll(Arrays.asList(priceResponseEntity.getBody()));
 
-        return new ResponseEntity<>(offers, HttpStatus.OK);
+        if (offers.size() == 0) {
+            return new ResponseEntity<>(offers, HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(offers, HttpStatus.OK);
+        }
     }
 
     public ResponseEntity<Order> createOrder(Order order) {
@@ -94,7 +97,7 @@ public class OrderClient {
     public ResponseEntity<Order> addOrderItem(long orderId, long offerId) throws UpdateOrderException, EntityNotFoundException {
         Order order = findOrderById(orderId).getBody();
         if (order.getPaymentStatus() == Payments.PAID.value()) {
-            throw new UpdateOrderException("Fail to add new order item to the paid order");
+            throw new UpdateOrderException("Failed to add new order item to the paid order");
         }
         Offer offer = getRequest(String.format(uriMap.get("baseOfferURI"), offerId), Offer.class).getBody();
         if (offer == null) {
@@ -119,9 +122,13 @@ public class OrderClient {
         return getRequest(String.format(uriMap.get("findOrdersByStatusURI"), status), Order[].class);
     }
 
-    public ResponseEntity<Order> countTotalPrice(long orderId) {
+    public ResponseEntity<Order> countTotalPrice(long orderId) throws EntityNotFoundException {
         Order order = findOrderById(orderId).getBody();
-        order.setTotalPrice(0);
+        try {
+            order.setTotalPrice(0);
+        } catch (NullPointerException e) {
+            throw new EntityNotFoundException("There is no order with such id");
+        }
         for(OrderItem orderItem: order.getOrderItems()) {
             order.setTotalPrice(order.getTotalPrice() + orderItem.getPrice());
         }
@@ -137,8 +144,7 @@ public class OrderClient {
     }
 
     private OrderItem convertFromOffer(Offer offer) {
-        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-        OrderItem orderItem = context.getBean(OrderItem.class);
+        OrderItem orderItem = new OrderItem();
         orderItem.setName(offer.getName());
         orderItem.setDescription(offer.getDescription());
         orderItem.setCategory(offer.getCategory().getName());

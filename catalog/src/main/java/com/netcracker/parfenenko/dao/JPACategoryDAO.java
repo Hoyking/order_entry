@@ -2,9 +2,11 @@ package com.netcracker.parfenenko.dao;
 
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
+import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -22,12 +24,12 @@ public class JPACategoryDAO extends JPANamedEntityDAO<Category, Long> implements
     }
 
     @Override
-    public List<Offer> findCategoryOffers(long id) {
+    public List<Offer> findCategoryOffers(long id) throws PersistenceMethodException, EntityNotFoundException {
         return persistenceMethodsProvider.functionalMethod(entityManager -> categoryOffers(entityManager, id));
     }
 
     @Override
-    public Category addOffer(long categoryId, long offerId) {
+    public Category addOffer(long categoryId, long offerId) throws PersistenceMethodException, EntityNotFoundException {
         persistenceMethodsProvider.consumerMethod(entityManager ->
                 entityManager
                         .createNativeQuery(ADD_OFFER_TO_CATEGORY)
@@ -38,7 +40,7 @@ public class JPACategoryDAO extends JPANamedEntityDAO<Category, Long> implements
     }
 
     @Override
-    public Category removeOffer(long categoryId, long offerId) {
+    public Category removeOffer(long categoryId, long offerId) throws PersistenceMethodException, EntityNotFoundException {
         persistenceMethodsProvider.consumerMethod(entityManager ->
                 entityManager
                         .createNamedQuery("removeOfferFromCategory")

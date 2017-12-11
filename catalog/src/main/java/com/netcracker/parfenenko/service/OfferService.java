@@ -1,16 +1,15 @@
 package com.netcracker.parfenenko.service;
 
-import com.netcracker.parfenenko.config.AppConfig;
 import com.netcracker.parfenenko.dao.OfferDAO;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,73 +25,73 @@ public class OfferService {
         this.offerDAO = offerDAO;
     }
 
-    public Offer save(Offer offer) {
+    public Offer save(Offer offer) throws PersistenceMethodException {
         return offerDAO.save(offer);
     }
 
     @Transactional(readOnly = true)
-    public Offer findById(long id) {
+    public Offer findById(long id) throws PersistenceMethodException, EntityNotFoundException {
         return offerDAO.findById(id);
     }
 
     @Transactional(readOnly = true)
-    public Offer findByName(String name) {
+    public Offer findByName(String name) throws PersistenceMethodException, EntityNotFoundException {
         return offerDAO.findByName(name);
     }
 
     @Transactional(readOnly = true)
-    public List<Offer> findAll() {
+    public List<Offer> findAll() throws PersistenceMethodException, EntityNotFoundException {
         return offerDAO.findAll();
     }
 
-    public Offer update(Offer offer) {
+    public Offer update(Offer offer) throws PersistenceMethodException, EntityNotFoundException {
         return offerDAO.update(offer);
     }
 
-    public void delete(long id) {
+    public void delete(long id) throws PersistenceMethodException, EntityNotFoundException {
         offerDAO.delete(id);
     }
 
     @Transactional(readOnly = true)
-    public Set<Tag> findTags(long offerId) {
+    public Set<Tag> findTags(long offerId) throws PersistenceMethodException, EntityNotFoundException {
         return offerDAO.findTags(offerId);
     }
 
-    public Offer changeAvailability(long id) {
+    public Offer changeAvailability(long id) throws PersistenceMethodException, EntityNotFoundException {
         return offerDAO.changeAvailability(id);
     }
 
     @Transactional(readOnly = true)
-    public List<Offer> findOffersByTags(List<String> tags) {
+    public List<Offer> findOffersByTags(List<String> tags) throws PersistenceMethodException, EntityNotFoundException {
         List<Tag> tagList = tags.stream().map(this::createTag).collect(Collectors.toList());
         return offerDAO.findOffersByTags(tagList);
     }
 
     @Transactional(readOnly = true)
-    public List<Offer> findAvailableOffers() {
+    public List<Offer> findAvailableOffers() throws PersistenceMethodException, EntityNotFoundException {
         return offerDAO.findAvailableOffers();
     }
 
-    public Offer addPriceToOffer(long id, Price price) {
+    public Offer addPriceToOffer(long id, Price price) throws PersistenceMethodException, EntityNotFoundException {
         return offerDAO.addPriceToOffer(id, price);
     }
 
     @Transactional(readOnly = true)
-    public List<Offer> findOffersOfPriceInterval(double fromPrice, double toPrice) {
+    public List<Offer> findOffersOfPriceInterval(double fromPrice, double toPrice) throws PersistenceMethodException,
+            EntityNotFoundException {
         return offerDAO.findOffersOfPriceInterval(fromPrice, toPrice);
     }
 
-    public Offer addTagToOffer(long id, Tag tag) {
+    public Offer addTagToOffer(long id, Tag tag) throws PersistenceMethodException, EntityNotFoundException {
         return offerDAO.addTagToOffer(id, tag);
     }
 
-    public Offer removeTagFromOffer(long id, Tag tag) {
+    public Offer removeTagFromOffer(long id, Tag tag) throws PersistenceMethodException, EntityNotFoundException {
         return offerDAO.removeTagFromOffer(id, tag);
     }
 
     private Tag createTag(String tagName) {
-        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
-        Tag tag = context.getBean(Tag.class);
+        Tag tag = new Tag();
         tag.setName(tagName);
         return tag;
     }
