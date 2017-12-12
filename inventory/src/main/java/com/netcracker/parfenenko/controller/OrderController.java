@@ -82,7 +82,7 @@ public class OrderController {
     }
 
     @ApiOperation(httpMethod = "GET",
-            value = "Searching for all offers",
+            value = "Searching for all orders",
             response = Order.class,
             responseContainer = "List")
     @ApiResponses({
@@ -101,7 +101,7 @@ public class OrderController {
     }
 
     @ApiOperation(httpMethod = "PUT",
-            value = "Updating an existing offer",
+            value = "Updating an existing order",
             response = Order.class)
     @ApiResponses({
             @ApiResponse(code = 404, message = "Order doesn't exist"),
@@ -119,10 +119,10 @@ public class OrderController {
     }
 
     @ApiOperation(httpMethod = "DELETE",
-            value = "Deleting an existing offer",
+            value = "Deleting an existing order",
             code = 204)
     @ApiResponses({
-            @ApiResponse(code = 404, message = "Offer doesn't exist"),
+            @ApiResponse(code = 404, message = "Order doesn't exist"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

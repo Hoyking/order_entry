@@ -1,10 +1,11 @@
 package com.netcracker.parfenenko.controller;
 
-import com.netcracker.parfenenko.client.OrderClient;
 import com.netcracker.parfenenko.entity.Offer;
 import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
 import com.netcracker.parfenenko.filter.OfferFilter;
+import com.netcracker.parfenenko.service.OfferService;
+import com.netcracker.parfenenko.service.OrderService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -20,11 +21,13 @@ import java.util.List;
 @RequestMapping(value = "/api/v1")
 public class OrderController {
 
-    private OrderClient orderClient;
+    private OrderService orderService;
+    private OfferService offerService;
 
     @Autowired
-    public OrderController(OrderClient orderClient) {
-        this.orderClient = orderClient;
+    public OrderController(OrderService orderService, OfferService offerService) {
+        this.orderService = orderService;
+        this.offerService = offerService;
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -36,7 +39,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/offers", method = RequestMethod.GET)
     public ResponseEntity<Offer[]> findOffers(@ModelAttribute(name = "filters") OfferFilter offerFilter) {
-        return orderClient.findOffers(offerFilter);
+        return offerService.findOffers(offerFilter);
     }
 
     @ApiOperation(httpMethod = "POST",
@@ -49,7 +52,7 @@ public class OrderController {
     @RequestMapping(value = "/orders", method = RequestMethod.POST)
     public ResponseEntity<Order> createOrder(@RequestBody Order order,
             @RequestParam(name = "offers", required = false, defaultValue = "") List<Long> offers) {
-        return orderClient.createOrder(order, offers);
+        return orderService.createOrder(order, offers);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -61,7 +64,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.GET)
     public ResponseEntity<Order> findOrderById(@PathVariable long id) {
-        return orderClient.findOrderById(id);
+        return orderService.findOrderById(id);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -73,7 +76,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/orders/name/{name}", method = RequestMethod.GET)
     public ResponseEntity<Order> findOrderByName(@PathVariable String name) {
-        return orderClient.findOrderByName(name);
+        return orderService.findOrderByName(name);
     }
 
     @ApiOperation(httpMethod = "POST",
@@ -87,7 +90,7 @@ public class OrderController {
     @RequestMapping(value = "/orders/{id}/orderItem", method = RequestMethod.POST)
     public ResponseEntity<Order> addOrderItem(@PathVariable long id, @RequestBody long offerId) {
         try {
-            return orderClient.addOrderItem(id, offerId);
+            return orderService.addOrderItem(id, offerId);
         } catch (UpdateOrderException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         } catch (EntityNotFoundException e) {
@@ -106,7 +109,7 @@ public class OrderController {
     @RequestMapping(value = "/orders/{id}/orderItem", method = RequestMethod.DELETE)
     public ResponseEntity<Order> removeOrderItem(@PathVariable long id, @RequestBody long orderItemId) {
         try {
-            return orderClient.removeOrderItem(id, orderItemId);
+            return orderService.removeOrderItem(id, orderItemId);
         } catch (UpdateOrderException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
@@ -121,7 +124,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
     public ResponseEntity<Order[]> findAllOrders() {
-        return orderClient.findAll();
+        return orderService.findAll();
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -134,7 +137,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/orders/status/{status}", method = RequestMethod.GET)
     public ResponseEntity<Order[]> findOrdersByStatus(@PathVariable int status) {
-        return orderClient.findByStatus(status);
+        return orderService.findOrderByStatus(status);
     }
 
     @ApiOperation(httpMethod = "PUT",
@@ -146,7 +149,7 @@ public class OrderController {
     @RequestMapping(value = "/orders/{id}/price", method = RequestMethod.PUT)
     public ResponseEntity<Order> countTotalPrice(@PathVariable long id) {
         try {
-            return orderClient.countTotalPrice(id);
+            return orderService.countTotalPrice(id);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -163,7 +166,7 @@ public class OrderController {
     @RequestMapping(value = "/orders/{id}/status", method = RequestMethod.PUT)
     public ResponseEntity<Order> payForOrder(@PathVariable long id) {
         try {
-            return orderClient.payForOrder(id);
+            return orderService.payForOrder(id);
         } catch (UpdateOrderException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
