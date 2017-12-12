@@ -4,6 +4,7 @@ import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
+import com.netcracker.parfenenko.filter.OfferFilter;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -30,6 +31,12 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
             }
         }
         return super.save(entity);
+    }
+
+    @Override
+    public List<Offer> findByFilters(OfferFilter offerFilter) throws PersistenceMethodException, EntityNotFoundException {
+        return persistenceMethodsProvider.
+                functionalMethod(entityManager -> findByFiltersQuery(entityManager, offerFilter));
     }
 
     @Override
@@ -86,16 +93,47 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     private boolean checkTagsEntrance(Offer offer, List<Tag> tags) {
         Set<Tag> offerTags = null;
         try {
-            offerTags =  findTags(offer.getId());
+            offerTags = findTags(offer.getId());
         } catch (PersistenceMethodException e) {
             e.printStackTrace();
         }
         return offerTags.containsAll(tags);
     }
 
+    private List<Offer> findByFiltersQuery(EntityManager entityManager, OfferFilter offerFilter) {
+        if (offerFilter.getCategories() == null && offerFilter.getTags() == null) {
+            return entityManager
+                    .createNamedQuery("findByPrice", Offer.class)
+                    .setParameter("fromPrice", offerFilter.getFrom())
+                    .setParameter("toPrice", offerFilter.getTo())
+                    .getResultList();
+        } else if (offerFilter.getCategories() == null) {
+            return entityManager
+                    .createNamedQuery("findByTagsAndPrice", Offer.class)
+                    .setParameter("tags", offerFilter.getTags())
+                    .setParameter("fromPrice", offerFilter.getFrom())
+                    .setParameter("toPrice", offerFilter.getTo())
+                    .getResultList();
+        } else if (offerFilter.getTags() == null) {
+            return entityManager
+                    .createNamedQuery("findByCategoriesAndPrice", Offer.class)
+                    .setParameter("categories", offerFilter.getCategories())
+                    .setParameter("fromPrice", offerFilter.getFrom())
+                    .setParameter("toPrice", offerFilter.getTo())
+                    .getResultList();
+        }
+        return entityManager
+                .createNamedQuery("findByAllFilters", Offer.class)
+                .setParameter("categories", offerFilter.getCategories())
+                .setParameter("tags", offerFilter.getTags())
+                .setParameter("fromPrice", offerFilter.getFrom())
+                .setParameter("toPrice", offerFilter.getTo())
+                .getResultList();
+    }
+
     private Set<Tag> findTagsQuery(EntityManager entityManager, long offerId) {
         return new HashSet<>(entityManager
-                .createNamedQuery("findTags")
+                .createNamedQuery("findTags", Tag.class)
                 .setParameter(1, offerId)
                 .getResultList());
     }

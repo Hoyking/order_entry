@@ -5,6 +5,7 @@ import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
+import com.netcracker.parfenenko.filter.OfferFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class OfferService {
 
     private OfferDAO offerDAO;
@@ -50,6 +51,12 @@ public class OfferService {
 
     public void delete(long id) throws PersistenceMethodException, EntityNotFoundException {
         offerDAO.delete(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Offer> findByFilter(OfferFilter offerFilter) throws PersistenceMethodException,
+            EntityNotFoundException {
+        return offerDAO.findByFilters(offerFilter);
     }
 
     @Transactional(readOnly = true)

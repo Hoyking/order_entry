@@ -4,6 +4,7 @@ import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
+import com.netcracker.parfenenko.filter.OfferFilter;
 import com.netcracker.parfenenko.service.OfferService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -28,7 +29,6 @@ public class OfferController {
         this.offerService = offerService;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
     @ApiOperation(httpMethod = "POST",
             value = "Saving a new offer",
             response = Offer.class,
@@ -36,6 +36,7 @@ public class OfferController {
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Offer> saveOffer(@RequestBody Offer offer) {
         try {
             return new ResponseEntity<>(offerService.save(offer), HttpStatus.CREATED);
@@ -44,7 +45,6 @@ public class OfferController {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ApiOperation(httpMethod = "GET",
             value = "Searching for an offer by id",
             response = Offer.class)
@@ -52,6 +52,7 @@ public class OfferController {
             @ApiResponse(code = 204, message = "There is no offer with such id"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Offer> findOfferById(@PathVariable long id) {
         try {
             return new ResponseEntity<>(offerService.findById(id), HttpStatus.OK);
@@ -62,7 +63,6 @@ public class OfferController {
         }
     }
 
-    @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
     @ApiOperation(httpMethod = "GET",
             value = "Searching for an offer by name",
             response = Offer.class)
@@ -70,6 +70,7 @@ public class OfferController {
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 204, message = "There is no offer with such name")
     })
+    @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
     public ResponseEntity<Offer> findOfferByName(@PathVariable String name) {
         try {
             return new ResponseEntity<>(offerService.findByName(name), HttpStatus.OK);
@@ -80,7 +81,6 @@ public class OfferController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET)
     @ApiOperation(httpMethod = "GET",
             value = "Searching for all offers",
             response = Offer.class,
@@ -89,6 +89,7 @@ public class OfferController {
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 204, message = "There are no existing offers")
     })
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<Offer>> findAllOffers() {
         try {
             return new ResponseEntity<>(offerService.findAll(), HttpStatus.OK);
@@ -99,7 +100,6 @@ public class OfferController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
     @ApiOperation(httpMethod = "PUT",
             value = "Updating an existing offer",
             response = Offer.class)
@@ -107,6 +107,7 @@ public class OfferController {
             @ApiResponse(code = 404, message = "Offer doesn't exist"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
+    @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<Offer> updateOffer(@RequestBody Offer offer) {
         try {
             return new ResponseEntity<>(offerService.update(offer), HttpStatus.OK) ;
@@ -117,7 +118,6 @@ public class OfferController {
         }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ApiOperation(httpMethod = "DELETE",
             value = "Deleting an existing offer",
             code = 204)
@@ -125,6 +125,7 @@ public class OfferController {
             @ApiResponse(code = 404, message = "Offer doesn't exist"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Offer> deleteOffer(@PathVariable long id) {
         try {
             offerService.delete(id);
@@ -136,13 +137,32 @@ public class OfferController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(value = "/{id}/tags", method = RequestMethod.GET)
+    @ApiOperation(httpMethod = "GET",
+            value = "Searching for offers with some filters",
+            response = Offer.class,
+            responseContainer = "List")
+    @ApiResponses({
+            @ApiResponse(code = 500, message = "Oops, something went wrong"),
+            @ApiResponse(code = 204, message = "There are no offers with such filters")
+    })
+    @RequestMapping(value = "/filters", method = RequestMethod.GET)
+    public ResponseEntity<List<Offer>> findOffersByFilters(@ModelAttribute(name = "filters") OfferFilter offerFilter) {
+        try {
+            return new ResponseEntity<>(offerService.findByFilter(offerFilter), HttpStatus.OK);
+        } catch (PersistenceMethodException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+
     @ApiOperation(httpMethod = "GET",
             value = "Searching for tags of the offer")
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offer doesn't exist"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
+    @RequestMapping(value = "/{id}/tags", method = RequestMethod.GET)
     public ResponseEntity<Set<Tag>> findTagsOfOffer(@PathVariable long id) {
         try {
             return new ResponseEntity<>(offerService.findTags(id), HttpStatus.OK);
@@ -153,13 +173,13 @@ public class OfferController {
         }
     }
 
-    @RequestMapping(value = "/{id}/availability", method = RequestMethod.PUT)
     @ApiOperation(httpMethod = "PUT",
             value = "Changing availability of the offer")
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offer doesn't exist"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
+    @RequestMapping(value = "/{id}/availability", method = RequestMethod.PUT)
     public ResponseEntity<Offer> changeOfferAvailability(@PathVariable long id) {
         try {
             return new ResponseEntity<>(offerService.changeAvailability(id), HttpStatus.OK);
@@ -170,13 +190,13 @@ public class OfferController {
         }
     }
 
-    @RequestMapping(value = "/tags", method = RequestMethod.GET)
     @ApiOperation(httpMethod = "GET",
             value = "Searching for offers by tags")
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 204, message = "There are no offers with such tags")
     })
+    @RequestMapping(value = "/tags", method = RequestMethod.GET)
     public ResponseEntity<List<Offer>> findOffersByTags(@RequestParam(value = "values") List<String> tags) {
         try {
             return new ResponseEntity<>(offerService.findOffersByTags(tags), HttpStatus.OK);
@@ -187,13 +207,13 @@ public class OfferController {
         }
     }
 
-    @RequestMapping(value = "/available", method = RequestMethod.GET)
     @ApiOperation(httpMethod = "GET",
             value = "Searching for available offers")
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 204, message = "There are no available offers")
     })
+    @RequestMapping(value = "/available", method = RequestMethod.GET)
     public ResponseEntity<List<Offer>> findAvailableOffers() {
         try {
             return new ResponseEntity<>(offerService.findAvailableOffers(), HttpStatus.OK);
@@ -204,13 +224,13 @@ public class OfferController {
         }
     }
 
-    @RequestMapping(value = "/{id}/price", method = RequestMethod.PUT)
     @ApiOperation(httpMethod = "PUT",
             value = "Adding price to the existing offer")
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offer doesn't exist"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
+    @RequestMapping(value = "/{id}/price", method = RequestMethod.PUT)
     public ResponseEntity<Offer> addPriceToOffer(@PathVariable long id, @RequestBody Price price) {
         try {
             return new ResponseEntity<>(offerService.addPriceToOffer(id, price), HttpStatus.OK);
@@ -221,13 +241,13 @@ public class OfferController {
         }
     }
 
-    @RequestMapping(value = "/price", method = RequestMethod.GET)
     @ApiOperation(httpMethod = "GET",
             value = "Searching for offers of price interval")
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 204, message = "There are no offers of such price interval")
     })
+    @RequestMapping(value = "/price", method = RequestMethod.GET)
     public ResponseEntity<List<Offer>> findOffersOfPriceInterval(@RequestParam(name = "from") double fromPrice,
                                                                  @RequestParam(name = "to") double toPrice) {
         try {
@@ -239,13 +259,13 @@ public class OfferController {
         }
     }
 
-    @RequestMapping(value = "/{id}/tag", method = RequestMethod.POST)
     @ApiOperation(httpMethod = "POST",
             value = "Adding tag to existing offer")
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offer doesn't exist"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
+    @RequestMapping(value = "/{id}/tag", method = RequestMethod.POST)
     public ResponseEntity<Offer> addTagToOffer(@PathVariable long id, @RequestBody Tag tag) {
         try {
             return new ResponseEntity<>(offerService.addTagToOffer(id, tag), HttpStatus.OK);
@@ -256,13 +276,13 @@ public class OfferController {
         }
     }
 
-    @RequestMapping(value = "/{id}/tag", method = RequestMethod.DELETE)
     @ApiOperation(httpMethod = "DELETE",
             value = "Removing tag from existing offer")
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offer doesn't exist"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
+    @RequestMapping(value = "/{id}/tag", method = RequestMethod.DELETE)
     public ResponseEntity<Offer> removeTagFromOffer(@PathVariable long id, @RequestBody Tag tag) {
         try {
             return new ResponseEntity<>(offerService.removeTagFromOffer(id, tag), HttpStatus.OK);

@@ -7,11 +7,11 @@ import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.entity.Tag;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
+import com.netcracker.parfenenko.filter.OfferFilter;
 import com.netcracker.parfenenko.util.Payments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -19,8 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,40 +44,8 @@ public class OrderClient {
         }
     }
 
-    public ResponseEntity<List<Offer>> findOffers(List<Long> categories, List<String> tags, double from, double to) {
-        List<Offer> offers = new ArrayList<>();
-
-        if (categories.size() == 0) {
-            ResponseEntity<Offer[]> categoryResponseEntity = getRequest(uriMap.get("offersURI"),
-                    Offer[].class);
-            offers.addAll(Arrays.asList(categoryResponseEntity.getBody()));
-        } else {
-            for(Long categoryId: categories) {
-                ResponseEntity<Offer[]> categoryResponseEntity = getRequest(
-                        String.format(uriMap.get("categoryOffersURI"), categoryId), Offer[].class);
-                offers.addAll(Arrays.asList(categoryResponseEntity.getBody()));
-            }
-        }
-
-        StringBuilder builder = new StringBuilder();
-        tags.forEach(tag -> builder.append(tag).append(","));
-        if (builder.length() != 0) {
-            builder.deleteCharAt(builder.length() - 1);
-        }
-
-        ResponseEntity<Offer[]> tagResponseEntity = getRequest(String.format(uriMap.get("offersWithTagsURI"), builder.toString()),
-                Offer[].class);
-        offers.retainAll(Arrays.asList(tagResponseEntity.getBody()));
-
-        ResponseEntity<Offer[]> priceResponseEntity = getRequest(String.format(uriMap.get("offersWithPriceURI"),
-                from, to), Offer[].class);
-        offers.retainAll(Arrays.asList(priceResponseEntity.getBody()));
-
-        if (offers.size() == 0) {
-            return new ResponseEntity<>(offers, HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(offers, HttpStatus.OK);
-        }
+    public ResponseEntity<Offer[]> findOffers(OfferFilter offerFilter) {
+        return getRequest(getOffersByFiltersURI(offerFilter), Offer[].class);
     }
 
     public ResponseEntity<Order> createOrder(Order order, List<Long> offers) {
@@ -152,6 +118,28 @@ public class OrderClient {
             throw new UpdateOrderException("Fail to pay for order. Order is already paid");
         }
         return putRequest(String.format(uriMap.get("payURI"), orderId), Order.class);
+    }
+
+    private String getOffersByFiltersURI(OfferFilter offerFilter) {
+        String uri = uriMap.get("findOffersByFiltersURI");
+        StringBuilder filters = new StringBuilder("?");
+        if (offerFilter.getCategories() != null) {
+            String categories = offerFilter.getCategories().toString();
+            filters
+                    .append("categories=")
+                    .append(categories.substring(1, categories.length() - 1))
+                    .append("&");
+        }
+        if (offerFilter.getTags() != null) {
+            String tags = offerFilter.getTags().toString();
+            filters
+                    .append("tags=")
+                    .append(tags.substring(1, tags.length() - 1))
+                    .append("&");
+        }
+        filters.append("from=").append(offerFilter.getFrom())
+                .append("&to=").append(offerFilter.getTo());
+        return String.format(uri, filters.toString());
     }
 
     private OrderItem convertFromOffer(Offer offer) {
