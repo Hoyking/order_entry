@@ -132,8 +132,9 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     }
 
     private Set<Tag> findTagsQuery(EntityManager entityManager, long offerId) {
-        return new HashSet<>(entityManager
-                .createNamedQuery("findTags", Tag.class)
+//        noinspection unchecked
+        return new HashSet(entityManager
+                .createNamedQuery("findTags", Set.class)
                 .setParameter(1, offerId)
                 .getResultList());
     }

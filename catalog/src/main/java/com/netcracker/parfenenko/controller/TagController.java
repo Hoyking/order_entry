@@ -1,5 +1,6 @@
 package com.netcracker.parfenenko.controller;
 
+import com.netcracker.parfenenko.dto.OfferDto;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
@@ -7,12 +8,14 @@ import com.netcracker.parfenenko.service.TagService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,10 +23,12 @@ import java.util.List;
 public class TagController {
 
     private TagService tagService;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public TagController(TagService tagService) {
+    public TagController(TagService tagService, ModelMapper modelMapper) {
         this.tagService = tagService;
+        this.modelMapper = modelMapper;
     }
 
     @ApiOperation(httpMethod = "POST",
@@ -142,14 +147,21 @@ public class TagController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/name/{name}/offers", method = RequestMethod.GET)
-    public ResponseEntity<List<Offer>> findTagOffers(@PathVariable String name) {
+    public ResponseEntity<List<OfferDto>> findTagOffers(@PathVariable String name) {
         try {
-            return new ResponseEntity<>(tagService.findTagOffers(name), HttpStatus.OK);
+            return new ResponseEntity<>(convertFromOfferList(tagService.findTagOffers(name)), HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @SuppressWarnings("SpellCheckingInspection")
+    private List<OfferDto> convertFromOfferList(List<Offer> offers) {
+        List<OfferDto> offerDtos = new ArrayList<>();
+        offers.forEach(offer -> offerDtos.add(modelMapper.map(offer, OfferDto.class)));
+        return offerDtos;
     }
 
 }

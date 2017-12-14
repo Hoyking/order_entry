@@ -104,7 +104,11 @@ public class OrderService {
         orderItem.setName(offer.getName());
         orderItem.setDescription(offer.getDescription());
         orderItem.setCategory(offer.getCategory().getName());
-        orderItem.setTags(offer.getTags().stream().map(Tag::getName).collect(Collectors.toList()));
+        if (offer.getTags() != null) {
+            orderItem.setTags(offer.getTags().stream().map(Tag::getName).collect(Collectors.toList()));
+        } else {
+            orderItem.setTags(null);
+        }
         orderItem.setPrice(offer.getPrice().getValue());
         return orderItem;
     }

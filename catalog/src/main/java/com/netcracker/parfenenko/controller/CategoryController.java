@@ -1,5 +1,6 @@
 package com.netcracker.parfenenko.controller;
 
+import com.netcracker.parfenenko.dto.OfferDto;
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
@@ -7,12 +8,14 @@ import com.netcracker.parfenenko.service.CategoryService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,10 +23,12 @@ import java.util.List;
 public class CategoryController {
 
     private CategoryService categoryService;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public CategoryController(CategoryService categoryService) {
+    public CategoryController(CategoryService categoryService, ModelMapper modelMapper) {
         this.categoryService = categoryService;
+        this.modelMapper = modelMapper;
     }
 
     @ApiOperation(httpMethod = "POST",
@@ -142,9 +147,10 @@ public class CategoryController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/{id}/offers", method = RequestMethod.GET)
-    public ResponseEntity<List<Offer>> findCategoryOffers(@PathVariable long id) {
+    public ResponseEntity<List<OfferDto>> findCategoryOffers(@PathVariable long id) {
         try {
-            return new ResponseEntity<>(categoryService.findCategoryOffers(id), HttpStatus.OK);
+            return new ResponseEntity<>(convertFromOfferList(categoryService.findCategoryOffers(id)),
+                    HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
@@ -187,6 +193,13 @@ public class CategoryController {
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @SuppressWarnings("SpellCheckingInspection")
+    private List<OfferDto> convertFromOfferList(List<Offer> offers) {
+        List<OfferDto> offerDtos = new ArrayList<>();
+        offers.forEach(offer -> offerDtos.add(modelMapper.map(offer, OfferDto.class)));
+        return offerDtos;
     }
 
 }

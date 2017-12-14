@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -453,6 +450,17 @@ public class OfferTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void findTagsTest() {
+        Set<Tag> tags = null;
+        try {
+            tags = offerService.findTags(offerId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Assert.assertEquals(2, tags.size());
     }
 
 }

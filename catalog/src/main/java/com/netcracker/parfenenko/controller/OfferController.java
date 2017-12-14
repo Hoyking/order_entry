@@ -1,5 +1,6 @@
 package com.netcracker.parfenenko.controller;
 
+import com.netcracker.parfenenko.dto.OfferDto;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
@@ -9,12 +10,14 @@ import com.netcracker.parfenenko.service.OfferService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -23,10 +26,12 @@ import java.util.Set;
 public class OfferController {
 
     private OfferService offerService;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public OfferController(OfferService offerService) {
+    public OfferController(OfferService offerService, ModelMapper modelMapper) {
         this.offerService = offerService;
+        this.modelMapper = modelMapper;
     }
 
     @ApiOperation(httpMethod = "POST",
@@ -37,9 +42,9 @@ public class OfferController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Offer> saveOffer(@RequestBody Offer offer) {
+    public ResponseEntity<OfferDto> saveOffer(@RequestBody Offer offer) {
         try {
-            return new ResponseEntity<>(offerService.save(offer), HttpStatus.CREATED);
+            return new ResponseEntity<>(modelMapper.map(offerService.save(offer), OfferDto.class), HttpStatus.CREATED);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -53,9 +58,10 @@ public class OfferController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Offer> findOfferById(@PathVariable long id) {
+    public ResponseEntity<OfferDto> findOfferById(@PathVariable long id) {
         try {
-            return new ResponseEntity<>(offerService.findById(id), HttpStatus.OK);
+            ModelMapper modelMapper = new ModelMapper();
+            return new ResponseEntity<>(modelMapper.map(offerService.findById(id), OfferDto.class), HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
@@ -71,9 +77,9 @@ public class OfferController {
             @ApiResponse(code = 204, message = "There is no offer with such name")
     })
     @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
-    public ResponseEntity<Offer> findOfferByName(@PathVariable String name) {
+    public ResponseEntity<OfferDto> findOfferByName(@PathVariable String name) {
         try {
-            return new ResponseEntity<>(offerService.findByName(name), HttpStatus.OK);
+            return new ResponseEntity<>(modelMapper.map(offerService.findByName(name), OfferDto.class), HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
@@ -90,9 +96,9 @@ public class OfferController {
             @ApiResponse(code = 204, message = "There are no existing offers")
     })
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Offer>> findAllOffers() {
+    public ResponseEntity<List<OfferDto>> findAllOffers() {
         try {
-            return new ResponseEntity<>(offerService.findAll(), HttpStatus.OK);
+            return new ResponseEntity<>(convertFromOfferList(offerService.findAll()), HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
@@ -108,9 +114,9 @@ public class OfferController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<Offer> updateOffer(@RequestBody Offer offer) {
+    public ResponseEntity<OfferDto> updateOffer(@RequestBody Offer offer) {
         try {
-            return new ResponseEntity<>(offerService.update(offer), HttpStatus.OK) ;
+            return new ResponseEntity<>(modelMapper.map(offerService.update(offer), OfferDto.class), HttpStatus.OK) ;
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
@@ -146,9 +152,9 @@ public class OfferController {
             @ApiResponse(code = 204, message = "There are no offers with such filters")
     })
     @RequestMapping(value = "/filters", method = RequestMethod.GET)
-    public ResponseEntity<List<Offer>> findOffersByFilters(@ModelAttribute(name = "filters") OfferFilter offerFilter) {
+    public ResponseEntity<List<OfferDto>> findOffersByFilters(@ModelAttribute(name = "filters") OfferFilter offerFilter) {
         try {
-            return new ResponseEntity<>(offerService.findByFilter(offerFilter), HttpStatus.OK);
+            return new ResponseEntity<>(convertFromOfferList(offerService.findByFilter(offerFilter)), HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
@@ -180,9 +186,10 @@ public class OfferController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/{id}/availability", method = RequestMethod.PUT)
-    public ResponseEntity<Offer> changeOfferAvailability(@PathVariable long id) {
+    public ResponseEntity<OfferDto> changeOfferAvailability(@PathVariable long id) {
         try {
-            return new ResponseEntity<>(offerService.changeAvailability(id), HttpStatus.OK);
+            return new ResponseEntity<>(modelMapper.map(offerService.changeAvailability(id), OfferDto.class),
+                    HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
@@ -197,9 +204,9 @@ public class OfferController {
             @ApiResponse(code = 204, message = "There are no offers with such tags")
     })
     @RequestMapping(value = "/tags", method = RequestMethod.GET)
-    public ResponseEntity<List<Offer>> findOffersByTags(@RequestParam(value = "values") List<String> tags) {
+    public ResponseEntity<List<OfferDto>> findOffersByTags(@RequestParam(value = "values") List<String> tags) {
         try {
-            return new ResponseEntity<>(offerService.findOffersByTags(tags), HttpStatus.OK);
+            return new ResponseEntity<>(convertFromOfferList(offerService.findOffersByTags(tags)), HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
@@ -214,9 +221,9 @@ public class OfferController {
             @ApiResponse(code = 204, message = "There are no available offers")
     })
     @RequestMapping(value = "/available", method = RequestMethod.GET)
-    public ResponseEntity<List<Offer>> findAvailableOffers() {
+    public ResponseEntity<List<OfferDto>> findAvailableOffers() {
         try {
-            return new ResponseEntity<>(offerService.findAvailableOffers(), HttpStatus.OK);
+            return new ResponseEntity<>(convertFromOfferList(offerService.findAvailableOffers()), HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
@@ -231,9 +238,10 @@ public class OfferController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/{id}/price", method = RequestMethod.PUT)
-    public ResponseEntity<Offer> addPriceToOffer(@PathVariable long id, @RequestBody Price price) {
+    public ResponseEntity<OfferDto> addPriceToOffer(@PathVariable long id, @RequestBody Price price) {
         try {
-            return new ResponseEntity<>(offerService.addPriceToOffer(id, price), HttpStatus.OK);
+            return new ResponseEntity<>(modelMapper.map(offerService.addPriceToOffer(id, price), OfferDto.class),
+                    HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
@@ -248,10 +256,11 @@ public class OfferController {
             @ApiResponse(code = 204, message = "There are no offers of such price interval")
     })
     @RequestMapping(value = "/price", method = RequestMethod.GET)
-    public ResponseEntity<List<Offer>> findOffersOfPriceInterval(@RequestParam(name = "from") double fromPrice,
+    public ResponseEntity<List<OfferDto>> findOffersOfPriceInterval(@RequestParam(name = "from") double fromPrice,
                                                                  @RequestParam(name = "to") double toPrice) {
         try {
-            return new ResponseEntity<>(offerService.findOffersOfPriceInterval(fromPrice, toPrice), HttpStatus.OK);
+            return new ResponseEntity<>(convertFromOfferList(offerService.findOffersOfPriceInterval(fromPrice, toPrice)),
+                    HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
@@ -266,9 +275,10 @@ public class OfferController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/{id}/tag", method = RequestMethod.POST)
-    public ResponseEntity<Offer> addTagToOffer(@PathVariable long id, @RequestBody Tag tag) {
+    public ResponseEntity<OfferDto> addTagToOffer(@PathVariable long id, @RequestBody Tag tag) {
         try {
-            return new ResponseEntity<>(offerService.addTagToOffer(id, tag), HttpStatus.OK);
+            return new ResponseEntity<>(modelMapper.map(offerService.addTagToOffer(id, tag), OfferDto.class),
+                    HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
@@ -283,14 +293,22 @@ public class OfferController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/{id}/tag", method = RequestMethod.DELETE)
-    public ResponseEntity<Offer> removeTagFromOffer(@PathVariable long id, @RequestBody Tag tag) {
+    public ResponseEntity<OfferDto> removeTagFromOffer(@PathVariable long id, @RequestBody Tag tag) {
         try {
-            return new ResponseEntity<>(offerService.removeTagFromOffer(id, tag), HttpStatus.OK);
+            return new ResponseEntity<>(modelMapper.map(offerService.removeTagFromOffer(id, tag), OfferDto.class),
+                    HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @SuppressWarnings("SpellCheckingInspection")
+    private List<OfferDto> convertFromOfferList(List<Offer> offers) {
+        List<OfferDto> offerDtos = new ArrayList<>();
+        offers.forEach(offer -> offerDtos.add(modelMapper.map(offer, OfferDto.class)));
+        return offerDtos;
     }
 
 }
