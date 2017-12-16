@@ -1,5 +1,6 @@
 package com.netcracker.parfenenko.client;
 
+import com.netcracker.parfenenko.entity.FreshOrder;
 import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.util.RequestManager;
@@ -21,7 +22,7 @@ public class OrderClient {
         this.uriProvider = uriProvider;
     }
 
-    public ResponseEntity<Order> createOrder(Order order) {
+    public ResponseEntity<Order> createOrder(FreshOrder order) {
         return requestManager.postRequest(uriProvider.get("baseOrdersURI"), new HttpEntity<>(order),
                 Order.class);
     }
@@ -62,6 +63,11 @@ public class OrderClient {
 
     public ResponseEntity<Order> payForOrder(long orderId) {
         return requestManager.putRequest(String.format(uriProvider.get("payURI"), orderId), Order.class);
+    }
+
+    public ResponseEntity<OrderItem[]> findOrderItems(long orderId) {
+        return requestManager.getRequest(String.format(uriProvider.get("findOrderItemsURI"), orderId),
+                OrderItem[].class);
     }
 
 }

@@ -1,10 +1,10 @@
 package com.netcracker.parfenenko.service;
 
 import com.netcracker.parfenenko.client.OrderClient;
+import com.netcracker.parfenenko.entity.FreshOrder;
 import com.netcracker.parfenenko.entity.Offer;
 import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.entity.OrderItem;
-import com.netcracker.parfenenko.entity.Tag;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
 import com.netcracker.parfenenko.util.Payments;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -27,8 +26,8 @@ public class OrderService {
         this.offerService = offerService;
     }
 
-    public ResponseEntity<Order> createOrder(Order order, List<Long> offers) {
-        order = orderClient.createOrder(order).getBody();
+    public ResponseEntity<Order> createOrder(FreshOrder freshOrder, List<Long> offers) {
+        Order order = orderClient.createOrder(freshOrder).getBody();
         final long orderId = order.getId();
         offers.forEach(id -> {
             try {
@@ -85,7 +84,7 @@ public class OrderService {
         } catch (NullPointerException e) {
             throw new EntityNotFoundException("There is no order with such id");
         }
-        for(OrderItem orderItem: order.getOrderItems()) {
+        for(OrderItem orderItem: findOrderItems(order.getId()).getBody()) {
             order.setTotalPrice(order.getTotalPrice() + orderItem.getPrice());
         }
         return orderClient.updateOrder(order);
@@ -99,16 +98,15 @@ public class OrderService {
         return orderClient.payForOrder(orderId);
     }
 
+    public ResponseEntity<OrderItem[]> findOrderItems(long orderId) {
+        return orderClient.findOrderItems(orderId);
+    }
+
     private OrderItem convertFromOffer(Offer offer) {
         OrderItem orderItem = new OrderItem();
         orderItem.setName(offer.getName());
         orderItem.setDescription(offer.getDescription());
         orderItem.setCategory(offer.getCategory().getName());
-        if (offer.getTags() != null) {
-            orderItem.setTags(offer.getTags().stream().map(Tag::getName).collect(Collectors.toList()));
-        } else {
-            orderItem.setTags(null);
-        }
         orderItem.setPrice(offer.getPrice().getValue());
         return orderItem;
     }

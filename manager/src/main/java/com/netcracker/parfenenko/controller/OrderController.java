@@ -1,7 +1,9 @@
 package com.netcracker.parfenenko.controller;
 
+import com.netcracker.parfenenko.entity.FreshOrder;
 import com.netcracker.parfenenko.entity.Offer;
 import com.netcracker.parfenenko.entity.Order;
+import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
 import com.netcracker.parfenenko.filter.OfferFilter;
 import com.netcracker.parfenenko.service.OfferService;
@@ -35,7 +37,7 @@ public class OrderController {
             response = Order.class,
             responseContainer = "List")
     @ApiResponses({
-            @ApiResponse(code = 204, message = "There are no offers with such filters")
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/offers", method = RequestMethod.GET)
     public ResponseEntity<Offer[]> findOffers(@ModelAttribute(name = "filters") OfferFilter offerFilter) {
@@ -50,7 +52,7 @@ public class OrderController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/orders", method = RequestMethod.POST)
-    public ResponseEntity<Order> createOrder(@RequestBody Order order,
+    public ResponseEntity<Order> createOrder(@RequestBody FreshOrder order,
             @RequestParam(name = "offers", required = false, defaultValue = "") List<Long> offers) {
         return orderService.createOrder(order, offers);
     }
@@ -59,7 +61,7 @@ public class OrderController {
             value = "Searching for an order by id",
             response = Order.class)
     @ApiResponses({
-            @ApiResponse(code = 204, message = "There is no order with such id"),
+            @ApiResponse(code = 404, message = "There is no order with such id"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.GET)
@@ -72,11 +74,23 @@ public class OrderController {
             response = Order.class)
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
-            @ApiResponse(code = 204, message = "There is no order with such name")
+            @ApiResponse(code = 404, message = "There is no order with such name")
     })
     @RequestMapping(value = "/orders/name/{name}", method = RequestMethod.GET)
     public ResponseEntity<Order> findOrderByName(@PathVariable String name) {
         return orderService.findOrderByName(name);
+    }
+
+    @ApiOperation(httpMethod = "GET",
+            value = "Searching for all orders",
+            response = OrderItem[].class)
+    @ApiResponses({
+            @ApiResponse(code = 500, message = "Oops, something went wrong"),
+            @ApiResponse(code = 404, message = "There is no order with such name")
+    })
+    @RequestMapping(value = "/orders/{id}/orderItems", method = RequestMethod.GET)
+    public ResponseEntity<OrderItem[]> findOrderItemsOfOrder(@PathVariable long id) {
+        return orderService.findOrderItems(id);
     }
 
     @ApiOperation(httpMethod = "POST",
@@ -116,11 +130,10 @@ public class OrderController {
     }
 
     @ApiOperation(httpMethod = "GET",
-            value = "Searching for all offers",
+            value = "Searching for all orders",
             response = Order[].class)
     @ApiResponses({
-            @ApiResponse(code = 500, message = "Oops, something went wrong"),
-            @ApiResponse(code = 204, message = "There are no existing orders")
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
     public ResponseEntity<Order[]> findAllOrders() {
@@ -131,7 +144,6 @@ public class OrderController {
             value = "Searching for orders with requested payment status",
             response = Order[].class)
     @ApiResponses({
-            @ApiResponse(code = 204, message = "There are no orders with requested payment status"),
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 400, message = "Wrong payment status value")
     })
@@ -144,6 +156,7 @@ public class OrderController {
             value = "Counting total price of the order",
             response = Order.class)
     @ApiResponses({
+            @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 404, message = "Order doesn't exist")
     })
     @RequestMapping(value = "/orders/{id}/price", method = RequestMethod.PUT)

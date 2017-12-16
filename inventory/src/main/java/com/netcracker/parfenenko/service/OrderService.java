@@ -6,11 +6,15 @@ import com.netcracker.parfenenko.entities.OrderItem;
 import com.netcracker.parfenenko.exception.PayForOrderException;
 import com.netcracker.parfenenko.exception.PaymentStatusException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
+import com.netcracker.parfenenko.util.Payments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +30,13 @@ public class OrderService {
     }
 
     public Order save(Order order) throws PersistenceMethodException {
-        return orderDAO.save(order);
+        order.setOrderItems(new HashSet<>(0));
+        order.setTotalPrice(0);
+        order.setOrderDate(new SimpleDateFormat("yyyy.MM.dd").format(Calendar.getInstance().getTime()));
+        order.setPaymentStatus(Payments.UNPAID.value());
+        order = orderDAO.save(order);
+        order.setName("Order #" + order.getId());
+        return update(order);
     }
 
     @Transactional(readOnly = true)
