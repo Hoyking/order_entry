@@ -5,6 +5,8 @@ import com.netcracker.parfenenko.entities.OrderItem;
 import com.netcracker.parfenenko.exception.PayForOrderException;
 import com.netcracker.parfenenko.exception.PaymentStatusException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
+import com.netcracker.parfenenko.mapper.FreshOrderDtoMapper;
+import com.netcracker.parfenenko.mapper.OrderDtoMapper;
 import com.netcracker.parfenenko.service.OrderService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -23,10 +25,14 @@ import java.util.Set;
 public class OrderController {
 
     private OrderService orderService;
+    private OrderDtoMapper orderMapper;
+    private FreshOrderDtoMapper freshOrderMapper;
 
     @Autowired
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, OrderDtoMapper orderMapper, FreshOrderDtoMapper freshOrderMapper) {
         this.orderService = orderService;
+        this.orderMapper = orderMapper;
+        this.freshOrderMapper = freshOrderMapper;
     }
 
     @ApiOperation(httpMethod = "POST",

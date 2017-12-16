@@ -91,11 +91,12 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     }
 
     private boolean checkTagsEntrance(Offer offer, List<Tag> tags) {
-        Set<Tag> offerTags = null;
+        Set<Tag> offerTags;
         try {
             offerTags = findTags(offer.getId());
         } catch (PersistenceMethodException e) {
             e.printStackTrace();
+            return false;
         }
         return offerTags.containsAll(tags);
     }

@@ -46,6 +46,7 @@ public class OfferService {
     }
 
     public Offer update(Offer offer) throws PersistenceMethodException, EntityNotFoundException {
+        offer.setTags(findTags(offer.getId()));
         return offerDAO.update(offer);
     }
 

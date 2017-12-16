@@ -34,7 +34,6 @@ public class OrderTest {
     private final double UPDATED_TOTAL_PRICE = 1.99;
     private final String MAIL = "Test mail";
     private final String DATE = "Test date";
-    private final String SIGN = "Test sign";
 
     private final String ORDER_ITEM_NAME_1 = "Test OrderItem 1";
     private final String ORDER_ITEM_NAME_2 = "Test OrderItem 2";
@@ -60,7 +59,6 @@ public class OrderTest {
             order.setTotalPrice(TOTAL_PRICE);
             order.setCustomerMail(MAIL);
             order.setOrderDate(DATE);
-            order.setPaymentSign(SIGN);
             order.setOrderItems(new HashSet<>(Arrays.asList(orderItem1, orderItem2)));
 
             order = orderService.save(order);
@@ -96,7 +94,6 @@ public class OrderTest {
             order.setTotalPrice(TOTAL_PRICE);
             order.setCustomerMail(MAIL);
             order.setOrderDate(DATE);
-            order.setPaymentSign(SIGN);
             order.setOrderItems(new HashSet<>(Arrays.asList(orderItem1, orderItem2)));
             order = orderService.save(order);
             long testOrderId = order.getId();
@@ -109,7 +106,6 @@ public class OrderTest {
             Assert.assertEquals(TOTAL_PRICE, loadedOrder.getTotalPrice(), 0);
             Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
             Assert.assertEquals(DATE, loadedOrder.getOrderDate());
-            Assert.assertEquals(SIGN, loadedOrder.getPaymentSign());
             Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
 
             orderService.delete(loadedOrder.getId());
@@ -129,7 +125,6 @@ public class OrderTest {
             Assert.assertEquals(TOTAL_PRICE, loadedOrder.getTotalPrice(), 0);
             Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
             Assert.assertEquals(DATE, loadedOrder.getOrderDate());
-            Assert.assertEquals(SIGN, loadedOrder.getPaymentSign());
             Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
         } catch (Exception e) {
             e.printStackTrace();
@@ -147,7 +142,6 @@ public class OrderTest {
             Assert.assertEquals(TOTAL_PRICE, loadedOrder.getTotalPrice(), 0);
             Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
             Assert.assertEquals(DATE, loadedOrder.getOrderDate());
-            Assert.assertEquals(SIGN, loadedOrder.getPaymentSign());
             Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
         } catch (Exception e) {
             e.printStackTrace();
@@ -165,7 +159,6 @@ public class OrderTest {
             order.setTotalPrice(TOTAL_PRICE);
             order.setCustomerMail(MAIL);
             order.setOrderDate(DATE);
-            order.setPaymentSign(SIGN);
             order = orderService.save(order);
             long testOrderId = order.getId();
 
@@ -194,7 +187,6 @@ public class OrderTest {
             Assert.assertEquals(UPDATED_TOTAL_PRICE, loadedOrder.getTotalPrice(), 0);
             Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
             Assert.assertEquals(DATE, loadedOrder.getOrderDate());
-            Assert.assertEquals(SIGN, loadedOrder.getPaymentSign());
             Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
         } catch (Exception e) {
             e.printStackTrace();
@@ -218,7 +210,6 @@ public class OrderTest {
             order.setTotalPrice(TOTAL_PRICE);
             order.setCustomerMail(MAIL);
             order.setOrderDate(DATE);
-            order.setPaymentSign(SIGN);
             order.setOrderItems(new HashSet<>(Arrays.asList(orderItem1, orderItem2)));
 
             order = orderService.save(order);
@@ -293,7 +284,6 @@ public class OrderTest {
             order1.setTotalPrice(TOTAL_PRICE);
             order1.setCustomerMail(MAIL);
             order1.setOrderDate(DATE);
-            order1.setPaymentSign(SIGN);
             order1.setOrderItems(new HashSet<>(Arrays.asList(orderItem1, orderItem2)));
             orderService.save(order1);
 
@@ -303,7 +293,6 @@ public class OrderTest {
             order2.setTotalPrice(TOTAL_PRICE);
             order2.setCustomerMail(MAIL);
             order2.setOrderDate(DATE);
-            order2.setPaymentSign(SIGN);
             order2.setPaymentStatus(Payments.PAID.value());
             order2.setOrderItems(new HashSet<>(Arrays.asList(orderItem3, orderItem4)));
             orderService.save(order2);

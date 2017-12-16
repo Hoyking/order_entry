@@ -45,6 +45,7 @@ public class OrderService {
     }
 
     public Order update(Order order) throws PersistenceMethodException, EntityNotFoundException {
+        order.setOrderItems(findOrderItems(order.getId()));
         return orderDAO.update(order);
     }
 

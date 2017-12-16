@@ -41,9 +41,6 @@ public class PersistenceMethodsProvider {
             e.printStackTrace();
             throw new PersistenceMethodException();
         }
-        if (result == null) {
-            throw new EntityNotFoundException("Entity doesn't exist");
-        }
         return result;
     }
 
