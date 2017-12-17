@@ -5,7 +5,6 @@ import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
-import com.netcracker.parfenenko.filter.OfferFilter;
 import com.netcracker.parfenenko.mapper.OfferDtoMapper;
 import com.netcracker.parfenenko.service.OfferService;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -138,20 +138,23 @@ public class OfferController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @ApiOperation(httpMethod = "GET",
+    @ApiOperation(httpMethod = "POST",
             value = "Searching for offers with some filters",
              response = OfferDto.class,
             responseContainer = "List")
     @ApiResponses({
-            @ApiResponse(code = 500, message = "Oops, something went wrong")
+            @ApiResponse(code = 500, message = "Oops, something went wrong"),
+            @ApiResponse(code = 400, message = "Wrong filters")
     })
-    @RequestMapping(value = "/filters", method = RequestMethod.GET)
-    public ResponseEntity<List<OfferDto>> findOffersByFilters(@ModelAttribute(name = "filters") OfferFilter offerFilter) {
+    @RequestMapping(value = "/filters", method = RequestMethod.POST)
+    public ResponseEntity<List<OfferDto>> findOffersByFilters(@RequestBody Map<String, List<String>> offerFilter) {
         try {
             return new ResponseEntity<>(offerMapper.mapEntityCollection(offerService.findByFilter(offerFilter)),
                     HttpStatus.OK);
         } catch (PersistenceMethodException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

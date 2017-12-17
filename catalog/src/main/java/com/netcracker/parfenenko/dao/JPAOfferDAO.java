@@ -4,7 +4,6 @@ import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
-import com.netcracker.parfenenko.filter.OfferFilter;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -34,9 +33,10 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     }
 
     @Override
-    public List<Offer> findByFilters(OfferFilter offerFilter) throws PersistenceMethodException, EntityNotFoundException {
+    public List<Offer> findByFilters(List<Long> categories, List<String> tags, double from, double to)
+            throws PersistenceMethodException, EntityNotFoundException {
         return persistenceMethodsProvider.
-                functionalMethod(entityManager -> findByFiltersQuery(entityManager, offerFilter));
+                functionalMethod(entityManager -> findByFiltersQuery(entityManager, categories, tags, from, to));
     }
 
     @Override
@@ -101,34 +101,35 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
         return offerTags.containsAll(tags);
     }
 
-    private List<Offer> findByFiltersQuery(EntityManager entityManager, OfferFilter offerFilter) {
-        if (offerFilter.getCategories() == null && offerFilter.getTags() == null) {
+    private List<Offer> findByFiltersQuery(EntityManager entityManager, List<Long> categories, List<String> tags,
+                                           double from, double to) {
+        if (categories == null && tags == null) {
             return entityManager
                     .createNamedQuery("findByPrice", Offer.class)
-                    .setParameter("fromPrice", offerFilter.getFrom())
-                    .setParameter("toPrice", offerFilter.getTo())
+                    .setParameter("fromPrice", from)
+                    .setParameter("toPrice", to)
                     .getResultList();
-        } else if (offerFilter.getCategories() == null) {
+        } else if (categories == null) {
             return entityManager
                     .createNamedQuery("findByTagsAndPrice", Offer.class)
-                    .setParameter("tags", offerFilter.getTags())
-                    .setParameter("fromPrice", offerFilter.getFrom())
-                    .setParameter("toPrice", offerFilter.getTo())
+                    .setParameter("tags", tags)
+                    .setParameter("fromPrice", from)
+                    .setParameter("toPrice", to)
                     .getResultList();
-        } else if (offerFilter.getTags() == null) {
+        } else if (tags == null) {
             return entityManager
                     .createNamedQuery("findByCategoriesAndPrice", Offer.class)
-                    .setParameter("categories", offerFilter.getCategories())
-                    .setParameter("fromPrice", offerFilter.getFrom())
-                    .setParameter("toPrice", offerFilter.getTo())
+                    .setParameter("categories", categories)
+                    .setParameter("fromPrice", from)
+                    .setParameter("toPrice", to)
                     .getResultList();
         }
         return entityManager
                 .createNamedQuery("findByAllFilters", Offer.class)
-                .setParameter("categories", offerFilter.getCategories())
-                .setParameter("tags", offerFilter.getTags())
-                .setParameter("fromPrice", offerFilter.getFrom())
-                .setParameter("toPrice", offerFilter.getTo())
+                .setParameter("categories", categories)
+                .setParameter("tags", tags)
+                .setParameter("fromPrice", from)
+                .setParameter("toPrice", to)
                 .getResultList();
     }
 

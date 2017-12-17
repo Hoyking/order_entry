@@ -5,7 +5,6 @@ import com.netcracker.parfenenko.entity.Offer;
 import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
-import com.netcracker.parfenenko.filter.OfferFilter;
 import com.netcracker.parfenenko.service.OfferService;
 import com.netcracker.parfenenko.service.OrderService;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -32,15 +32,16 @@ public class OrderController {
         this.offerService = offerService;
     }
 
-    @ApiOperation(httpMethod = "GET",
+    @ApiOperation(httpMethod = "POST",
             value = "Searching for offers with filters",
             response = Order.class,
             responseContainer = "List")
     @ApiResponses({
-            @ApiResponse(code = 500, message = "Oops, something went wrong")
+            @ApiResponse(code = 500, message = "Oops, something went wrong"),
+            @ApiResponse(code = 400, message = "Wrong filters")
     })
-    @RequestMapping(value = "/offers", method = RequestMethod.GET)
-    public ResponseEntity<Offer[]> findOffers(@ModelAttribute(name = "filters") OfferFilter offerFilter) {
+    @RequestMapping(value = "/offers", method = RequestMethod.POST)
+    public ResponseEntity<Offer[]> findOffers(@RequestBody Map<String, List<String>> offerFilter) {
         return offerService.findOffers(offerFilter);
     }
 

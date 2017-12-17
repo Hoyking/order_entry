@@ -4,8 +4,12 @@ import com.netcracker.parfenenko.entity.Offer;
 import com.netcracker.parfenenko.util.RequestManager;
 import com.netcracker.parfenenko.util.UriProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class OfferClient {
@@ -19,8 +23,8 @@ public class OfferClient {
         this.uriProvider = uriProvider;
     }
 
-    public ResponseEntity<Offer[]> findOffers(String filters) {
-        return requestManager.getRequest(String.format(uriProvider.get("findOffersByFiltersURI"), filters),
+    public ResponseEntity<Offer[]> findOffers(Map<String, List<String>> offerFilter) {
+        return requestManager.postRequest(uriProvider.get("findOffersByFiltersURI"), new HttpEntity<>(offerFilter),
                 Offer[].class);
     }
 
