@@ -93,7 +93,7 @@ public class OrderService {
     public ResponseEntity<Order> payForOrder(long orderId) throws UpdateOrderException {
         Order order = findOrderById(orderId).getBody();
         if (order.getPaymentStatus() == Payments.PAID.value()) {
-            throw new UpdateOrderException("Fail to pay for order. Order is already paid");
+            throw new UpdateOrderException("Fail to pay an order. Order is already paid");
         }
         return orderClient.payForOrder(orderId);
     }

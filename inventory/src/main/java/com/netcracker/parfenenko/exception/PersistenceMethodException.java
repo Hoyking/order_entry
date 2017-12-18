@@ -1,6 +1,6 @@
 package com.netcracker.parfenenko.exception;
 
-public class PersistenceMethodException extends Exception {
+public class PersistenceMethodException extends RuntimeException {
 
     public PersistenceMethodException() {
         super("Something went wrong while executing persistence operation");

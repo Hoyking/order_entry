@@ -4,9 +4,6 @@ import com.netcracker.parfenenko.dto.FreshOrderDto;
 import com.netcracker.parfenenko.dto.OrderDto;
 import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
-import com.netcracker.parfenenko.exception.PayForOrderException;
-import com.netcracker.parfenenko.exception.PaymentStatusException;
-import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import com.netcracker.parfenenko.mapper.FreshOrderDtoMapper;
 import com.netcracker.parfenenko.mapper.OrderDtoMapper;
 import com.netcracker.parfenenko.service.OrderService;
@@ -18,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Set;
 
@@ -46,12 +42,8 @@ public class OrderController {
     })
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<OrderDto> saveOrder(@RequestBody FreshOrderDto orderDto) {
-        try {
-            return new ResponseEntity<>(orderMapper.mapEntity(orderService.save(freshOrderMapper.mapDto(orderDto))),
-                    HttpStatus.CREATED);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(orderMapper.mapEntity(orderService.save(freshOrderMapper.mapDto(orderDto))),
+                HttpStatus.CREATED);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -63,13 +55,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<OrderDto> findOrderById(@PathVariable long id) {
-        try {
-            return new ResponseEntity<>(orderMapper.mapEntity(orderService.findById(id)), HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(orderMapper.mapEntity(orderService.findById(id)), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -81,13 +67,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
     public ResponseEntity<OrderDto> findOrderByName(@PathVariable String name) {
-        try {
-            return new ResponseEntity<>(orderMapper.mapEntity(orderService.findByName(name)), HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(orderMapper.mapEntity(orderService.findByName(name)), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -99,11 +79,7 @@ public class OrderController {
     })
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<OrderDto>> findAllOrders() {
-        try {
-            return new ResponseEntity<>(orderMapper.mapEntityCollection(orderService.findAll()), HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(orderMapper.mapEntityCollection(orderService.findAll()), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "PUT",
@@ -115,13 +91,7 @@ public class OrderController {
     })
     @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<OrderDto> updateOrder(@RequestBody Order order) {
-        try {
-            return new ResponseEntity<>(orderMapper.mapEntity(orderService.update(order)), HttpStatus.OK) ;
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(orderMapper.mapEntity(orderService.update(order)), HttpStatus.OK) ;
     }
 
     @ApiOperation(httpMethod = "DELETE",
@@ -133,13 +103,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<OrderDto> deleteOrder(@PathVariable long id) {
-        try {
-            orderService.delete(id);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        orderService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -153,13 +117,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/{id}/orderItems", method = RequestMethod.GET)
     public ResponseEntity<Set<OrderItem>> findOrderItemsOfOrder(@PathVariable long id) {
-        try {
-            return new ResponseEntity<>(orderService.findOrderItems(id), HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(orderService.findOrderItems(id), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "POST",
@@ -171,14 +129,8 @@ public class OrderController {
     })
     @RequestMapping(value = "/{id}/orderItem", method = RequestMethod.POST)
     public ResponseEntity<OrderDto> addOrderItemToOrder(@PathVariable long id, @RequestBody OrderItem orderItem) {
-        try {
-            return new ResponseEntity<>(orderMapper.mapEntity(orderService.addOrderItem(id, orderItem)),
-                    HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(orderMapper.mapEntity(orderService.addOrderItem(id, orderItem)),
+                HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "DELETE",
@@ -190,13 +142,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/{id}/orderItem", method = RequestMethod.DELETE)
     public ResponseEntity<OrderDto> removeOrderItemFromOrder(@PathVariable long id, @RequestBody long orderItemId) {
-        try {
-            return new ResponseEntity<>(orderMapper.mapEntity(orderService.removeOrderItem(id, orderItemId)), HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(orderMapper.mapEntity(orderService.removeOrderItem(id, orderItemId)), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -209,14 +155,8 @@ public class OrderController {
     })
     @RequestMapping(value = "/status/{status}", method = RequestMethod.GET)
     public ResponseEntity<List<OrderDto>> findOrdersByPaymentStatus(@PathVariable int status) {
-        try {
-            return new ResponseEntity<>(orderMapper.mapEntityCollection(orderService.findOrdersByPaymentStatus(status)),
-                    HttpStatus.OK);
-        } catch (PaymentStatusException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(orderMapper.mapEntityCollection(orderService.findOrdersByPaymentStatus(status)),
+                HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -230,15 +170,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/{id}/status", method = RequestMethod.PUT)
     public ResponseEntity<OrderDto> payForOrder(@PathVariable long id) {
-        try {
-            return new ResponseEntity<>(orderMapper.mapEntity(orderService.payForOrder(id)), HttpStatus.OK);
-        } catch (PayForOrderException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(orderMapper.mapEntity(orderService.payForOrder(id)), HttpStatus.OK);
     }
 
 }

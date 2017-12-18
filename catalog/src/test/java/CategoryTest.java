@@ -35,227 +35,183 @@ public class CategoryTest {
 
     @Before
     public void initCategory() {
-        try {
-            Category category = new Category();
-            category.setName(NAME_1);
+        Category category = new Category();
+        category.setName(NAME_1);
 
-            category = categoryService.save(category);
-            categoryId = category.getId();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        category = categoryService.save(category);
+        categoryId = category.getId();
     }
 
     @After
     public void destroyCategory() {
-        try {
-            categoryService.delete(categoryId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        categoryService.delete(categoryId);
     }
 
     @Test
     public void saveTest() {
-        try {
-            Category category = new Category();
-            category.setName(NAME_2);
+        Category category = new Category();
+        category.setName(NAME_2);
 
-            category = categoryService.save(category);
-            long testCategoryId = category.getId();
+        category = categoryService.save(category);
+        long testCategoryId = category.getId();
 
-            Category loadedCategory = categoryService.findById(testCategoryId);
+        Category loadedCategory = categoryService.findById(testCategoryId);
 
-            Assert.assertEquals(testCategoryId, loadedCategory.getId());
-            Assert.assertEquals(NAME_2, loadedCategory.getName());
+        Assert.assertEquals(testCategoryId, loadedCategory.getId());
+        Assert.assertEquals(NAME_2, loadedCategory.getName());
 
-            categoryService.delete(loadedCategory.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        categoryService.delete(loadedCategory.getId());
     }
 
     @Test
     public void findByIdTest() {
-        try {
-            Category loadedCategory = categoryService.findById(categoryId);
+        Category loadedCategory = categoryService.findById(categoryId);
 
-            Assert.assertEquals(categoryId, loadedCategory.getId());
-            Assert.assertEquals(NAME_1, loadedCategory.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(categoryId, loadedCategory.getId());
+        Assert.assertEquals(NAME_1, loadedCategory.getName());
     }
 
     @Test
     public void findByNameTest() {
-        try {
-            Category loadedCategory = categoryService.findByName(NAME_1);
+        Category loadedCategory = categoryService.findByName(NAME_1);
 
-            Assert.assertEquals(categoryId, loadedCategory.getId());
-            Assert.assertEquals(NAME_1, loadedCategory.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(categoryId, loadedCategory.getId());
+        Assert.assertEquals(NAME_1, loadedCategory.getName());
     }
 
     @Test
     public void findAllTest() {
-        try {
-            int currentSize = categoryService.findAll().size();
+        int currentSize = categoryService.findAll().size();
 
-            Category category = new Category();
-            category.setName(NAME_2);
+        Category category = new Category();
+        category.setName(NAME_2);
 
-            category = categoryService.save(category);
-            long testCategoryId = category.getId();
+        category = categoryService.save(category);
+        long testCategoryId = category.getId();
 
-            Assert.assertEquals(currentSize + 1, categoryService.findAll().size());
+        Assert.assertEquals(currentSize + 1, categoryService.findAll().size());
 
-            categoryService.delete(testCategoryId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        categoryService.delete(testCategoryId);
     }
 
     @Test
     public void updateTest() {
-        try {
-            Category category = new Category();
-            category.setName(UPDATED_NAME);
-            category.setId(categoryId);
+        Category category = new Category();
+        category.setName(UPDATED_NAME);
+        category.setId(categoryId);
 
-            category = categoryService.update(category);
-            Category loadedCategory = categoryService.findById(categoryId);
+        category = categoryService.update(category);
+        Category loadedCategory = categoryService.findById(categoryId);
 
-            Assert.assertEquals(category.getId(), loadedCategory.getId());
-            Assert.assertEquals(UPDATED_NAME, loadedCategory.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(category.getId(), loadedCategory.getId());
+        Assert.assertEquals(UPDATED_NAME, loadedCategory.getName());
     }
 
     @Test
     public void deleteTest() {
-        try {
-            Category category = new Category();
-            category.setName(NAME_2);
+        Category category = new Category();
+        category.setName(NAME_2);
 
-            category = categoryService.save(category);
-            long testCategoryId = category.getId();
-            categoryService.delete(testCategoryId);
+        category = categoryService.save(category);
+        long testCategoryId = category.getId();
+        categoryService.delete(testCategoryId);
 
-            Assert.assertNull(categoryService.findById(testCategoryId));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Assert.assertNull(categoryService.findById(testCategoryId));
     }
 
     @Test
     public void findOffersTest() {
-        try {
-            Category category1 = new Category();
-            category1.setName(NAME_2);
-            category1 = categoryService.save(category1);
+        Category category1 = new Category();
+        category1.setName(NAME_2);
+        category1 = categoryService.save(category1);
 
-            Category category2 = new Category();
-            category2.setName(NAME_3);
-            category2 = categoryService.save(category2);
+        Category category2 = new Category();
+        category2.setName(NAME_3);
+        category2 = categoryService.save(category2);
 
-            Offer offer1 = new Offer();
-            offer1.setName(OFFER_NAME_1);
-            offer1.setCategory(category1);
-            offer1 = offerService.save(offer1);
+        Offer offer1 = new Offer();
+        offer1.setName(OFFER_NAME_1);
+        offer1.setCategory(category1);
+        offer1 = offerService.save(offer1);
 
-            Offer offer2 = new Offer();
-            offer2.setName(OFFER_NAME_2);
-            offer2.setCategory(category1);
-            offer2 = offerService.save(offer2);
+        Offer offer2 = new Offer();
+        offer2.setName(OFFER_NAME_2);
+        offer2.setCategory(category1);
+        offer2 = offerService.save(offer2);
 
-            Offer offer3 = new Offer();
-            offer3.setName(OFFER_NAME_3);
-            offer3.setCategory(category2);
-            offer3 = offerService.save(offer3);
+        Offer offer3 = new Offer();
+        offer3.setName(OFFER_NAME_3);
+        offer3.setCategory(category2);
+        offer3 = offerService.save(offer3);
 
-            List<Offer> offers = categoryService.findCategoryOffers(category1.getId());
+        List<Offer> offers = categoryService.findCategoryOffers(category1.getId());
 
-            Assert.assertEquals(2, offers.size());
-            Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
-            Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
+        Assert.assertEquals(2, offers.size());
+        Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
+        Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
 
-            offerService.delete(offer1.getId());
-            offerService.delete(offer2.getId());
-            offerService.delete(offer3.getId());
-            categoryService.delete(category1.getId());
-            categoryService.delete(category2.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        offerService.delete(offer1.getId());
+        offerService.delete(offer2.getId());
+        offerService.delete(offer3.getId());
+        categoryService.delete(category1.getId());
+        categoryService.delete(category2.getId());
     }
 
     @Test
     public void addOfferToCategoryTest() {
-        try {
-            Category category = categoryService.findById(categoryId);
+        Category category = categoryService.findById(categoryId);
 
-            Offer offer1 = new Offer();
-            offer1.setName(OFFER_NAME_1);
-            offer1.setCategory(category);
-            offer1 = offerService.save(offer1);
+        Offer offer1 = new Offer();
+        offer1.setName(OFFER_NAME_1);
+        offer1.setCategory(category);
+        offer1 = offerService.save(offer1);
 
-            List<Offer> offers = categoryService.findCategoryOffers(categoryId);
+        List<Offer> offers = categoryService.findCategoryOffers(categoryId);
 
-            Assert.assertEquals(1, offers.size());
+        Assert.assertEquals(1, offers.size());
 
-            Offer offer2 = new Offer();
-            offer2.setName(OFFER_NAME_2);
-            offer2 = offerService.save(offer2);
-            categoryService.addOffer(category.getId(), offer2.getId());
+        Offer offer2 = new Offer();
+        offer2.setName(OFFER_NAME_2);
+        offer2 = offerService.save(offer2);
+        categoryService.addOffer(category.getId(), offer2.getId());
 
-            offers = categoryService.findCategoryOffers(categoryId);
+        offers = categoryService.findCategoryOffers(categoryId);
 
-            Assert.assertEquals(2, offers.size());
-            Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
-            Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
+        Assert.assertEquals(2, offers.size());
+        Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
+        Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
 
-            offerService.delete(offer1.getId());
-            offerService.delete(offer2.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+        offerService.delete(offer1.getId());
+        offerService.delete(offer2.getId());
+}
 
     @Test
     public void removeOfferFromCategoryTest() {
-        try {
-            Category category = categoryService.findById(categoryId);
+        Category category = categoryService.findById(categoryId);
 
-            Offer offer1 = new Offer();
-            offer1.setName(OFFER_NAME_1);
-            offer1.setCategory(category);
-            offer1 = offerService.save(offer1);
+        Offer offer1 = new Offer();
+        offer1.setName(OFFER_NAME_1);
+        offer1.setCategory(category);
+        offer1 = offerService.save(offer1);
 
-            Offer offer2 = new Offer();
-            offer2.setName(OFFER_NAME_2);
-            offer2.setCategory(category);
-            offer2 = offerService.save(offer2);
+        Offer offer2 = new Offer();
+        offer2.setName(OFFER_NAME_2);
+        offer2.setCategory(category);
+        offer2 = offerService.save(offer2);
 
-            List<Offer> offers = categoryService.findCategoryOffers(categoryId);
+        List<Offer> offers = categoryService.findCategoryOffers(categoryId);
 
-            Assert.assertEquals(2, offers.size());
+        Assert.assertEquals(2, offers.size());
 
-            categoryService.removeOffer(categoryId, offer2.getId());
+        categoryService.removeOffer(categoryId, offer2.getId());
 
-            offers = categoryService.findCategoryOffers(categoryId);
+        offers = categoryService.findCategoryOffers(categoryId);
 
-            Assert.assertEquals(1, offers.size());
-            Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
+        Assert.assertEquals(1, offers.size());
+        Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
 
-            offerService.delete(offer1.getId());
-            offerService.delete(offer2.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        offerService.delete(offer1.getId());
+        offerService.delete(offer2.getId());
     }
 
 }

@@ -4,18 +4,15 @@ import com.netcracker.parfenenko.entity.FreshOrder;
 import com.netcracker.parfenenko.entity.Offer;
 import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.entity.OrderItem;
-import com.netcracker.parfenenko.exception.UpdateOrderException;
 import com.netcracker.parfenenko.service.OfferService;
 import com.netcracker.parfenenko.service.OrderService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Map;
 
@@ -104,13 +101,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/orders/{id}/orderItem", method = RequestMethod.POST)
     public ResponseEntity<Order> addOrderItem(@PathVariable long id, @RequestBody long offerId) {
-        try {
-            return orderService.addOrderItem(id, offerId);
-        } catch (UpdateOrderException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return orderService.addOrderItem(id, offerId);
     }
 
     @ApiOperation(httpMethod = "DELETE",
@@ -123,11 +114,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/orders/{id}/orderItem", method = RequestMethod.DELETE)
     public ResponseEntity<Order> removeOrderItem(@PathVariable long id, @RequestBody long orderItemId) {
-        try {
-            return orderService.removeOrderItem(id, orderItemId);
-        } catch (UpdateOrderException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
+        return orderService.removeOrderItem(id, orderItemId);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -162,11 +149,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/orders/{id}/price", method = RequestMethod.PUT)
     public ResponseEntity<Order> countTotalPrice(@PathVariable long id) {
-        try {
-            return orderService.countTotalPrice(id);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return orderService.countTotalPrice(id);
     }
 
     @ApiOperation(httpMethod = "PUT",
@@ -179,11 +162,7 @@ public class OrderController {
     })
     @RequestMapping(value = "/orders/{id}/status", method = RequestMethod.PUT)
     public ResponseEntity<Order> payForOrder(@PathVariable long id) {
-        try {
-            return orderService.payForOrder(id);
-        } catch (UpdateOrderException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
+        return orderService.payForOrder(id);
     }
 
 }

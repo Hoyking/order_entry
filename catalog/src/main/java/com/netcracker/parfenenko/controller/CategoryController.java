@@ -3,7 +3,6 @@ package com.netcracker.parfenenko.controller;
 import com.netcracker.parfenenko.dto.CategoryDto;
 import com.netcracker.parfenenko.dto.OfferDto;
 import com.netcracker.parfenenko.entities.Category;
-import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import com.netcracker.parfenenko.mapper.CategoryDtoMapper;
 import com.netcracker.parfenenko.mapper.OfferDtoMapper;
 import com.netcracker.parfenenko.service.CategoryService;
@@ -15,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @RestController
@@ -42,11 +40,7 @@ public class CategoryController {
     })
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<CategoryDto> saveCategory(@RequestBody Category category) {
-        try {
-            return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.save(category)), HttpStatus.CREATED);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.save(category)), HttpStatus.CREATED);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -58,13 +52,8 @@ public class CategoryController {
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<CategoryDto> findCategoryById(@PathVariable long id) {
-        try {
-            return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.findById(id)), HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.findById(id)), HttpStatus.OK);
+
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -76,13 +65,7 @@ public class CategoryController {
     })
     @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
     public ResponseEntity<CategoryDto> findCategoryByName(@PathVariable String name) {
-        try {
-            return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.findByName(name)), HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.findByName(name)), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -94,11 +77,7 @@ public class CategoryController {
     })
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<CategoryDto>> findAllCategories() {
-        try {
-            return new ResponseEntity<>(categoryMapper.mapEntityCollection(categoryService.findAll()), HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(categoryMapper.mapEntityCollection(categoryService.findAll()), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "PUT",
@@ -110,13 +89,7 @@ public class CategoryController {
     })
     @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<CategoryDto> updateCategory(@RequestBody Category category) {
-        try {
-            return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.update(category)), HttpStatus.OK) ;
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.update(category)), HttpStatus.OK) ;
     }
 
     @ApiOperation(httpMethod = "DELETE",
@@ -128,13 +101,7 @@ public class CategoryController {
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<CategoryDto> deleteCategory(@PathVariable long id) {
-        try {
-            categoryService.delete(id);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        categoryService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -148,14 +115,8 @@ public class CategoryController {
     })
     @RequestMapping(value = "/{id}/offers", method = RequestMethod.GET)
     public ResponseEntity<List<OfferDto>> findCategoryOffers(@PathVariable long id) {
-        try {
-            return new ResponseEntity<>(offerMapper.mapEntityCollection(categoryService.findCategoryOffers(id)),
-                    HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(offerMapper.mapEntityCollection(categoryService.findCategoryOffers(id)),
+                HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "PUT",
@@ -168,14 +129,8 @@ public class CategoryController {
     @RequestMapping(value = "/{id}/offer", method = RequestMethod.PUT)
     public ResponseEntity<CategoryDto> addOfferToCategory(@PathVariable(name = "id") long categoryId,
                                                           @RequestBody long offerId) {
-        try {
-            return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.addOffer(categoryId, offerId)),
-                    HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.addOffer(categoryId, offerId)),
+                HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "DELETE",
@@ -188,14 +143,8 @@ public class CategoryController {
     @RequestMapping(value = "/{id}/offer", method = RequestMethod.DELETE)
     public ResponseEntity<CategoryDto> removeOfferFromCategory(@PathVariable(name = "id") long categoryId,
                                                             @RequestBody long offerId) {
-        try {
-            return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.removeOffer(categoryId, offerId)),
-                    HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.removeOffer(categoryId, offerId)),
+                HttpStatus.OK);
     }
 
 }

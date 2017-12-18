@@ -37,158 +37,122 @@ public class TagTest {
 
     @Before
     public void initTag() {
-        try {
-            Tag tag = new Tag();
-            tag.setName(NAME_1);
+        Tag tag = new Tag();
+        tag.setName(NAME_1);
 
-            tag = tagService.save(tag);
-            tagId = tag.getId();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        tag = tagService.save(tag);
+        tagId = tag.getId();
     }
 
     @After
     public void destroyTag() {
-        try {
-            tagService.delete(tagId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        tagService.delete(tagId);
     }
 
     @Test
     public void saveTest() {
-        try {
-            Tag tag = new Tag();
-            tag.setName(NAME_2);
+        Tag tag = new Tag();
+        tag.setName(NAME_2);
 
-            tag = tagService.save(tag);
-            long testTagId = tag.getId();
+        tag = tagService.save(tag);
+        long testTagId = tag.getId();
 
-            Tag loadedTag = tagService.findById(testTagId);
+        Tag loadedTag = tagService.findById(testTagId);
 
-            Assert.assertEquals(testTagId, loadedTag.getId());
-            Assert.assertEquals(NAME_2, loadedTag.getName());
+        Assert.assertEquals(testTagId, loadedTag.getId());
+        Assert.assertEquals(NAME_2, loadedTag.getName());
 
-            tagService.delete(loadedTag.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        tagService.delete(loadedTag.getId());
     }
 
     @Test
     public void findByIdTest() {
-        try {
-            Tag loadedTag = tagService.findById(tagId);
+        Tag loadedTag = tagService.findById(tagId);
 
-            Assert.assertEquals(tagId, loadedTag.getId());
-            Assert.assertEquals(NAME_1, loadedTag.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(tagId, loadedTag.getId());
+        Assert.assertEquals(NAME_1, loadedTag.getName());
     }
 
     @Test
     public void findByNameTest() {
-        try {
-            Tag loadedTag = tagService.findByName(NAME_1);
+        Tag loadedTag = tagService.findByName(NAME_1);
 
-            Assert.assertEquals(tagId, loadedTag.getId());
-            Assert.assertEquals(NAME_1, loadedTag.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(tagId, loadedTag.getId());
+        Assert.assertEquals(NAME_1, loadedTag.getName());
     }
 
     @Test
     public void findAllTest() {
-        try {
-            int currentSize = tagService.findAll().size();
+        int currentSize = tagService.findAll().size();
 
-            Tag tag = new Tag();
-            tag.setName(NAME_2);
+        Tag tag = new Tag();
+        tag.setName(NAME_2);
 
-            tag = tagService.save(tag);
-            long testTagId = tag.getId();
+        tag = tagService.save(tag);
+        long testTagId = tag.getId();
 
-            Assert.assertEquals(currentSize + 1, tagService.findAll().size());
+        Assert.assertEquals(currentSize + 1, tagService.findAll().size());
 
-            tagService.delete(testTagId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        tagService.delete(testTagId);
     }
 
     @Test
     public void updateTest() {
-        try {
-            Tag tag = new Tag();
-            tag.setName(UPDATED_NAME);
-            tag.setId(tagId);
+        Tag tag = new Tag();
+        tag.setName(UPDATED_NAME);
+        tag.setId(tagId);
 
-            tag = tagService.update(tag);
-            Tag loadedTag = tagService.findById(tagId);
+        tag = tagService.update(tag);
+        Tag loadedTag = tagService.findById(tagId);
 
-            Assert.assertEquals(tag.getId(), loadedTag.getId());
-            Assert.assertEquals(UPDATED_NAME, loadedTag.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(tag.getId(), loadedTag.getId());
+        Assert.assertEquals(UPDATED_NAME, loadedTag.getName());
     }
 
     @Test
     public void deleteTest() {
-        try {
-            Tag tag = new Tag();
-            tag.setName(NAME_2);
+        Tag tag = new Tag();
+        tag.setName(NAME_2);
 
-            tag = tagService.save(tag);
-            long testTagId = tag.getId();
-            tagService.delete(testTagId);
+        tag = tagService.save(tag);
+        long testTagId = tag.getId();
+        tagService.delete(testTagId);
 
-            Assert.assertNull(tagService.findById(testTagId));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Assert.assertNull(tagService.findById(testTagId));
     }
 
     @Test
     public void findOffersTest() {
-        try {
-            Tag tag1 = new Tag();
-            tag1.setName(NAME_2);
+        Tag tag1 = new Tag();
+        tag1.setName(NAME_2);
 
-            Tag tag2 = new Tag();
-            tag2.setName(NAME_3);
+        Tag tag2 = new Tag();
+        tag2.setName(NAME_3);
 
-            Offer offer1 = new Offer();
-            offer1.setName(OFFER_NAME_1);
-            offer1.setTags(new HashSet<>(Collections.singletonList(tag1)));
-            offer1 = offerService.save(offer1);
+        Offer offer1 = new Offer();
+        offer1.setName(OFFER_NAME_1);
+        offer1.setTags(new HashSet<>(Collections.singletonList(tag1)));
+        offer1 = offerService.save(offer1);
 
-            Offer offer2 = new Offer();
-            offer2.setName(OFFER_NAME_2);
-            offer2.setTags(new HashSet<>(Collections.singletonList(tag1)));
-            offer2 = offerService.save(offer2);
+        Offer offer2 = new Offer();
+        offer2.setName(OFFER_NAME_2);
+        offer2.setTags(new HashSet<>(Collections.singletonList(tag1)));
+        offer2 = offerService.save(offer2);
 
-            Offer offer3 = new Offer();
-            offer3.setName(OFFER_NAME_3);
-            offer3.setTags(new HashSet<>(Collections.singletonList(tag2)));
-            offer3 = offerService.save(offer3);
+        Offer offer3 = new Offer();
+        offer3.setName(OFFER_NAME_3);
+        offer3.setTags(new HashSet<>(Collections.singletonList(tag2)));
+        offer3 = offerService.save(offer3);
 
-            List<Offer> offers = tagService.findTagOffers(tag1.getName());
+        List<Offer> offers = tagService.findTagOffers(tag1.getName());
 
-            Assert.assertEquals(2, offers.size());
-            Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
-            Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
+        Assert.assertEquals(2, offers.size());
+        Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
+        Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
 
-            offerService.delete(offer1.getId());
-            offerService.delete(offer2.getId());
-            offerService.delete(offer3.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        offerService.delete(offer1.getId());
+        offerService.delete(offer2.getId());
+        offerService.delete(offer3.getId());
     }
 
 }

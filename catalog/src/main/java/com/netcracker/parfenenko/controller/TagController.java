@@ -3,7 +3,6 @@ package com.netcracker.parfenenko.controller;
 import com.netcracker.parfenenko.dto.OfferDto;
 import com.netcracker.parfenenko.dto.TagDto;
 import com.netcracker.parfenenko.entities.Tag;
-import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import com.netcracker.parfenenko.mapper.OfferDtoMapper;
 import com.netcracker.parfenenko.mapper.TagDtoMapper;
 import com.netcracker.parfenenko.service.TagService;
@@ -15,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @RestController
@@ -42,11 +40,7 @@ public class TagController {
     })
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<TagDto> saveTag(@RequestBody Tag tag) {
-        try {
-            return new ResponseEntity<>(tagMapper.mapEntity(tagService.save(tag)), HttpStatus.CREATED);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(tagMapper.mapEntity(tagService.save(tag)), HttpStatus.CREATED);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -58,13 +52,7 @@ public class TagController {
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<TagDto> findTagById(@PathVariable long id) {
-        try {
-            return new ResponseEntity<>(tagMapper.mapEntity(tagService.findById(id)), HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(tagMapper.mapEntity(tagService.findById(id)), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -76,13 +64,7 @@ public class TagController {
     })
     @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
     public ResponseEntity<TagDto> findTagByName(@PathVariable String name) {
-        try {
-            return new ResponseEntity<>(tagMapper.mapEntity(tagService.findByName(name)), HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(tagMapper.mapEntity(tagService.findByName(name)), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -94,11 +76,7 @@ public class TagController {
     })
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<TagDto>> findAllTags() {
-        try {
-            return new ResponseEntity<>(tagMapper.mapEntityCollection(tagService.findAll()), HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(tagMapper.mapEntityCollection(tagService.findAll()), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "PUT",
@@ -110,13 +88,7 @@ public class TagController {
     })
     @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<TagDto> updateTag(@RequestBody Tag tag) {
-        try {
-            return new ResponseEntity<>(tagMapper.mapEntity(tagService.update(tag)), HttpStatus.OK) ;
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(tagMapper.mapEntity(tagService.update(tag)), HttpStatus.OK) ;
     }
 
     @ApiOperation(httpMethod = "DELETE",
@@ -127,13 +99,7 @@ public class TagController {
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<TagDto> deleteTag(@PathVariable long id) {
-        try {
-            tagService.delete(id);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        tagService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -147,13 +113,7 @@ public class TagController {
     })
     @RequestMapping(value = "/name/{name}/offers", method = RequestMethod.GET)
     public ResponseEntity<List<OfferDto>> findTagOffers(@PathVariable String name) {
-        try {
-            return new ResponseEntity<>(offerMapper.mapEntityCollection(tagService.findTagOffers(name)), HttpStatus.OK);
-        } catch (PersistenceMethodException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(offerMapper.mapEntityCollection(tagService.findTagOffers(name)), HttpStatus.OK);
     }
 
 }
