@@ -1,10 +1,7 @@
 package com.netcracker.parfenenko.entity;
 
-import lombok.Data;
-
 import java.util.Objects;
 
-@Data
 public class Price extends IdentifiedEntity {
 
     private double value;

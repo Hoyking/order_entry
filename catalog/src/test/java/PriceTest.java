@@ -21,108 +21,80 @@ public class PriceTest {
 
     @Before
     public void initPrice() {
-        try {
-            Price price = new Price();
-            price.setValue(PRICE_1);
+        Price price = new Price();
+        price.setValue(PRICE_1);
 
-            price = priceService.save(price);
-            priceId = price.getId();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        price = priceService.save(price);
+        priceId = price.getId();
     }
 
     @After
     public void destroyPrice() {
-        try {
-            priceService.delete(priceId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        priceService.delete(priceId);
     }
 
     @Test
     public void saveTest() {
-        try {
-            Price price = new Price();
-            price.setValue(PRICE_2);
+        Price price = new Price();
+        price.setValue(PRICE_2);
 
-            price = priceService.save(price);
-            long testPriceId = price.getId();
+        price = priceService.save(price);
+        long testPriceId = price.getId();
 
-            Price loadedPrice = priceService.findById(testPriceId);
+        Price loadedPrice = priceService.findById(testPriceId);
 
-            Assert.assertEquals(testPriceId, loadedPrice.getId());
-            Assert.assertEquals(PRICE_2, loadedPrice.getValue(), 0);
+        Assert.assertEquals(testPriceId, loadedPrice.getId());
+        Assert.assertEquals(PRICE_2, loadedPrice.getValue(), 0);
 
-            priceService.delete(loadedPrice.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        priceService.delete(loadedPrice.getId());
     }
 
     @Test
     public void findByIdTest() {
-        try {
-            Price loadedPrice = priceService.findById(priceId);
+        Price loadedPrice = priceService.findById(priceId);
 
-            Assert.assertEquals(priceId, loadedPrice.getId());
-            Assert.assertEquals(PRICE_1, loadedPrice.getValue(), 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(priceId, loadedPrice.getId());
+        Assert.assertEquals(PRICE_1, loadedPrice.getValue(), 0);
     }
 
     @Test
     public void findAllTest() {
-        try {
-            int currentSize = priceService.findAll().size();
+        int currentSize = priceService.findAll().size();
 
-            Price price = new Price();
-            price.setValue(PRICE_2);
+        Price price = new Price();
+        price.setValue(PRICE_2);
 
-            price = priceService.save(price);
-            long testPriceId = price.getId();
+        price = priceService.save(price);
+        long testPriceId = price.getId();
 
-            Assert.assertEquals(currentSize + 1, priceService.findAll().size());
+        Assert.assertEquals(currentSize + 1, priceService.findAll().size());
 
-            priceService.delete(testPriceId);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        priceService.delete(testPriceId);
     }
 
     @Test
     public void updateTest() {
-        try {
-            Price price = new Price();
-            price.setValue(UPDATED_PRICE);
-            price.setId(priceId);
+        Price price = new Price();
+        price.setValue(UPDATED_PRICE);
+        price.setId(priceId);
 
-            price = priceService.update(price);
-            Price loadedPrice = priceService.findById(priceId);
+        price = priceService.update(price);
+        Price loadedPrice = priceService.findById(priceId);
 
-            Assert.assertEquals(price.getId(), loadedPrice.getId());
-            Assert.assertEquals(UPDATED_PRICE, loadedPrice.getValue(), 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Assert.assertEquals(price.getId(), loadedPrice.getId());
+        Assert.assertEquals(UPDATED_PRICE, loadedPrice.getValue(), 0);
     }
 
     @Test
     public void deleteTest() {
-        try {
-            Price price = new Price();
-            price.setValue(PRICE_2);
+        Price price = new Price();
+        price.setValue(PRICE_2);
 
-            price = priceService.save(price);
-            long testPriceId = price.getId();
-            priceService.delete(testPriceId);
+        price = priceService.save(price);
+        long testPriceId = price.getId();
+        priceService.delete(testPriceId);
 
-            Assert.assertNull(priceService.findById(testPriceId));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Assert.assertNull(priceService.findById(testPriceId));
     }
 
 }

@@ -1,16 +1,11 @@
 package com.netcracker.parfenenko.entity;
 
-import lombok.Data;
-
-import java.util.List;
 import java.util.Objects;
 
-@Data
 public class OrderItem extends NamedEntity {
 
     private double price;
     private String category;
-    private List<String> tags;
     private String description;
 
     public OrderItem() {}
@@ -29,14 +24,6 @@ public class OrderItem extends NamedEntity {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
     }
 
     public String getDescription() {

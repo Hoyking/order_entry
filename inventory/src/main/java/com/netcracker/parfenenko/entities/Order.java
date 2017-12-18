@@ -18,13 +18,12 @@ import java.util.Set;
 })
 public class Order extends NamedEntity {
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL/*, orphanRemoval = true*/)
     private Set<OrderItem> orderItems;
     private String description;
     private double totalPrice;
     private String customerMail;
     private String orderDate;
-    private String paymentSign;
     private int paymentStatus = Payments.UNPAID.value();
 
     public Order() {}
@@ -61,14 +60,6 @@ public class Order extends NamedEntity {
         this.orderDate = orderDate;
     }
 
-    public String getPaymentSign() {
-        return paymentSign;
-    }
-
-    public void setPaymentSign(String paymentSign) {
-        this.paymentSign = paymentSign;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -95,14 +86,13 @@ public class Order extends NamedEntity {
                 Objects.equals(orderItems, order.orderItems) &&
                 Objects.equals(customerMail, order.customerMail) &&
                 Objects.equals(orderDate, order.orderDate) &&
-                Objects.equals(paymentSign, order.paymentSign) &&
                 Objects.equals(name, order.name) &&
                 Objects.equals(description, order.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, orderItems, totalPrice, customerMail, orderDate, paymentSign, name, description);
+        return Objects.hash(id, orderItems, totalPrice, customerMail, orderDate, name, description);
     }
 
 }

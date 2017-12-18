@@ -33,6 +33,13 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     }
 
     @Override
+    public List<Offer> findByFilters(List<Long> categories, List<String> tags, double from, double to)
+            throws PersistenceMethodException, EntityNotFoundException {
+        return persistenceMethodsProvider.
+                functionalMethod(entityManager -> findByFiltersQuery(entityManager, categories, tags, from, to));
+    }
+
+    @Override
     public Set<Tag> findTags(long offerId) throws PersistenceMethodException, EntityNotFoundException {
         return persistenceMethodsProvider.functionalMethod(entityManager -> findTagsQuery(entityManager, offerId));
     }
@@ -84,18 +91,52 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     }
 
     private boolean checkTagsEntrance(Offer offer, List<Tag> tags) {
-        Set<Tag> offerTags = null;
+        Set<Tag> offerTags;
         try {
-            offerTags =  findTags(offer.getId());
+            offerTags = findTags(offer.getId());
         } catch (PersistenceMethodException e) {
             e.printStackTrace();
+            return false;
         }
         return offerTags.containsAll(tags);
     }
 
+    private List<Offer> findByFiltersQuery(EntityManager entityManager, List<Long> categories, List<String> tags,
+                                           double from, double to) {
+        if (categories == null && tags == null) {
+            return entityManager
+                    .createNamedQuery("findByPrice", Offer.class)
+                    .setParameter("fromPrice", from)
+                    .setParameter("toPrice", to)
+                    .getResultList();
+        } else if (categories == null) {
+            return entityManager
+                    .createNamedQuery("findByTagsAndPrice", Offer.class)
+                    .setParameter("tags", tags)
+                    .setParameter("fromPrice", from)
+                    .setParameter("toPrice", to)
+                    .getResultList();
+        } else if (tags == null) {
+            return entityManager
+                    .createNamedQuery("findByCategoriesAndPrice", Offer.class)
+                    .setParameter("categories", categories)
+                    .setParameter("fromPrice", from)
+                    .setParameter("toPrice", to)
+                    .getResultList();
+        }
+        return entityManager
+                .createNamedQuery("findByAllFilters", Offer.class)
+                .setParameter("categories", categories)
+                .setParameter("tags", tags)
+                .setParameter("fromPrice", from)
+                .setParameter("toPrice", to)
+                .getResultList();
+    }
+
     private Set<Tag> findTagsQuery(EntityManager entityManager, long offerId) {
-        return new HashSet<>(entityManager
-                .createNamedQuery("findTags")
+//        noinspection unchecked
+        return new HashSet(entityManager
+                .createNamedQuery("findTags", Set.class)
                 .setParameter(1, offerId)
                 .getResultList());
     }
