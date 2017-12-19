@@ -1,6 +1,6 @@
 package com.netcracker.parfenenko.entity;
 
-import com.netcracker.parfenenko.util.Payments;
+import com.netcracker.parfenenko.util.Statuses;
 
 import java.util.Objects;
 
@@ -10,7 +10,7 @@ public class Order extends NamedEntity {
     private double totalPrice;
     private String customerMail;
     private String orderDate;
-    private int paymentStatus = Payments.UNPAID.value();
+    private int paymentStatus = Statuses.OPENED.value();
 
     public Order() {}
 

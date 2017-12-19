@@ -6,6 +6,7 @@ import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.service.OfferService;
 import com.netcracker.parfenenko.service.OrderService;
+import com.netcracker.parfenenko.util.Statuses;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -80,7 +81,7 @@ public class OrderController {
     }
 
     @ApiOperation(httpMethod = "GET",
-            value = "Searching for all orders",
+            value = "Searching order items of an order",
             response = OrderItem[].class)
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
@@ -153,16 +154,29 @@ public class OrderController {
     }
 
     @ApiOperation(httpMethod = "PUT",
-            value = "Payment for the order",
+            value = "Order payment",
             response = Order.class)
     @ApiResponses({
-            @ApiResponse(code = 409, message = "The order is already paid"),
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
-            @ApiResponse(code = 404, message = "Order doesn't exist")
+            @ApiResponse(code = 404, message = "Order doesn't exist"),
+            @ApiResponse(code = 400, message = "Invalid payment status")
     })
-    @RequestMapping(value = "/orders/{id}/status", method = RequestMethod.PUT)
+    @RequestMapping(value = "/orders/{id}/pay", method = RequestMethod.PUT)
     public ResponseEntity<Order> payForOrder(@PathVariable long id) {
-        return orderService.payForOrder(id);
+        return orderService.updateStatus(id, Statuses.PAID.value());
+    }
+
+    @ApiOperation(httpMethod = "PUT",
+            value = "Cancel order",
+            response = Order.class)
+    @ApiResponses({
+            @ApiResponse(code = 500, message = "Oops, something went wrong"),
+            @ApiResponse(code = 404, message = "Order doesn't exist"),
+            @ApiResponse(code = 400, message = "Invalid payment status")
+    })
+    @RequestMapping(value = "/orders/{id}/cancel", method = RequestMethod.PUT)
+    public ResponseEntity<Order> cancelOrder(@PathVariable long id) {
+        return orderService.updateStatus(id, Statuses.CANCELED.value());
     }
 
 }

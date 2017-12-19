@@ -61,8 +61,9 @@ public class OrderClient {
                 new HttpEntity<>(orderItemId), Order.class);
     }
 
-    public ResponseEntity<Order> payForOrder(long orderId) {
-        return requestManager.putRequest(String.format(uriProvider.get("payURI"), orderId), Order.class);
+    public ResponseEntity<Order> updateStatus(long orderId, int status) {
+        return requestManager.putRequest(String.format(uriProvider.get("updateStatusURI"), orderId),
+                new HttpEntity<>(status), Order.class);
     }
 
     public ResponseEntity<OrderItem[]> findOrderItems(long orderId) {
