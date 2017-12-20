@@ -5,10 +5,12 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@SuppressWarnings("Duplicates")
 @Component
 public class PersistenceMethodsProvider {
 
@@ -26,12 +28,6 @@ public class PersistenceMethodsProvider {
         } catch (Exception e) {
             e.printStackTrace();
             throw new PersistenceMethodException();
-        } finally {
-            try {
-                entityManager.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -39,18 +35,12 @@ public class PersistenceMethodsProvider {
         T result;
         try {
             result = function.apply(entityManager);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NoResultException e) {
             e.printStackTrace();
             throw new EntityNotFoundException("Entity doesn't exist");
         } catch (Exception e) {
             e.printStackTrace();
             throw new PersistenceMethodException();
-        } finally {
-            try {
-                entityManager.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
         if (result == null) {
             throw new EntityNotFoundException("Entity doesn't exist");

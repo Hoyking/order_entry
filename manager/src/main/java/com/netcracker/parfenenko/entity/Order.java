@@ -1,32 +1,18 @@
 package com.netcracker.parfenenko.entity;
 
-import com.netcracker.parfenenko.util.Payments;
-import lombok.Data;
-import lombok.ToString;
+import com.netcracker.parfenenko.util.Statuses;
 
-import java.util.List;
 import java.util.Objects;
 
-@Data
 public class Order extends NamedEntity {
 
-    private List<OrderItem> orderItems;
     private String description;
     private double totalPrice;
     private String customerMail;
     private String orderDate;
-    private String paymentSign;
-    private int paymentStatus = Payments.UNPAID.value();
+    private int paymentStatus = Statuses.OPENED.value();
 
     public Order() {}
-
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
-    }
-
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
-    }
 
     public double getTotalPrice() {
         return totalPrice;
@@ -52,14 +38,6 @@ public class Order extends NamedEntity {
         this.orderDate = orderDate;
     }
 
-    public String getPaymentSign() {
-        return paymentSign;
-    }
-
-    public void setPaymentSign(String paymentSign) {
-        this.paymentSign = paymentSign;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -83,17 +61,15 @@ public class Order extends NamedEntity {
         Order order = (Order) o;
         return id == order.id &&
                 Double.compare(order.totalPrice, totalPrice) == 0 &&
-                Objects.equals(orderItems, order.orderItems) &&
                 Objects.equals(customerMail, order.customerMail) &&
                 Objects.equals(orderDate, order.orderDate) &&
-                Objects.equals(paymentSign, order.paymentSign) &&
                 Objects.equals(name, order.name) &&
                 Objects.equals(description, order.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, orderItems, totalPrice, customerMail, orderDate, paymentSign, name, description);
+        return Objects.hash(id, totalPrice, customerMail, orderDate, name, description);
     }
 
 }

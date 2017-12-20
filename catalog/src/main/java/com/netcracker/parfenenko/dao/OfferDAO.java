@@ -11,6 +11,9 @@ import java.util.Set;
 
 public interface OfferDAO extends NamedEntityDAO<Offer, Long> {
 
+    List<Offer> findByFilters(List<Long> categories, List<String> tags, double from, double to)
+            throws PersistenceMethodException, EntityNotFoundException;
+
     Set<Tag> findTags(long offerId) throws PersistenceMethodException, EntityNotFoundException;
 
     Offer changeAvailability(long id) throws PersistenceMethodException, EntityNotFoundException;

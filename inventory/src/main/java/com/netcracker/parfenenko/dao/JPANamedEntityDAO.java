@@ -4,6 +4,7 @@ import com.netcracker.parfenenko.exception.PersistenceMethodException;
 
 import javax.persistence.EntityNotFoundException;
 
+@SuppressWarnings("unchecked")
 public abstract class JPANamedEntityDAO<T, ID> extends JPAGenericDAO<T, ID> implements NamedEntityDAO<T, ID> {
 
     protected JPANamedEntityDAO() {}

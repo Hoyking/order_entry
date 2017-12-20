@@ -5,11 +5,30 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@NamedQueries(
+@NamedQueries({
         @NamedQuery(name = "findTags",
                 query = "SELECT e.tags FROM Offer e WHERE e.id = ?1"
+        ),
+        @NamedQuery(name = "findByAllFilters",
+                query = "SELECT DISTINCT o FROM Offer o JOIN Tag t " +
+                        "ON (t.name IN :tags AND t MEMBER OF o.tags) " +
+                        "WHERE o.category.id IN :categories " +
+                        "AND o.price.value >= :fromPrice AND o.price.value <= :toPrice"
+        ),
+        @NamedQuery(name = "findByCategoriesAndPrice",
+                query = "SELECT DISTINCT o FROM Offer o WHERE o.category.id IN :categories " +
+                        "AND o.price.value >= :fromPrice AND o.price.value <= :toPrice"
+        ),
+        @NamedQuery(name = "findByTagsAndPrice",
+                query = "SELECT DISTINCT o FROM Offer o JOIN Tag t " +
+                        "ON (t.name IN :tags AND t MEMBER OF o.tags) " +
+                        "WHERE o.price.value >= :fromPrice AND o.price.value <= :toPrice "
+        ),
+        @NamedQuery(name = "findByPrice",
+                query = "SELECT DISTINCT o FROM Offer o WHERE o.price.value >= :fromPrice " +
+                        "AND o.price.value <= :toPrice"
         )
-)
+})
 public class Offer extends NamedEntity {
 
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})

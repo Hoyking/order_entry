@@ -12,7 +12,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class TagService {
 
     private TagDAO tagDAO;
@@ -34,6 +34,11 @@ public class TagService {
     @Transactional(readOnly = true)
     public Tag findByName(String name) throws PersistenceMethodException, EntityNotFoundException {
         return tagDAO.findByName(name);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Tag> findByPartOfName(String part) throws PersistenceMethodException {
+        return tagDAO.findByPartOfName(part);
     }
 
     @Transactional(readOnly = true)

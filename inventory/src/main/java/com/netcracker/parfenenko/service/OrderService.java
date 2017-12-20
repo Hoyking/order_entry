@@ -3,14 +3,17 @@ package com.netcracker.parfenenko.service;
 import com.netcracker.parfenenko.dao.OrderDAO;
 import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
-import com.netcracker.parfenenko.exception.PayForOrderException;
-import com.netcracker.parfenenko.exception.PaymentStatusException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
+import com.netcracker.parfenenko.exception.StatusSignException;
+import com.netcracker.parfenenko.exception.UpdateStatusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +29,12 @@ public class OrderService {
     }
 
     public Order save(Order order) throws PersistenceMethodException {
-        return orderDAO.save(order);
+        order.setOrderItems(new HashSet<>(0));
+        order.setTotalPrice(0);
+        order.setOrderDate(new SimpleDateFormat("yyyy.MM.dd").format(Calendar.getInstance().getTime()));
+        order = orderDAO.save(order);
+        order.setName("Order #" + order.getId());
+        return update(order);
     }
 
     @Transactional(readOnly = true)
@@ -45,6 +53,7 @@ public class OrderService {
     }
 
     public Order update(Order order) throws PersistenceMethodException, EntityNotFoundException {
+        order.setOrderItems(findOrderItems(order.getId()));
         return orderDAO.update(order);
     }
 
@@ -66,13 +75,14 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<Order> findOrdersByPaymentStatus(int paymentStatus) throws PaymentStatusException, PersistenceMethodException,
+    public List<Order> findOrdersByPaymentStatus(int paymentStatus) throws StatusSignException, PersistenceMethodException,
             EntityNotFoundException {
         return orderDAO.findOrdersByPaymentStatus(paymentStatus);
     }
 
-    public Order payForOrder(long id) throws PayForOrderException, PersistenceMethodException, EntityNotFoundException {
-        return orderDAO.payForOrder(id);
+    public Order updateStatus(long id, int status) throws UpdateStatusException, PersistenceMethodException,
+            EntityNotFoundException {
+        return orderDAO.updateStatus(id, status);
     }
 
 }
