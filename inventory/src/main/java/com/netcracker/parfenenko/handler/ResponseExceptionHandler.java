@@ -20,16 +20,16 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
             StatusSignException.class})
     public final ResponseEntity<Object> handleConflict(Exception e, WebRequest request) {
         ResponseEntity<Object> responseEntity = null;
-        if (e instanceof PersistenceMethodException) {
+        if (e.getClass().equals(PersistenceMethodException.class)) {
             responseEntity = handleExceptionInternal(e, "Oops, something went wrong", new HttpHeaders(),
                     HttpStatus.INTERNAL_SERVER_ERROR, request);
-        } else if (e instanceof EntityNotFoundException) {
+        } else if (e.getClass().equals(EntityNotFoundException.class)) {
             responseEntity = handleExceptionInternal(e, "There is now information you are looking for",
                     new HttpHeaders(), HttpStatus.NOT_FOUND, request);
-        } else if (e instanceof StatusSignException) {
+        } else if (e.getClass().equals(StatusSignException.class)) {
             responseEntity = handleExceptionInternal(e, e.getMessage(), new HttpHeaders(),
                     HttpStatus.BAD_REQUEST, request);
-        } else if (e instanceof UpdateStatusException) {
+        } else if (e.getClass().equals(UpdateStatusException.class)) {
             responseEntity = handleExceptionInternal(e, e.getMessage(), new HttpHeaders(),
                     HttpStatus.INTERNAL_SERVER_ERROR, request);
         }

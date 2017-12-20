@@ -17,6 +17,8 @@ public class OfferClient {
     private RequestManager requestManager;
     private UriProvider uriProvider;
 
+    private final String URN = "catalog";
+
     @Autowired
     public OfferClient(RequestManager requestManager, UriProvider uriProvider) {
         this.requestManager = requestManager;
@@ -24,12 +26,12 @@ public class OfferClient {
     }
 
     public ResponseEntity<Offer[]> findOffers(Map<String, List<String>> offerFilter) {
-        return requestManager.postRequest(uriProvider.get("findOffersByFiltersURI"), new HttpEntity<>(offerFilter),
+        return requestManager.postRequest(uriProvider.get(URN, "offers/filters"), new HttpEntity<>(offerFilter),
                 Offer[].class);
     }
 
     public ResponseEntity<Offer> findOfferById(long offerId) {
-        return requestManager.getRequest(String.format(uriProvider.get("baseOfferURI"), offerId),
+        return requestManager.getRequest(String.format(uriProvider.get(URN, "offers/%s"), offerId),
                 Offer.class);
     }
 

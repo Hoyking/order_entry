@@ -19,10 +19,10 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<Object> handleConflict(Exception e, WebRequest request) {
         String body;
         ResponseEntity<Object> response = null;
-        if (e instanceof UpdateOrderException) {
+        if (e.getClass().equals(UpdateOrderException.class)) {
             body = e.getMessage();
             response = handleExceptionInternal(e, body, new HttpHeaders(), HttpStatus.CONFLICT, request);
-        } else if (e instanceof EntityNotFoundException) {
+        } else if (e.getClass().equals(EntityNotFoundException.class)) {
             body = e.getMessage();
             response = handleExceptionInternal(e, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
         }
