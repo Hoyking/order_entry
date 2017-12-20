@@ -23,6 +23,10 @@ public class OfferService {
         return offerClient.findOffers(offerFilter);
     }
 
+    public ResponseEntity<Offer[]> findOffersByPartOfName(String part) {
+        return offerClient.findOffersByPartOfName(part);
+    }
+
     public ResponseEntity<Offer> findOfferById(long offerId) {
         return offerClient.findOfferById(offerId);
     }

@@ -30,6 +30,11 @@ public class OfferClient {
                 Offer[].class);
     }
 
+    public ResponseEntity<Offer[]> findOffersByPartOfName(String part) {
+        return requestManager.getRequest(String.format(uriProvider.get(URN, "offers/name/part/%s"), part),
+                Offer[].class);
+    }
+
     public ResponseEntity<Offer> findOfferById(long offerId) {
         return requestManager.getRequest(String.format(uriProvider.get(URN, "offers/%s"), offerId),
                 Offer.class);

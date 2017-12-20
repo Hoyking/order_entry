@@ -1,9 +1,7 @@
 package com.netcracker.parfenenko.controller;
 
-import com.netcracker.parfenenko.entity.FreshOrder;
-import com.netcracker.parfenenko.entity.Offer;
-import com.netcracker.parfenenko.entity.Order;
-import com.netcracker.parfenenko.entity.OrderItem;
+import com.netcracker.parfenenko.entity.*;
+import com.netcracker.parfenenko.service.CategoryService;
 import com.netcracker.parfenenko.service.OfferService;
 import com.netcracker.parfenenko.service.OrderService;
 import com.netcracker.parfenenko.util.Statuses;
@@ -19,21 +17,23 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/v1")
-public class OrderController {
+public class ServiceController {
 
     private OrderService orderService;
     private OfferService offerService;
+    private CategoryService categoryService;
 
     @Autowired
-    public OrderController(OrderService orderService, OfferService offerService) {
+    public ServiceController(OrderService orderService, OfferService offerService, CategoryService categoryService) {
         this.orderService = orderService;
         this.offerService = offerService;
+        this.categoryService = categoryService;
     }
 
     @ApiOperation(httpMethod = "POST",
             value = "Searching for offers with filters",
-            response = Order.class,
-            responseContainer = "List")
+            response = Offer[].class
+    )
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 400, message = "Wrong filters")
@@ -41,6 +41,30 @@ public class OrderController {
     @RequestMapping(value = "/offers", method = RequestMethod.POST)
     public ResponseEntity<Offer[]> findOffers(@RequestBody Map<String, List<String>> offerFilter) {
         return offerService.findOffers(offerFilter);
+    }
+
+    @ApiOperation(httpMethod = "GET",
+            value = "Searching for offers by part of name",
+            response = Offer[].class
+    )
+    @ApiResponses({
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
+    })
+    @RequestMapping(value = "/offers/name/part/{part}", method = RequestMethod.GET)
+    public ResponseEntity<Offer[]> findOffersByPartOfName(@PathVariable String part) {
+        return offerService.findOffersByPartOfName(part);
+    }
+
+    @ApiOperation(httpMethod = "GET",
+            value = "Searching for categories",
+            response = Category[].class
+    )
+    @ApiResponses({
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
+    })
+    @RequestMapping(value = "/categories", method = RequestMethod.GET)
+    public ResponseEntity<Category[]> findCategories() {
+        return categoryService.findAll();
     }
 
     @ApiOperation(httpMethod = "POST",

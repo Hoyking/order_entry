@@ -69,6 +69,19 @@ public class CategoryController {
     }
 
     @ApiOperation(httpMethod = "GET",
+            value = "Searching for categories by part of name",
+            response = CategoryDto.class,
+            responseContainer = "List")
+    @ApiResponses({
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
+    })
+    @RequestMapping(value = "/name/part/{part}", method = RequestMethod.GET)
+    public ResponseEntity<List<CategoryDto>> findCategoriesByPartOfName(@PathVariable String part) {
+        return new ResponseEntity<>(categoryMapper.mapEntityCollection(categoryService.findByPartOfName(part)),
+                HttpStatus.OK);
+    }
+
+    @ApiOperation(httpMethod = "GET",
             value = "Searching for all categories",
             response = CategoryDto.class,
             responseContainer = "List")

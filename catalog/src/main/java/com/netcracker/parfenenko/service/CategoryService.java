@@ -37,6 +37,11 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
+    public List<Category> findByPartOfName(String part) throws PersistenceMethodException {
+        return categoryDAO.findByPartOfName(part);
+    }
+
+    @Transactional(readOnly = true)
     public List<Category> findAll() throws PersistenceMethodException, EntityNotFoundException {
         return categoryDAO.findAll();
     }

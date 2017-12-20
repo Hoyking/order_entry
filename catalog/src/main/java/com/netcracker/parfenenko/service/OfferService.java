@@ -42,6 +42,11 @@ public class OfferService {
     }
 
     @Transactional(readOnly = true)
+    public List<Offer> findByPartOfName(String part) throws PersistenceMethodException {
+        return offerDAO.findByPartOfName(part);
+    }
+
+    @Transactional(readOnly = true)
     public List<Offer> findAll() throws PersistenceMethodException, EntityNotFoundException {
         return offerDAO.findAll();
     }
