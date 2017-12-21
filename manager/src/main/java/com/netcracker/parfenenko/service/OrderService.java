@@ -6,7 +6,7 @@ import com.netcracker.parfenenko.entity.Offer;
 import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
-import com.netcracker.parfenenko.util.Payments;
+import com.netcracker.parfenenko.util.Statuses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,13 +29,7 @@ public class OrderService {
     public ResponseEntity<Order> createOrder(FreshOrder freshOrder, List<Long> offers) {
         Order order = orderClient.createOrder(freshOrder).getBody();
         final long orderId = order.getId();
-        offers.forEach(id -> {
-            try {
-                addOrderItem(orderId, id);
-            } catch (UpdateOrderException e) {
-                e.printStackTrace();
-            }
-        });
+        offers.forEach(id -> addOrderItem(orderId, id));
         return findOrderById(orderId);
     }
 
@@ -49,8 +43,11 @@ public class OrderService {
 
     public ResponseEntity<Order> addOrderItem(long orderId, long offerId) throws UpdateOrderException, EntityNotFoundException {
         Order order = findOrderById(orderId).getBody();
-        if (order.getPaymentStatus() == Payments.PAID.value()) {
+        if (order.getPaymentStatus() == Statuses.PAID.value()) {
             throw new UpdateOrderException("Failed to add new order item to the paid order");
+        }
+        if (order.getPaymentStatus() == Statuses.CANCELED.value()) {
+            throw new UpdateOrderException("Fail to add order item to the canceled order");
         }
         Offer offer = offerService.findOfferById(offerId).getBody();
         if (offer == null) {
@@ -62,8 +59,11 @@ public class OrderService {
 
     public ResponseEntity<Order> removeOrderItem(long orderId, long orderItemId) throws UpdateOrderException {
         Order order = findOrderById(orderId).getBody();
-        if (order.getPaymentStatus() == Payments.PAID.value()) {
+        if (order.getPaymentStatus() == Statuses.PAID.value()) {
             throw new UpdateOrderException("Fail to remove order item from the paid order");
+        }
+        if (order.getPaymentStatus() == Statuses.CANCELED.value()) {
+            throw new UpdateOrderException("Fail to remove order item from the canceled order");
         }
         orderClient.removeOrderItem(orderId, orderItemId);
         return countTotalPrice(orderId);
@@ -90,12 +90,8 @@ public class OrderService {
         return orderClient.updateOrder(order);
     }
 
-    public ResponseEntity<Order> payForOrder(long orderId) throws UpdateOrderException {
-        Order order = findOrderById(orderId).getBody();
-        if (order.getPaymentStatus() == Payments.PAID.value()) {
-            throw new UpdateOrderException("Fail to pay an order. Order is already paid");
-        }
-        return orderClient.payForOrder(orderId);
+    public ResponseEntity<Order> updateStatus(long orderId, int status) {
+        return orderClient.updateStatus(orderId, status);
     }
 
     public ResponseEntity<OrderItem[]> findOrderItems(long orderId) {

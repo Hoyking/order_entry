@@ -1,12 +1,20 @@
 package com.netcracker.parfenenko.dto;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"id"})
-public class TagDto extends NamedDto {
+public class TagDto {
+
+    private String name;
 
     public TagDto() {}
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

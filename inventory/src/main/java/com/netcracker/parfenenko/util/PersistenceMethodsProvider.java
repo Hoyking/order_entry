@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -21,7 +22,7 @@ public class PersistenceMethodsProvider {
     public void consumerMethod(Consumer<EntityManager> consumer) throws PersistenceMethodException, EntityNotFoundException {
         try {
             consumer.accept(entityManager);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NoResultException e) {
             e.printStackTrace();
             throw new EntityNotFoundException("Entity doesn't exist");
         } catch (Exception e) {

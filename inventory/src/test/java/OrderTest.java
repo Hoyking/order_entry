@@ -2,7 +2,7 @@ import com.netcracker.parfenenko.Application;
 import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
 import com.netcracker.parfenenko.service.OrderService;
-import com.netcracker.parfenenko.util.Payments;
+import com.netcracker.parfenenko.util.Statuses;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -218,8 +218,8 @@ public class OrderTest {
 
     @Test
     public void findOrdersByPaymentStatusTest() {
-        int currentPaidOrders = orderService.findOrdersByPaymentStatus(Payments.PAID.value()).size();
-        int currentUnpaidOrders = orderService.findOrdersByPaymentStatus(Payments.UNPAID.value()).size();
+        int currentPaidOrders = orderService.findOrdersByPaymentStatus(Statuses.PAID.value()).size();
+        int currentUnpaidOrders = orderService.findOrdersByPaymentStatus(Statuses.OPENED.value()).size();
 
         OrderItem orderItem1 = new OrderItem();
         orderItem1.setName(ORDER_ITEM_NAME_1);
@@ -252,12 +252,12 @@ public class OrderTest {
         order2.setTotalPrice(TOTAL_PRICE);
         order2.setCustomerMail(MAIL);
         order2.setOrderDate(DATE);
-        order2.setPaymentStatus(Payments.PAID.value());
+        order2.setPaymentStatus(Statuses.PAID.value());
         order2.setOrderItems(new HashSet<>(Arrays.asList(orderItem3, orderItem4)));
         orderService.save(order2);
 
-        List<Order> paidOrders = orderService.findOrdersByPaymentStatus(Payments.PAID.value());
-        List<Order> unpaidOrders = orderService.findOrdersByPaymentStatus(Payments.UNPAID.value());
+        List<Order> paidOrders = orderService.findOrdersByPaymentStatus(Statuses.PAID.value());
+        List<Order> unpaidOrders = orderService.findOrdersByPaymentStatus(Statuses.OPENED.value());
 
         Assert.assertEquals(currentPaidOrders + 1, paidOrders.size());
         Assert.assertEquals(currentUnpaidOrders + 1, unpaidOrders.size());
@@ -268,8 +268,15 @@ public class OrderTest {
 
     @Test
     public void payForOrderTest() {
-        Order order = orderService.payForOrder(orderId);
-        Assert.assertEquals(Payments.PAID.value(), order.getPaymentStatus());
+        Order order = new Order();
+        order.setDescription(DESCRIPTION_2);
+        order.setCustomerMail(MAIL);
+        order = orderService.save(order);
+        orderService.updateStatus(order.getId(), Statuses.PAID.value());
+
+        Assert.assertEquals(Statuses.PAID.value(), order.getPaymentStatus());
+
+        orderService.delete(order.getId());
     }
 
 }

@@ -1,16 +1,15 @@
 package com.netcracker.parfenenko.util;
 
-public enum Payments {
+public enum Statuses {
 
-    UNPAID(0),
-
+    OPENED(0),
     PAID(1),
-
-    REJECTED(2);
+    CANCELED(2),
+    REJECTED_PAYMENT(3);
 
     private final int VALUE;
 
-    Payments(int value) {
+    Statuses(int value) {
         this.VALUE = value;
     }
 
@@ -19,7 +18,7 @@ public enum Payments {
     }
 
     public static boolean consists(int value) {
-        return value == UNPAID.VALUE || value == PAID.VALUE || value == REJECTED.VALUE;
+        return value == OPENED.VALUE || value == PAID.VALUE || value == CANCELED.VALUE || value == REJECTED_PAYMENT.VALUE;
     }
 
 }

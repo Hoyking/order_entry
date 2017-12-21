@@ -146,7 +146,7 @@ public class OrderController {
     }
 
     @ApiOperation(httpMethod = "GET",
-            value = "Searching for orders with requested payment status",
+            value = "Searching for orders with requested status",
             response = OrderDto.class,
             responseContainer = "List")
     @ApiResponses({
@@ -164,13 +164,13 @@ public class OrderController {
             response = OrderDto.class,
             responseContainer = "List")
     @ApiResponses({
-            @ApiResponse(code = 409, message = "The order is already paid"),
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
-            @ApiResponse(code = 404, message = "Order doesn't exist")
+            @ApiResponse(code = 404, message = "Order doesn't exist"),
+            @ApiResponse(code = 400, message = "Wrong payment status")
     })
     @RequestMapping(value = "/{id}/status", method = RequestMethod.PUT)
-    public ResponseEntity<OrderDto> payForOrder(@PathVariable long id) {
-        return new ResponseEntity<>(orderMapper.mapEntity(orderService.payForOrder(id)), HttpStatus.OK);
+    public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable long id, @RequestBody int status) {
+        return new ResponseEntity<>(orderMapper.mapEntity(orderService.updateStatus(id, status)), HttpStatus.OK);
     }
 
 }

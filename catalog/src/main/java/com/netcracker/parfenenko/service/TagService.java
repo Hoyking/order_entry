@@ -37,6 +37,11 @@ public class TagService {
     }
 
     @Transactional(readOnly = true)
+    public List<Tag> findByPartOfName(String part) throws PersistenceMethodException {
+        return tagDAO.findByPartOfName(part);
+    }
+
+    @Transactional(readOnly = true)
     public List<Tag> findAll() throws PersistenceMethodException, EntityNotFoundException {
         return tagDAO.findAll();
     }

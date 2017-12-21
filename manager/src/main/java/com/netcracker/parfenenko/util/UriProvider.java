@@ -26,8 +26,9 @@ public class UriProvider {
         }
     }
 
-    public String get(String uriName) {
-        return uriMap.get(uriName);
+    public String get(String urnName, String url) {
+        String uri = "%s%s";
+        return String.format(uri, uriMap.get(urnName), url);
     }
 
 }

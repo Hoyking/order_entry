@@ -68,8 +68,21 @@ public class OfferController {
     }
 
     @ApiOperation(httpMethod = "GET",
+            value = "Searching for offers by part of name",
+            response = OfferDto.class,
+            responseContainer = "List")
+    @ApiResponses({
+            @ApiResponse(code = 500, message = "Oops, something went wrong")
+    })
+    @RequestMapping(value = "/name/part/{part}", method = RequestMethod.GET)
+    public ResponseEntity<List<OfferDto>> findOfferByPartOfName(@PathVariable String part) {
+        return new ResponseEntity<>(offerMapper.mapEntityCollection(offerService.findByPartOfName(part)),
+                HttpStatus.OK);
+    }
+
+    @ApiOperation(httpMethod = "GET",
             value = "Searching for all offers",
-             response = OfferDto.class,
+            response = OfferDto.class,
             responseContainer = "List")
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong")
