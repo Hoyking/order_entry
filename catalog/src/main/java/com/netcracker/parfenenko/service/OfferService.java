@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -87,8 +86,7 @@ public class OfferService {
 
     @Transactional(readOnly = true)
     public List<Offer> findOffersByTags(List<String> tags) throws PersistenceMethodException, EntityNotFoundException {
-        List<Tag> tagList = tags.stream().map(this::createTag).collect(Collectors.toList());
-        return offerDAO.findOffersByTags(tagList);
+        return offerDAO.findOffersByTags(tags);
     }
 
     @Transactional(readOnly = true)
@@ -112,12 +110,6 @@ public class OfferService {
 
     public Offer removeTagFromOffer(long id, Tag tag) throws PersistenceMethodException, EntityNotFoundException {
         return offerDAO.removeTagFromOffer(id, tag);
-    }
-
-    private Tag createTag(String tagName) {
-        Tag tag = new Tag();
-        tag.setName(tagName);
-        return tag;
     }
 
     private void filtersValidation(Map<String, List<String>> filters) {

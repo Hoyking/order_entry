@@ -27,6 +27,9 @@ import java.util.Set;
         @NamedQuery(name = "findByPrice",
                 query = "SELECT DISTINCT o FROM Offer o WHERE o.price.value >= :fromPrice " +
                         "AND o.price.value <= :toPrice"
+        ),
+        @NamedQuery(name = "findByTags",
+                query = "SELECT DISTINCT o FROM Offer o JOIN Tag t ON (t.name IN :tags AND t MEMBER OF o.tags)"
         )
 })
 public class Offer extends NamedEntity {

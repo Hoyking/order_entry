@@ -18,7 +18,7 @@ public interface OfferDAO extends NamedEntityDAO<Offer, Long> {
 
     Offer changeAvailability(long id) throws PersistenceMethodException, EntityNotFoundException;
 
-    List<Offer> findOffersByTags(List<Tag> tags) throws PersistenceMethodException, EntityNotFoundException;
+    List<Offer> findOffersByTags(List<String> tags) throws PersistenceMethodException, EntityNotFoundException;
 
     List<Offer> findAvailableOffers() throws PersistenceMethodException, EntityNotFoundException;
 

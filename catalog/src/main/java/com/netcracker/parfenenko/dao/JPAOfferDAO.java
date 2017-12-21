@@ -4,6 +4,8 @@ import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -13,10 +15,11 @@ import javax.persistence.criteria.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Repository
 public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements OfferDAO {
+
+    private static final Logger logger = LogManager.getLogger(JPAOfferDAO.class);
 
     public JPAOfferDAO() {
         super.setPersistenceClass(Offer.class);
@@ -36,12 +39,14 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     public List<Offer> findByFilters(List<Long> categories, List<String> tags, double from, double to)
             throws PersistenceMethodException, EntityNotFoundException {
         return persistenceMethodsProvider.
-                functionalMethod(entityManager -> findByFiltersQuery(entityManager, categories, tags, from, to));
+                functionalMethod(entityManager -> findByFiltersQuery(entityManager, categories, tags, from, to),
+                        "searching for offers with filters");
     }
 
     @Override
     public Set<Tag> findTags(long offerId) throws PersistenceMethodException, EntityNotFoundException {
-        return persistenceMethodsProvider.functionalMethod(entityManager -> findTagsQuery(entityManager, offerId));
+        return persistenceMethodsProvider.functionalMethod(entityManager -> findTagsQuery(entityManager, offerId),
+                "searching for tags of offer with id " + offerId);
     }
 
     @Override
@@ -52,53 +57,82 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     }
 
     @Override
-    public List<Offer> findOffersByTags(List<Tag> tags) throws PersistenceMethodException, EntityNotFoundException {
-        return findAll().stream().filter(offer -> checkTagsEntrance(offer, tags)).collect(Collectors.toList());
+    public List<Offer> findOffersByTags(List<String> tags) throws PersistenceMethodException, EntityNotFoundException {
+        String operation = "searching for offers by tags";
+        return persistenceMethodsProvider.functionalMethod(entityManager ->
+                entityManager
+                        .createNamedQuery("findByTags", Offer.class)
+                        .setParameter("tags", tags)
+                        .getResultList()
+                , operation
+        );
     }
 
     @Override
     public List<Offer> findAvailableOffers() throws PersistenceMethodException, EntityNotFoundException {
-        return persistenceMethodsProvider.functionalMethod(this::availableOffers);
+        return persistenceMethodsProvider.functionalMethod(this::availableOffers,
+                "searching for available offers");
     }
 
     @Override
     public Offer addPriceToOffer(long id, Price price) throws PersistenceMethodException, EntityNotFoundException {
-        Offer offer = findById(id);
-        offer.setPrice(price);
-        return update(offer);
+        String operation = "adding price to the offer with id " + id;
+        logger.info("START OPERATION: " + operation);
+        try {
+            Offer offer = findById(id);
+            offer.setPrice(price);
+            offer = update(offer);
+            logger.info("END OF OPERATION: " + operation);
+            return offer;
+        } catch (Exception e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
+        }
     }
 
     @Override
     public List<Offer> findOffersOfPriceInterval(double fromPrice, double toPrice) throws PersistenceMethodException,
             EntityNotFoundException {
         return persistenceMethodsProvider
-                .functionalMethod(entityManager -> offersOfPriceInterval(entityManager, fromPrice, toPrice));
+                .functionalMethod(entityManager -> offersOfPriceInterval(entityManager, fromPrice, toPrice),
+                        "searching for offers of price interval (" + fromPrice + ", " + toPrice + ")");
     }
 
     @Override
     public Offer addTagToOffer(long id, Tag tag) throws PersistenceMethodException, EntityNotFoundException {
-        Offer offer = findById(id);
-        tag.setId(0);
-        offer.getTags().add(tag);
-        return update(offer);
+        String operation = "adding tag to the offer with id " + id;
+        logger.info("START OPERATION: " + operation);
+        try {
+            Offer offer = findById(id);
+            tag.setId(0);
+            offer.getTags().add(tag);
+            offer = update(offer);
+            logger.info("END OF OPERATION: " + operation);
+            return offer;
+        } catch (Exception e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
+        }
     }
 
     @Override
     public Offer removeTagFromOffer(long id, Tag tag) throws PersistenceMethodException, EntityNotFoundException {
-        Offer offer = findById(id);
-        offer.getTags().remove(tag);
-        return update(offer);
-    }
-
-    private boolean checkTagsEntrance(Offer offer, List<Tag> tags) {
-        Set<Tag> offerTags;
+        String operation = "removing tag from the offer with id " + id;
+        logger.info("START OPERATION: " + operation);
         try {
-            offerTags = findTags(offer.getId());
-        } catch (PersistenceMethodException e) {
-            e.printStackTrace();
-            return false;
+            Offer offer = findById(id);
+            tag.setId(0);
+            offer.getTags().remove(tag);
+            offer = update(offer);
+            logger.info("END OF OPERATION: " + operation);
+            return offer;
+        } catch (Exception e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
         }
-        return offerTags.containsAll(tags);
     }
 
     private List<Offer> findByFiltersQuery(EntityManager entityManager, List<Long> categories, List<String> tags,

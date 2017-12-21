@@ -7,13 +7,13 @@ Configuration:
       name: ConsoleAppender
       target: SYSTEM_OUT
       PatternLayout:
-        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%-15t] %-40c{1} : %msg%n"
 
     File:
       name: FileAppender
       fileName: "catalog/target/logs/logfile.log"
       PatternLayout:
-        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
+        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%-15t] %-40c{1} : %msg%n"
 
   Loggers:
 

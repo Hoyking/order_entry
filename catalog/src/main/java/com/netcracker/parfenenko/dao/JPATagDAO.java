@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 @Repository
 public class JPATagDAO extends JPANamedEntityDAO<Tag, Long> implements TagDAO {
 
@@ -23,11 +24,13 @@ public class JPATagDAO extends JPANamedEntityDAO<Tag, Long> implements TagDAO {
 
     @Override
     public List<Offer> findTagOffers(String name) throws PersistenceMethodException, EntityNotFoundException {
+        String operation = "searching for offers containing tag " + name;
         return (List<Offer>) persistenceMethodsProvider.functionalMethod(entityManager ->
             (List<Offer>) entityManager
                     .createNamedQuery("findOffersByTag")
                     .setParameter(1, name)
-                    .getResultList()
+                    .getResultList(),
+                operation
         );
     }
 
