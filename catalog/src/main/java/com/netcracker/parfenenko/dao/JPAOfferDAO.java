@@ -38,15 +38,17 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     @Override
     public List<Offer> findByFilters(List<Long> categories, List<String> tags, double from, double to)
             throws PersistenceMethodException, EntityNotFoundException {
+        String operation = "searching for offers with filters";
         return persistenceMethodsProvider.
                 functionalMethod(entityManager -> findByFiltersQuery(entityManager, categories, tags, from, to),
-                        "searching for offers with filters");
+                        operation);
     }
 
     @Override
     public Set<Tag> findTags(long offerId) throws PersistenceMethodException, EntityNotFoundException {
+        String operation = "searching for tags of offer with id " + offerId;
         return persistenceMethodsProvider.functionalMethod(entityManager -> findTagsQuery(entityManager, offerId),
-                "searching for tags of offer with id " + offerId);
+                operation);
     }
 
     @Override
@@ -70,8 +72,9 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
 
     @Override
     public List<Offer> findAvailableOffers() throws PersistenceMethodException, EntityNotFoundException {
+        String operation = "searching for available offers";
         return persistenceMethodsProvider.functionalMethod(this::availableOffers,
-                "searching for available offers");
+                operation);
     }
 
     @Override
@@ -94,9 +97,10 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     @Override
     public List<Offer> findOffersOfPriceInterval(double fromPrice, double toPrice) throws PersistenceMethodException,
             EntityNotFoundException {
+        String operation = "searching for offers of price interval (" + fromPrice + ", " + toPrice + ")";
         return persistenceMethodsProvider
                 .functionalMethod(entityManager -> offersOfPriceInterval(entityManager, fromPrice, toPrice),
-                        "searching for offers of price interval (" + fromPrice + ", " + toPrice + ")");
+                        operation);
     }
 
     @Override

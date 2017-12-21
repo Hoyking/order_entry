@@ -7,6 +7,8 @@ import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
 import com.netcracker.parfenenko.util.Statuses;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import java.util.List;
 
 @Service
 public class OrderService {
+
+    private static final Logger logger = LogManager.getLogger(OrderService.class);
 
     private OrderClient orderClient;
     private OfferService offerService;
@@ -27,75 +31,175 @@ public class OrderService {
     }
 
     public ResponseEntity<Order> createOrder(FreshOrder freshOrder, List<Long> offers) {
-        Order order = orderClient.createOrder(freshOrder).getBody();
-        final long orderId = order.getId();
-        offers.forEach(id -> addOrderItem(orderId, id));
-        return findOrderById(orderId);
+        String operation = "creating a new order";
+        logger.info("START OPERATION: " + operation);
+        try {
+            Order order = orderClient.createOrder(freshOrder).getBody();
+            final long orderId = order.getId();
+            offers.forEach(id -> addOrderItem(orderId, id));
+            ResponseEntity<Order> response = findOrderById(orderId);
+            logger.info("END OF OPERATION: " + operation);
+            return response;
+        } catch (RuntimeException e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
+        }
     }
 
     public ResponseEntity<Order> findOrderById(long orderId) {
-        return orderClient.findOrderById(orderId);
+        String operation = "creating a new order";
+        logger.info("START OPERATION: " + operation);
+        try {
+            ResponseEntity<Order> response = orderClient.findOrderById(orderId);
+            logger.error("END OF OPERATION: " + operation);
+            return response;
+        } catch (RuntimeException e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
+        }
     }
 
     public ResponseEntity<Order> findOrderByName(String name) {
-        return orderClient.findOrderByName(name);
+        String operation = "searching for order with name " + name;
+        logger.info("START OPERATION: " + operation);
+        try {
+            ResponseEntity<Order> response = orderClient.findOrderByName(name);;
+            logger.error("END OF OPERATION: " + operation);
+            return response;
+        } catch (RuntimeException e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
+        }
     }
 
     public ResponseEntity<Order> addOrderItem(long orderId, long offerId) throws UpdateOrderException, EntityNotFoundException {
-        Order order = findOrderById(orderId).getBody();
-        if (order.getPaymentStatus() == Statuses.PAID.value()) {
-            throw new UpdateOrderException("Failed to add new order item to the paid order");
+        String operation = "adding order item based on the offer with id " + offerId +
+                " to the order with id " + orderId;
+        logger.info("START OPERATION: " + operation);
+        try {
+            Order order = findOrderById(orderId).getBody();
+            if (order.getPaymentStatus() == Statuses.PAID.value()) {
+                throw new UpdateOrderException("Failed to add new order item to the paid order");
+            }
+            if (order.getPaymentStatus() == Statuses.CANCELED.value()) {
+                throw new UpdateOrderException("Fail to add order item to the canceled order");
+            }
+            Offer offer = offerService.findOfferById(offerId).getBody();
+            if (offer == null) {
+                throw new EntityNotFoundException("Can't find Offer entity with id " + offerId);
+            }
+            orderClient.addOrderItem(orderId, convertFromOffer(offer));
+            ResponseEntity<Order> response = countTotalPrice(orderId);
+            logger.info("END OF OPERATION: " + operation);
+            return response;
+        } catch (RuntimeException e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
         }
-        if (order.getPaymentStatus() == Statuses.CANCELED.value()) {
-            throw new UpdateOrderException("Fail to add order item to the canceled order");
-        }
-        Offer offer = offerService.findOfferById(offerId).getBody();
-        if (offer == null) {
-            throw new EntityNotFoundException("Can't find Offer entity with id " + offerId);
-        }
-        orderClient.addOrderItem(orderId, convertFromOffer(offer));
-        return countTotalPrice(orderId);
     }
 
     public ResponseEntity<Order> removeOrderItem(long orderId, long orderItemId) throws UpdateOrderException {
-        Order order = findOrderById(orderId).getBody();
-        if (order.getPaymentStatus() == Statuses.PAID.value()) {
-            throw new UpdateOrderException("Fail to remove order item from the paid order");
+        String operation = "removing order item with id " + orderItemId +
+                " from the order with id " + orderId;
+        logger.info("START OPERATION: " + operation);
+        try {
+            Order order = findOrderById(orderId).getBody();
+            if (order.getPaymentStatus() == Statuses.PAID.value()) {
+                throw new UpdateOrderException("Fail to remove order item from the paid order");
+            }
+            if (order.getPaymentStatus() == Statuses.CANCELED.value()) {
+                throw new UpdateOrderException("Fail to remove order item from the canceled order");
+            }
+            orderClient.removeOrderItem(orderId, orderItemId);
+            ResponseEntity<Order> response = countTotalPrice(orderId);
+            logger.info("END OF OPERATION: " + operation);
+            return response;
+        } catch (RuntimeException e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
         }
-        if (order.getPaymentStatus() == Statuses.CANCELED.value()) {
-            throw new UpdateOrderException("Fail to remove order item from the canceled order");
-        }
-        orderClient.removeOrderItem(orderId, orderItemId);
-        return countTotalPrice(orderId);
     }
 
     public ResponseEntity<Order[]> findAll() {
-        return orderClient.findAll();
+        String operation = "searching for all orders";
+        logger.info("START OPERATION: " + operation);
+        try {
+            ResponseEntity<Order[]> response = orderClient.findAll();
+            logger.error("END OF OPERATION: " + operation);
+            return response;
+        } catch (RuntimeException e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
+        }
     }
 
     public ResponseEntity<Order[]> findOrderByStatus(int status) {
-        return orderClient.findOrderByStatus(status);
+        String operation = "searching for orders by payment status " + status;
+        logger.info("START OPERATION: " + operation);
+        try {
+            ResponseEntity<Order[]> response = orderClient.findOrderByStatus(status);
+            logger.error("END OF OPERATION: " + operation);
+            return response;
+        } catch (RuntimeException e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
+        }
     }
 
     public ResponseEntity<Order> countTotalPrice(long orderId) throws EntityNotFoundException {
-        Order order = findOrderById(orderId).getBody();
+        String operation = "counting total price of the order with id " + orderId;
+        logger.info("START OPERATION: " + operation);
         try {
-            order.setTotalPrice(0);
-        } catch (NullPointerException e) {
-            throw new EntityNotFoundException("There is no order with such id");
+            Order order = findOrderById(orderId).getBody();
+            try {
+                order.setTotalPrice(0);
+            } catch (NullPointerException e) {
+                throw new EntityNotFoundException("There is no order with such id");
+            }
+            for(OrderItem orderItem: findOrderItems(order.getId()).getBody()) {
+                order.setTotalPrice(order.getTotalPrice() + orderItem.getPrice());
+            }
+            return orderClient.updateOrder(order);
+        } catch (RuntimeException e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
         }
-        for(OrderItem orderItem: findOrderItems(order.getId()).getBody()) {
-            order.setTotalPrice(order.getTotalPrice() + orderItem.getPrice());
-        }
-        return orderClient.updateOrder(order);
     }
 
     public ResponseEntity<Order> updateStatus(long orderId, int status) {
-        return orderClient.updateStatus(orderId, status);
+        String operation = "changing status to " + status + " in the order with id " + orderId;
+        logger.info("START OPERATION: " + operation);
+        try {
+            ResponseEntity<Order> response = orderClient.updateStatus(orderId, status);
+            logger.error("END OF OPERATION: " + operation);
+            return response;
+        } catch (RuntimeException e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
+        }
     }
 
     public ResponseEntity<OrderItem[]> findOrderItems(long orderId) {
-        return orderClient.findOrderItems(orderId);
+        String operation = "searching for order items of the order with id " + orderId;
+        logger.info("START OPERATION: " + operation);
+        try {
+            ResponseEntity<OrderItem[]> response = orderClient.findOrderItems(orderId);
+            logger.error("END OF OPERATION: " + operation);
+            return response;
+        } catch (RuntimeException e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
+        }
     }
 
     private OrderItem convertFromOffer(Offer offer) {

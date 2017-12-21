@@ -6,6 +6,8 @@ import com.netcracker.parfenenko.exception.UpdateStatusException;
 import com.netcracker.parfenenko.exception.StatusSignException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import com.netcracker.parfenenko.util.Statuses;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -19,8 +21,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("unchecked")
 @Repository
 public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements OrderDAO {
+
+    private static final Logger logger = LogManager.getLogger(JPAOrderDAO.class);
 
     public JPAOrderDAO() {
         super.setPersistenceClass(Order.class);
@@ -28,57 +33,89 @@ public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements Order
 
     @Override
     public Set<OrderItem> findOrderItems(long orderId) throws PersistenceMethodException, EntityNotFoundException {
+        String operation = "searching for order items of the order with id " + orderId;
         return persistenceMethodsProvider.functionalMethod(entityManager ->
             new HashSet<>(entityManager
                     .createNamedQuery("findOrderItems")
                     .setParameter(1, orderId)
-                    .getResultList()));
+                    .getResultList()),
+                operation);
     }
 
     @Override
     public Order addOrderItem(long orderId, OrderItem orderItem) throws PersistenceMethodException, EntityNotFoundException {
-        Order order = findById(orderId);
-        orderItem.setId(0);
-        order.getOrderItems().add(orderItem);
-        return update(order);
+        String operation = "adding order item to the order with id " + orderId;
+        logger.info("START OPERATION: " + operation);
+        try {
+            Order order = findById(orderId);
+            orderItem.setId(0);
+            order.getOrderItems().add(orderItem);
+            order = update(order);
+            logger.info("END OF OPERATION: " + operation);
+            return order;
+        } catch (Exception e) {
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
+        }
     }
 
     @Override
     public Order removeOrderItem(long orderId, long orderItemId) throws PersistenceMethodException, EntityNotFoundException {
+        String operation = "removing order item with id " + orderItemId + " from the order with id " + orderId;
         return persistenceMethodsProvider.functionalMethod(entityManager ->
-                removeOrderItemQuery(entityManager, orderId, orderItemId));
+                removeOrderItemQuery(entityManager, orderId, orderItemId), operation);
     }
 
     @Override
     public List<Order> findOrdersByPaymentStatus(int paymentStatus) throws StatusSignException, PersistenceMethodException,
             EntityNotFoundException{
-        if (!Statuses.consists(paymentStatus)) {
-            throw new StatusSignException();
+        String operation = "searching for orders by payment status " + paymentStatus;
+        try {
+            isValidStatus(paymentStatus);
+        } catch (StatusSignException e) {
+            logger.info("START OPERATION: " + operation);
+            logger.error("There is an error occurred while executing operation of " +
+                    operation + ". Stack trace:", e);
+            throw e;
         }
         return persistenceMethodsProvider
-                .functionalMethod(entityManager -> ordersWithPaymentStatusCriteriaQuery(entityManager, paymentStatus));
+                .functionalMethod(entityManager -> ordersWithPaymentStatusCriteriaQuery(entityManager, paymentStatus),
+                        operation);
     }
 
     @Override
     public Order updateStatus(long id, int status) throws UpdateStatusException, StatusSignException,
             PersistenceMethodException, EntityNotFoundException {
-        Order order = findById(id);
-        isValid(order.getPaymentStatus(), status);
-        order.setPaymentStatus(status);
+        String operation = "changing status to " + status + " in the order with id " + id;
+        logger.info("START OPERATION: " + operation);
+        Order order = null;
         try {
+            order = findById(id);
+            isValidStatus(order.getPaymentStatus(), status);
+            order.setPaymentStatus(status);
             order = update(order);
-        } catch (PersistenceMethodException e) {
-            order.setPaymentStatus(Statuses.REJECTED_PAYMENT.value());
-            update(order);
+            logger.info("");
+            return order;
+        } catch (Exception e) {
+            if (order != null) {
+                order.setPaymentStatus(Statuses.REJECTED_PAYMENT.value());
+                update(order);
+            }
+            logger.error("There is an error occurred while executing operation " + operation + ". Stack trace: ", e);
             throw new UpdateStatusException("Fail to update status of the order with id " + id);
         }
-        return order;
+
     }
 
-    private void isValid(int currentStatus, int newStatus) throws StatusSignException {
-        if (!Statuses.consists(newStatus)) {
+    private void isValidStatus(int status) throws StatusSignException {
+        if (!Statuses.consists(status)) {
             throw new StatusSignException();
         }
+    }
+
+    private void isValidStatus(int currentStatus, int newStatus) throws StatusSignException {
+        isValidStatus(newStatus);
 
         final int OPENED = Statuses.OPENED.value();
         final int PAID = Statuses.PAID.value();
@@ -120,23 +157,15 @@ public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements Order
         return typedQuery.getResultList();
     }
 
-    private Order removeOrderItemQuery(EntityManager entityManager, long orderId, long orderItemId) {
-        Order order = null;
-        try {
-            order = findById(orderId);
-        } catch (PersistenceMethodException e) {
-            e.printStackTrace();
-        }
+    private Order removeOrderItemQuery(EntityManager entityManager, long orderId, long orderItemId)
+            throws PersistenceMethodException, EntityNotFoundException {
+        Order order = findById(orderId);
         OrderItem orderItem = entityManager
                 .createNamedQuery("findOrderItem", OrderItem.class)
                 .setParameter(1, orderItemId)
                 .getSingleResult();
         order.getOrderItems().remove(orderItem);
-        try {
-            order = update(order);
-        } catch (PersistenceMethodException e) {
-            e.printStackTrace();
-        }
+        order = update(order);
         return order;
     }
 
