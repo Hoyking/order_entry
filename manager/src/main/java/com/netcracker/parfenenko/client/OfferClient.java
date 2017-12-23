@@ -26,12 +26,12 @@ public class OfferClient {
     }
 
     public ResponseEntity<Offer[]> findOffers(Map<String, List<String>> offerFilter) {
-        return requestManager.postRequest(uriProvider.get(URN, "offers/filters"), new HttpEntity<>(offerFilter),
+        return requestManager.postRequest(uriProvider.get(URN, "offers/filteredOffers"), new HttpEntity<>(offerFilter),
                 Offer[].class);
     }
 
     public ResponseEntity<Offer[]> findOffersByPartOfName(String part) {
-        return requestManager.getRequest(String.format(uriProvider.get(URN, "offers/name/part/%s"), part),
+        return requestManager.getRequest(String.format(uriProvider.get(URN, "offers?namePart=%s"), part),
                 Offer[].class);
     }
 

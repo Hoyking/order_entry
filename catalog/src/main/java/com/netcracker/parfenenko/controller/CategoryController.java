@@ -71,7 +71,7 @@ public class CategoryController {
             @ApiResponse(code = 404, message = "There is now category with such name"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
-    @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
+    @RequestMapping(value = "?name={name}", method = RequestMethod.GET)
     public ResponseEntity<CategoryDto> findCategoryByName(@PathVariable String name) {
         return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.findByName(name)), HttpStatus.OK);
     }
@@ -83,7 +83,7 @@ public class CategoryController {
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
-    @RequestMapping(value = "/name/part/{part}", method = RequestMethod.GET)
+    @RequestMapping(value = "?namePart={part}", method = RequestMethod.GET)
     public ResponseEntity<List<CategoryDto>> findCategoriesByPartOfName(@PathVariable String part) {
         return new ResponseEntity<>(categoryMapper.mapEntityCollection(categoryService.findByPartOfName(part)),
                 HttpStatus.OK);

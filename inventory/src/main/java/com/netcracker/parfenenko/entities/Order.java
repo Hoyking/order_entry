@@ -18,7 +18,7 @@ import java.util.Set;
 })
 public class Order extends NamedEntity {
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL/*, orphanRemoval = true*/)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<OrderItem> orderItems;
     private String description;
     private double totalPrice;

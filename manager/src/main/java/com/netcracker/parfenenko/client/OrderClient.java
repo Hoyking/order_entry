@@ -35,7 +35,7 @@ public class OrderClient {
     }
 
     public ResponseEntity<Order> findOrderByName(String name) {
-        return requestManager.getRequest(String.format(uriProvider.get(URN, "orders/name/%s"), name),
+        return requestManager.getRequest(String.format(uriProvider.get(URN, "orders?name=%s"), name),
                 Order.class);
     }
 
@@ -49,7 +49,7 @@ public class OrderClient {
     }
 
     public ResponseEntity<Order[]> findOrderByStatus(int status) {
-        return requestManager.getRequest(String.format(uriProvider.get(URN, "orders/status/%s"), status),
+        return requestManager.getRequest(String.format(uriProvider.get(URN, "orders/?status=%s"), status),
                 Order[].class);
     }
 

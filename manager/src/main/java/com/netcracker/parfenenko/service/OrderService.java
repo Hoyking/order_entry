@@ -65,7 +65,7 @@ public class OrderService {
         String operation = "searching for order with name " + name;
         logger.info("START OPERATION: " + operation);
         try {
-            ResponseEntity<Order> response = orderClient.findOrderByName(name);;
+            ResponseEntity<Order> response = orderClient.findOrderByName(name);
             logger.error("END OF OPERATION: " + operation);
             return response;
         } catch (RuntimeException e) {

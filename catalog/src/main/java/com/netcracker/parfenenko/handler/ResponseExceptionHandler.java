@@ -37,7 +37,6 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
     private void logErrorMessage(Exception e) {
         LOGGER.error("There is an error occurred while executing operation. Stack trace: ", e);
-
     }
 
 }

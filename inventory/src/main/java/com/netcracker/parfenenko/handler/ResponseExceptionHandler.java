@@ -3,6 +3,8 @@ package com.netcracker.parfenenko.handler;
 import com.netcracker.parfenenko.exception.UpdateStatusException;
 import com.netcracker.parfenenko.exception.StatusSignException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,8 @@ import javax.persistence.EntityNotFoundException;
 
 @ControllerAdvice
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private static final Logger LOGGER = LogManager.getLogger(ResponseExceptionHandler.class);
 
     @ExceptionHandler(value = {PersistenceMethodException.class, EntityNotFoundException.class, UpdateStatusException.class,
             StatusSignException.class})
@@ -33,7 +37,12 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
             responseEntity = handleExceptionInternal(e, e.getMessage(), new HttpHeaders(),
                     HttpStatus.INTERNAL_SERVER_ERROR, request);
         }
+        logErrorMessage(e);
         return responseEntity;
+    }
+
+    private void logErrorMessage(Exception e) {
+        LOGGER.error("There is an error occurred while executing operation. Stack trace: ", e);
     }
 
 }
