@@ -1,4 +1,4 @@
-import com.netcracker.parfenenko.Application;
+import com.netcracker.parfenenko.CatalogApplication;
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.service.CategoryService;
@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = CatalogApplication.class)
 public class CategoryTest {
 
     @Autowired

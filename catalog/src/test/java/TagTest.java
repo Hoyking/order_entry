@@ -1,4 +1,4 @@
-import com.netcracker.parfenenko.Application;
+import com.netcracker.parfenenko.CatalogApplication;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.service.OfferService;
@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = CatalogApplication.class)
 public class TagTest {
 
     @Autowired

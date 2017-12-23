@@ -1,9 +1,11 @@
 package com.netcracker.parfenenko.controller;
 
+import com.netcracker.parfenenko.dto.FreshOfferDto;
 import com.netcracker.parfenenko.dto.OfferDto;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.mapper.FreshOfferDtoMapper;
 import com.netcracker.parfenenko.mapper.OfferDtoMapper;
 import com.netcracker.parfenenko.service.OfferService;
 import io.swagger.annotations.ApiOperation;
@@ -24,11 +26,13 @@ public class OfferController {
 
     private OfferService offerService;
     private OfferDtoMapper offerMapper;
+    private FreshOfferDtoMapper freshOfferMapper;
 
     @Autowired
-    public OfferController(OfferService offerService, OfferDtoMapper offerDtoMapper) {
+    public OfferController(OfferService offerService, OfferDtoMapper offerDtoMapper, FreshOfferDtoMapper freshOfferDtoMapper) {
         this.offerService = offerService;
         this.offerMapper = offerDtoMapper;
+        this.freshOfferMapper = freshOfferDtoMapper;
     }
 
     @ApiOperation(httpMethod = "POST",
@@ -39,8 +43,11 @@ public class OfferController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<OfferDto> saveOffer(@RequestBody Offer offer) {
-        return new ResponseEntity<>(offerMapper.mapEntity(offerService.save(offer)), HttpStatus.CREATED);
+    public ResponseEntity<OfferDto> saveOffer(@RequestBody FreshOfferDto offer) {
+        return new ResponseEntity<>(offerMapper
+                .mapEntity(offerService
+                        .save(freshOfferMapper.mapDto(offer))),
+                HttpStatus.CREATED);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -165,7 +172,7 @@ public class OfferController {
     })
     @RequestMapping(value = "/tags", method = RequestMethod.GET)
     public ResponseEntity<List<OfferDto>> findOffersByTags(@RequestParam(value = "values") List<String> tags) {
-        return new ResponseEntity<>(offerMapper.mapEntityCollection(offerService.findOffersByTags(tags)),
+        return new ResponseEntity<>(offerMapper.mapEntityCollection(offerService.findByTags(tags)),
                 HttpStatus.OK);
     }
 
@@ -191,7 +198,7 @@ public class OfferController {
     })
     @RequestMapping(value = "/{id}/price", method = RequestMethod.PUT)
     public ResponseEntity<OfferDto> addPriceToOffer(@PathVariable long id, @RequestBody Price price) {
-        return new ResponseEntity<>(offerMapper.mapEntity(offerService.addPriceToOffer(id, price)),
+        return new ResponseEntity<>(offerMapper.mapEntity(offerService.updatePrice(id, price)),
                 HttpStatus.OK);
     }
 

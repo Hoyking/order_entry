@@ -1,9 +1,11 @@
 package com.netcracker.parfenenko.controller;
 
 import com.netcracker.parfenenko.dto.CategoryDto;
+import com.netcracker.parfenenko.dto.FreshCategoryDto;
 import com.netcracker.parfenenko.dto.OfferDto;
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.mapper.CategoryDtoMapper;
+import com.netcracker.parfenenko.mapper.FreshCategoryDtoMapper;
 import com.netcracker.parfenenko.mapper.OfferDtoMapper;
 import com.netcracker.parfenenko.service.CategoryService;
 import io.swagger.annotations.ApiOperation;
@@ -23,12 +25,15 @@ public class CategoryController {
     private CategoryService categoryService;
     private CategoryDtoMapper categoryMapper;
     private OfferDtoMapper offerMapper;
+    private FreshCategoryDtoMapper freshCategoryMapper;
 
     @Autowired
-    public CategoryController(CategoryService categoryService, CategoryDtoMapper categoryMapper, OfferDtoMapper offerMapper) {
+    public CategoryController(CategoryService categoryService, CategoryDtoMapper categoryMapper, OfferDtoMapper offerMapper,
+                              FreshCategoryDtoMapper freshCategoryMapper) {
         this.categoryService = categoryService;
         this.categoryMapper = categoryMapper;
         this.offerMapper = offerMapper;
+        this.freshCategoryMapper = freshCategoryMapper;
     }
 
     @ApiOperation(httpMethod = "POST",
@@ -39,8 +44,11 @@ public class CategoryController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<CategoryDto> saveCategory(@RequestBody Category category) {
-        return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.save(category)), HttpStatus.CREATED);
+    public ResponseEntity<CategoryDto> saveCategory(@RequestBody FreshCategoryDto category) {
+        return new ResponseEntity<>(categoryMapper
+                .mapEntity(categoryService
+                        .save(freshCategoryMapper.mapDto(category))),
+                HttpStatus.CREATED);
     }
 
     @ApiOperation(httpMethod = "GET",

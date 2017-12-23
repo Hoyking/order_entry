@@ -16,19 +16,11 @@ public interface OfferDAO extends NamedEntityDAO<Offer, Long> {
 
     Set<Tag> findTags(long offerId) throws PersistenceMethodException, EntityNotFoundException;
 
-    Offer changeAvailability(long id) throws PersistenceMethodException, EntityNotFoundException;
-
-    List<Offer> findOffersByTags(List<String> tags) throws PersistenceMethodException, EntityNotFoundException;
+    List<Offer> findByTags(List<String> tags) throws PersistenceMethodException, EntityNotFoundException;
 
     List<Offer> findAvailableOffers() throws PersistenceMethodException, EntityNotFoundException;
 
-    Offer addPriceToOffer(long id, Price price) throws PersistenceMethodException, EntityNotFoundException;
-
     List<Offer> findOffersOfPriceInterval(double fromPrice, double toPrice) throws PersistenceMethodException,
             EntityNotFoundException;
-
-    Offer addTagToOffer(long id, Tag tag) throws PersistenceMethodException, EntityNotFoundException;
-
-    Offer removeTagFromOffer(long id, Tag tag) throws PersistenceMethodException, EntityNotFoundException;
 
 }

@@ -25,34 +25,30 @@ public class JPACategoryDAO extends JPANamedEntityDAO<Category, Long> implements
 
     @Override
     public List<Offer> findCategoryOffers(long id) throws PersistenceMethodException, EntityNotFoundException {
-        String operation = "searching for offers in category with id " + id;
-        return persistenceMethodsProvider.functionalMethod(entityManager -> categoryOffers(entityManager, id),
-                operation);
+        return persistenceMethodsProvider.functionalMethod(entityManager -> categoryOffers(entityManager, id));
     }
 
     @Override
     public Category addOffer(long categoryId, long offerId) throws PersistenceMethodException, EntityNotFoundException {
-        String operation = "adding offer with id " + offerId + " to the category with id " + categoryId;
         persistenceMethodsProvider.consumerMethod(entityManager ->
                 entityManager
                         .createNativeQuery(ADD_OFFER_TO_CATEGORY)
                         .setParameter(1, categoryId)
                         .setParameter(2, offerId)
-                        .executeUpdate(),
-                operation);
+                        .executeUpdate()
+        );
         return findById(categoryId);
     }
 
     @Override
     public Category removeOffer(long categoryId, long offerId) throws PersistenceMethodException, EntityNotFoundException {
-        String operation = "removing offer with id " + offerId + " from the category with id " + categoryId;
         persistenceMethodsProvider.consumerMethod(entityManager ->
                 entityManager
                         .createNamedQuery("removeOfferFromCategory")
                         .setParameter(1, categoryId)
                         .setParameter(2, offerId)
-                        .executeUpdate(),
-                operation);
+                        .executeUpdate()
+        );
         return findById(categoryId);
     }
 

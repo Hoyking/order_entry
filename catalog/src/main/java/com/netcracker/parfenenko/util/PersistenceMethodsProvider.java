@@ -16,51 +16,36 @@ import java.util.function.Function;
 @Component
 public class PersistenceMethodsProvider {
 
-    private static final Logger logger = LogManager.getLogger(PersistenceMethodsProvider.class);
-
     @PersistenceContext
     private EntityManager entityManager;
 
-    public PersistenceMethodsProvider() {}
+    public PersistenceMethodsProvider() {
+    }
 
-    public void consumerMethod(Consumer<EntityManager> consumer, String operation)
+    public void consumerMethod(Consumer<EntityManager> consumer)
             throws PersistenceMethodException, EntityNotFoundException {
-        logger.info("START OPERATION: " + operation);
         try {
             consumer.accept(entityManager);
         } catch (IllegalArgumentException e) {
-            logger.error("There is an error occurred while executing operation of '" +
-                    operation + "'. Stack trace:", e);
             throw new EntityNotFoundException("Entity doesn't exist");
         } catch (Exception e) {
-            logger.error("There is an error occurred while executing operation of '" +
-                    operation + "'. Stack trace:", e);
-            throw new PersistenceMethodException();
+            throw new PersistenceMethodException(e);
         }
-        logger.info("END OF OPERATION: " + operation);
     }
 
-    public <T> T functionalMethod(Function<EntityManager, T> function, String operation)
+    public <T> T functionalMethod(Function<EntityManager, T> function)
             throws PersistenceMethodException, EntityNotFoundException {
-        logger.info("START OPERATION: " + operation);
         T result;
         try {
             result = function.apply(entityManager);
         } catch (IllegalArgumentException | NoResultException e) {
-            logger.error("There is an error occurred while executing operation of '" +
-                    operation + "'. Stack trace:", e);
             throw new EntityNotFoundException("Entity doesn't exist");
         } catch (Exception e) {
-            logger.error("There is an error occurred while executing operation of '" +
-                    operation + "'. Stack trace:", e);
-            throw new PersistenceMethodException();
+            throw new PersistenceMethodException(e);
         }
         if (result == null) {
-            logger.error("There is an error occurred while executing operation of '" +
-                    operation + "'. Entity doesn't exist");
             throw new EntityNotFoundException("Entity doesn't exist");
         }
-        logger.info("END OF OPERATION: " + operation);
         return result;
     }
 

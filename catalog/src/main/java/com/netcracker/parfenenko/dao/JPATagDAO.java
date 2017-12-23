@@ -24,13 +24,11 @@ public class JPATagDAO extends JPANamedEntityDAO<Tag, Long> implements TagDAO {
 
     @Override
     public List<Offer> findTagOffers(String name) throws PersistenceMethodException, EntityNotFoundException {
-        String operation = "searching for offers containing tag " + name;
         return (List<Offer>) persistenceMethodsProvider.functionalMethod(entityManager ->
-            (List<Offer>) entityManager
-                    .createNamedQuery("findOffersByTag")
-                    .setParameter(1, name)
-                    .getResultList(),
-                operation
+                (List<Offer>) entityManager
+                        .createNamedQuery("findOffersByTag")
+                        .setParameter(1, name)
+                        .getResultList()
         );
     }
 

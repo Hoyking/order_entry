@@ -1,4 +1,4 @@
-import com.netcracker.parfenenko.Application;
+import com.netcracker.parfenenko.CatalogApplication;
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = CatalogApplication.class)
 public class OfferTest {
 
     @Autowired
@@ -228,8 +228,8 @@ public class OfferTest {
         offer3.setCategory(category);
         offer3 = offerService.save(offer3);
 
-        List<Offer> loadedOffers1 = offerService.findOffersByTags(Arrays.asList(tag1.getName(), tag2.getName()));
-        List<Offer> loadedOffers2 = offerService.findOffersByTags(Arrays.asList(tag1.getName(), tag3.getName()));
+        List<Offer> loadedOffers1 = offerService.findByTags(Arrays.asList(tag1.getName(), tag2.getName()));
+        List<Offer> loadedOffers2 = offerService.findByTags(Arrays.asList(tag1.getName(), tag3.getName()));
 
         Assert.assertEquals(2, loadedOffers1.size());
         Assert.assertEquals(OFFER_NAME_1, loadedOffers1.get(0).getName());
@@ -287,7 +287,7 @@ public class OfferTest {
         Price price = new Price();
         price.setValue(PRICE_VALUE_2);
 
-        offer = offerService.addPriceToOffer(offer.getId(), price);
+        offer = offerService.updatePrice(offer.getId(), price);
 
         Assert.assertEquals(PRICE_VALUE_2, offer.getPrice().getValue(), 0);
     }

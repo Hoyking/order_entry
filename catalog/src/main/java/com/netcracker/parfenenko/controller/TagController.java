@@ -68,19 +68,6 @@ public class TagController {
     }
 
     @ApiOperation(httpMethod = "GET",
-            value = "Searching for tags by part of name",
-            response = TagDto.class,
-            responseContainer = "List")
-    @ApiResponses({
-            @ApiResponse(code = 500, message = "Oops, something went wrong")
-    })
-    @RequestMapping(value = "/name/part/{part}", method = RequestMethod.GET)
-    public ResponseEntity<List<TagDto>> findTagsByPartOfName(@PathVariable String part) {
-        return new ResponseEntity<>(tagMapper.mapEntityCollection(tagService.findByPartOfName(part)),
-                HttpStatus.OK);
-    }
-
-    @ApiOperation(httpMethod = "GET",
             value = "Searching for all tags",
             response = TagDto.class,
             responseContainer = "List")

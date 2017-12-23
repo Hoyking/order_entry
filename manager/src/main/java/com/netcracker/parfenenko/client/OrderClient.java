@@ -54,7 +54,7 @@ public class OrderClient {
     }
 
     public ResponseEntity<Order> addOrderItem(long orderId, OrderItem orderItem) {
-        return requestManager.postRequest(String.format(uriProvider.get(URN, "orderItemURI"), orderId),
+        return requestManager.postRequest(String.format(uriProvider.get(URN, "orders/%s/orderItem"), orderId),
                 new HttpEntity<>(orderItem), Order.class);
     }
 

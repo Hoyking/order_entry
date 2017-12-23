@@ -1,4 +1,4 @@
-import com.netcracker.parfenenko.Application;
+import com.netcracker.parfenenko.InventoryApplication;
 import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
 import com.netcracker.parfenenko.service.OrderService;
@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = InventoryApplication.class)
 public class OrderTest {
 
     @Autowired
