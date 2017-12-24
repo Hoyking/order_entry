@@ -3,6 +3,7 @@ package com.netcracker.parfenenko.entities;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
@@ -14,6 +15,12 @@ import java.util.Objects;
 public class Tag extends NamedEntity {
 
     public Tag() {}
+
+    @Size(min = 2, max = 10)
+    @Override
+    public String getName() {
+        return name;
+    }
 
     @Override
     public boolean equals(Object o) {

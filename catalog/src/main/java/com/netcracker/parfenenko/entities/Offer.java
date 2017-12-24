@@ -44,6 +44,7 @@ public class Offer extends NamedEntity {
     private Category category;
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     private Set<Tag> tags;
+    @NotNull
     @Size(max = 500)
     private String description;
     private boolean available = true;

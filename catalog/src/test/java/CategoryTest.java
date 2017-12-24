@@ -183,35 +183,6 @@ public class CategoryTest {
 
         offerService.delete(offer1.getId());
         offerService.delete(offer2.getId());
-}
-
-    @Test
-    public void removeOfferFromCategoryTest() {
-        Category category = categoryService.findById(categoryId);
-
-        Offer offer1 = new Offer();
-        offer1.setName(OFFER_NAME_1);
-        offer1.setCategory(category);
-        offer1 = offerService.save(offer1);
-
-        Offer offer2 = new Offer();
-        offer2.setName(OFFER_NAME_2);
-        offer2.setCategory(category);
-        offer2 = offerService.save(offer2);
-
-        List<Offer> offers = categoryService.findCategoryOffers(categoryId);
-
-        Assert.assertEquals(2, offers.size());
-
-        categoryService.removeOffer(categoryId, offer2.getId());
-
-        offers = categoryService.findCategoryOffers(categoryId);
-
-        Assert.assertEquals(1, offers.size());
-        Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
-
-        offerService.delete(offer1.getId());
-        offerService.delete(offer2.getId());
     }
 
 }

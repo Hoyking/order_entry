@@ -40,18 +40,6 @@ public class JPACategoryDAO extends JPANamedEntityDAO<Category, Long> implements
         return findById(categoryId);
     }
 
-    @Override
-    public Category removeOffer(long categoryId, long offerId) throws PersistenceMethodException, EntityNotFoundException {
-        persistenceMethodsProvider.consumerMethod(entityManager ->
-                entityManager
-                        .createNamedQuery("removeOfferFromCategory")
-                        .setParameter(1, categoryId)
-                        .setParameter(2, offerId)
-                        .executeUpdate()
-        );
-        return findById(categoryId);
-    }
-
     private List<Offer> categoryOffers(EntityManager entityManager, long categoryId) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Offer> criteriaQuery = criteriaBuilder.createQuery(Offer.class);

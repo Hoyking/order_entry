@@ -2,10 +2,12 @@ package com.netcracker.parfenenko.service;
 
 import com.netcracker.parfenenko.dao.CategoryDAO;
 import com.netcracker.parfenenko.dao.OfferDAO;
+import com.netcracker.parfenenko.dao.PriceDAO;
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +30,7 @@ public class OfferService {
 
     private OfferDAO offerDAO;
     private CategoryDAO categoryDAO;
+    private PriceDAO priceDAO;
 
     private String started = "Operation of {} started";
     private String finished = "Operation of {} finished";
@@ -50,9 +53,10 @@ public class OfferService {
     private String removeTagFromOffer = "removing tag from the offer with id %s";
 
     @Autowired
-    public OfferService(OfferDAO offerDAO, CategoryDAO categoryDAO) {
+    public OfferService(OfferDAO offerDAO, CategoryDAO categoryDAO, PriceDAO priceDAO) {
         this.offerDAO = offerDAO;
         this.categoryDAO = categoryDAO;
+        this.priceDAO = priceDAO;
     }
 
     public Offer save(Offer offer) throws PersistenceMethodException {
@@ -60,8 +64,8 @@ public class OfferService {
         try {
             Category category = categoryDAO.findById(offer.getCategory().getId());
             offer.setCategory(category);
-        } catch (EntityNotFoundException e) {
-            throw new EntityNotFoundException("Wrong category");
+        } catch (EntityNotFoundException | NullPointerException e) {
+            throw new IllegalArgumentException("Wrong category");
         }
         offer = offerDAO.save(offer);
         LOGGER.info(finished, save);
@@ -69,17 +73,29 @@ public class OfferService {
     }
 
     @Transactional(readOnly = true)
-    public Offer findById(long id) throws PersistenceMethodException, EntityNotFoundException {
+    public Offer findById(long id) throws PersistenceMethodException, EntityNotFoundException, NoContentException {
         LOGGER.info(started, String.format(findById, id));
-        Offer offer = offerDAO.findById(id);
+        Offer offer;
+        try {
+            offer = offerDAO.findById(id);
+        } catch (EntityNotFoundException e) {
+            LOGGER.info(finished, String.format(findById, id));
+            throw new NoContentException();
+        }
         LOGGER.info(finished, String.format(findById, id));
         return offer;
     }
 
     @Transactional(readOnly = true)
-    public Offer findByName(String name) throws PersistenceMethodException, EntityNotFoundException {
+    public Offer findByName(String name) throws PersistenceMethodException, EntityNotFoundException, NoContentException {
         LOGGER.info(started, String.format(findByName, name));
-        Offer offer = offerDAO.findByName(name);
+        Offer offer;
+        try {
+            offer = offerDAO.findByName(name);
+        } catch (EntityNotFoundException e) {
+            LOGGER.info(finished, String.format(findByName, name));
+            throw new NoContentException();
+        }
         LOGGER.info(finished, String.format(findByName, name));
         return offer;
     }
@@ -105,8 +121,8 @@ public class OfferService {
         try {
             Category category = categoryDAO.findById(offer.getCategory().getId());
             offer.setCategory(category);
-        } catch (EntityNotFoundException e) {
-            throw new EntityNotFoundException("Wrong category");
+        } catch (EntityNotFoundException | NullPointerException e) {
+            throw new IllegalArgumentException("Wrong category");
         }
         offer = offerDAO.update(offer);
         LOGGER.info(finished, update);
@@ -114,9 +130,9 @@ public class OfferService {
     }
 
     public void delete(long id) throws PersistenceMethodException, EntityNotFoundException {
-        LOGGER.info(started, delete, id);
+        LOGGER.info(started, String.format(delete, id));
         offerDAO.delete(id);
-        LOGGER.info(finished, delete, id);
+        LOGGER.info(finished, String.format(delete, id));
     }
 
     @Transactional(readOnly = true)
@@ -171,45 +187,56 @@ public class OfferService {
         return offers;
     }
 
-    public Offer updatePrice(long id, Price price) throws PersistenceMethodException, EntityNotFoundException {
+    public Offer updatePrice(long id, double value) throws PersistenceMethodException, EntityNotFoundException {
         LOGGER.info(started, String.format(updatePrice, id));
         Offer offer = offerDAO.findById(id);
+        Price currentPrice = offer.getPrice();
+        Price price = new Price();
+        price.setValue(value);
         offer.setPrice(price);
         offer = offerDAO.update(offer);
+        priceDAO.delete(currentPrice.getId());
         LOGGER.info(finished, String.format(updatePrice, id));
         return offer;
     }
 
     @Transactional(readOnly = true)
     public List<Offer> findOffersOfPriceInterval(double fromPrice, double toPrice) throws PersistenceMethodException,
-            EntityNotFoundException {
+            EntityNotFoundException, IllegalArgumentException {
         LOGGER.info(started, String.format(findOffersOfPriceInterval, fromPrice, toPrice));
+        try {
+            priceValueValidation(fromPrice, toPrice);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
         List<Offer> offers = offerDAO.findOffersOfPriceInterval(fromPrice, toPrice);
         LOGGER.info(finished, String.format(findOffersOfPriceInterval, fromPrice, toPrice));
         return offers;
     }
 
-    public Offer addTagToOffer(long id, Tag tag) throws PersistenceMethodException, EntityNotFoundException {
+    public Offer addTagToOffer(long id, String tagName) throws PersistenceMethodException, EntityNotFoundException {
         LOGGER.info(started, String.format(addTagToOffer, id));
         Offer offer = offerDAO.findById(id);
-        tag.setId(0);
+        Tag tag = new Tag();
+        tag.setName(tagName);
         offer.getTags().add(tag);
         offer = offerDAO.update(offer);
         LOGGER.info(finished, String.format(addTagToOffer, id));
         return offer;
     }
 
-    public Offer removeTagFromOffer(long id, Tag tag) throws PersistenceMethodException, EntityNotFoundException {
+    public Offer removeTagFromOffer(long id, String tagName) throws PersistenceMethodException, EntityNotFoundException {
         LOGGER.info(started, String.format(removeTagFromOffer, id));
         Offer offer = offerDAO.findById(id);
-        tag.setId(0);
+        Tag tag = new Tag();
+        tag.setName(tagName);
         offer.getTags().remove(tag);
         offer = offerDAO.update(offer);
         LOGGER.info(finished, String.format(removeTagFromOffer, id));
         return offer;
     }
 
-    private void filtersValidation(Map<String, List<String>> filters) {
+    private void filtersValidation(Map<String, List<String>> filters) throws IllegalArgumentException {
         for (String key : filters.keySet()) {
             if (!key.equals("categories") && !key.equals("tags") && !key.equals("price")) {
                 throw new IllegalArgumentException("Wrong filters");
@@ -230,12 +257,16 @@ public class OfferService {
             try {
                 double from = Double.parseDouble(fromValueString);
                 double to = Double.parseDouble(toValueString);
-                if (from < 0 || to < 0 || from > to) {
-                    throw new NumberFormatException();
-                }
+                priceValueValidation(from, to);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("Wrong filters");
             }
+        }
+    }
+
+    private void priceValueValidation(double from, double to) throws NumberFormatException {
+        if (from < 0 || to < 0 || from > to) {
+            throw new NumberFormatException("Wrong price format");
         }
     }
 

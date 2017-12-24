@@ -154,18 +154,4 @@ public class CategoryController {
                 HttpStatus.OK);
     }
 
-    @ApiOperation(httpMethod = "DELETE",
-            value = "Deleting an offer from the category",
-            response = CategoryDto.class)
-    @ApiResponses({
-            @ApiResponse(code = 404, message = "Either category or offer not found"),
-            @ApiResponse(code = 500, message = "Oops, something went wrong")
-    })
-    @RequestMapping(value = "/{id}/offer", method = RequestMethod.DELETE)
-    public ResponseEntity<CategoryDto> removeOfferFromCategory(@PathVariable(name = "id") long categoryId,
-                                                            @RequestBody long offerId) {
-        return new ResponseEntity<>(categoryMapper.mapEntity(categoryService.removeOffer(categoryId, offerId)),
-                HttpStatus.OK);
-    }
-
 }
