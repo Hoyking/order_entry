@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 @NamedQueries({
         @NamedQuery(name = "findTags",
                 query = "SELECT e.tags FROM Offer e WHERE e.id = ?1"

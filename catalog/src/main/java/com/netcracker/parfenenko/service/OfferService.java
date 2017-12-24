@@ -7,6 +7,7 @@ import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.exception.EntityCreationException;
 import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.apache.logging.log4j.LogManager;
@@ -59,6 +60,7 @@ public class OfferService {
         this.priceDAO = priceDAO;
     }
 
+    @SuppressWarnings("Duplicates")
     public Offer save(Offer offer) throws PersistenceMethodException {
         LOGGER.info(started, save);
         try {
@@ -67,9 +69,14 @@ public class OfferService {
         } catch (EntityNotFoundException | NullPointerException e) {
             throw new IllegalArgumentException("Wrong category");
         }
-        offer = offerDAO.save(offer);
-        LOGGER.info(finished, save);
-        return offer;
+        try {
+            offerDAO.findByName(offer.getName());
+        } catch (EntityNotFoundException e) {
+            offer = offerDAO.save(offer);
+            LOGGER.info(finished, save);
+            return offer;
+        }
+        throw new EntityCreationException("Offer with such name already exists");
     }
 
     @Transactional(readOnly = true)

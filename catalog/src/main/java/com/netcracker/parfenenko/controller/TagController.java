@@ -69,14 +69,14 @@ public class TagController {
 
     @ApiOperation(httpMethod = "GET",
             value = "Searching for all tags",
-            response = TagDto.class,
+            response = Tag.class,
             responseContainer = "List")
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<TagDto>> findAllTags() {
-        return new ResponseEntity<>(tagMapper.mapEntityCollection(tagService.findAll()), HttpStatus.OK);
+    public ResponseEntity<List<Tag>> findAllTags() {
+        return new ResponseEntity<>(tagService.findAll(), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "PUT",

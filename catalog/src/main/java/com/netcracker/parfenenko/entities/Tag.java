@@ -1,5 +1,6 @@
 package com.netcracker.parfenenko.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -17,6 +18,7 @@ public class Tag extends NamedEntity {
     public Tag() {}
 
     @Size(min = 2, max = 10)
+    @Column(unique = false)
     @Override
     public String getName() {
         return name;

@@ -1,6 +1,7 @@
 package com.netcracker.parfenenko.handler;
 
-import com.netcracker.parfenenko.exception.CategoryDeletingException;
+import com.netcracker.parfenenko.exception.EntityCreationException;
+import com.netcracker.parfenenko.exception.EntityDeletingException;
 import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.apache.logging.log4j.LogManager;
@@ -23,7 +24,8 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger LOGGER = LogManager.getLogger(ResponseExceptionHandler.class);
 
     @ExceptionHandler(value = {PersistenceMethodException.class, EntityNotFoundException.class, IllegalArgumentException.class,
-            TransactionSystemException.class, NoContentException.class, CategoryDeletingException.class})
+            TransactionSystemException.class, NoContentException.class, EntityDeletingException.class,
+            EntityCreationException.class})
     public final ResponseEntity<Object> handleConflict(Exception e, WebRequest request) {
         ResponseEntity<Object> responseEntity = null;
         if (e.getClass().equals(PersistenceMethodException.class)) {
@@ -34,7 +36,8 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
             responseEntity = handleExceptionInternal(e, e.getMessage(),
                     new HttpHeaders(), HttpStatus.NOT_FOUND, request);
             logErrorMessage(e);
-        } else if (e.getClass().equals(IllegalArgumentException.class) || e.getClass().equals(CategoryDeletingException.class)) {
+        } else if (e.getClass().equals(IllegalArgumentException.class) || e.getClass().equals(EntityDeletingException.class)
+                || e.getClass().equals(EntityCreationException.class)) {
             responseEntity = handleExceptionInternal(e, e.getMessage(), new HttpHeaders(),
                     HttpStatus.BAD_REQUEST, request);
             logErrorMessage(e);

@@ -3,7 +3,8 @@ package com.netcracker.parfenenko.service;
 import com.netcracker.parfenenko.dao.CategoryDAO;
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
-import com.netcracker.parfenenko.exception.CategoryDeletingException;
+import com.netcracker.parfenenko.exception.EntityCreationException;
+import com.netcracker.parfenenko.exception.EntityDeletingException;
 import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.apache.logging.log4j.LogManager;
@@ -42,11 +43,17 @@ public class CategoryService {
         this.categoryDAO = categoryDAO;
     }
 
+    @SuppressWarnings("Duplicates")
     public Category save(Category category) throws PersistenceMethodException {
         LOGGER.info(started, save);
-        category = categoryDAO.save(category);
-        LOGGER.info(finished, save);
-        return category;
+        try {
+            categoryDAO.findByName(category.getName());
+        } catch (EntityNotFoundException e) {
+            category = categoryDAO.save(category);
+            LOGGER.info(finished, save);
+            return category;
+        }
+        throw new EntityCreationException("Category with such name already exists");
     }
 
     @Transactional(readOnly = true)
@@ -103,7 +110,7 @@ public class CategoryService {
     public void delete(long id) throws PersistenceMethodException, EntityNotFoundException {
         LOGGER.info(started, String.format(delete, id));
         if (categoryDAO.findCategoryOffers(id).size() != 0) {
-            throw new CategoryDeletingException(String.format("Fail to delete category with id %s. " +
+            throw new EntityDeletingException(String.format("Fail to delete category with id %s. " +
                     "Some offers still referenced to it", id));
         }
         categoryDAO.delete(id);

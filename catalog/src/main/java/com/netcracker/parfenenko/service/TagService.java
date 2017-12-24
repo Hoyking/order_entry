@@ -3,6 +3,7 @@ package com.netcracker.parfenenko.service;
 import com.netcracker.parfenenko.dao.TagDAO;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.exception.EntityDeletingException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -79,6 +80,11 @@ public class TagService {
 
     public void delete(long id) throws PersistenceMethodException, EntityNotFoundException {
         LOGGER.info(started, String.format(delete, id));
+        String name = tagDAO.findById(id).getName();
+        if (tagDAO.findTagOffers(name).size() != 0) {
+            throw new EntityDeletingException(String.format("Fail to delete tag %s. " +
+                    "Some offers still referenced to it", name));
+        }
         tagDAO.delete(id);
         LOGGER.info(finished, String.format(delete, id));
     }
