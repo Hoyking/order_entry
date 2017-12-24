@@ -1,8 +1,11 @@
 package com.netcracker.parfenenko.entities;
 
 import com.netcracker.parfenenko.util.Statuses;
+import org.hibernate.validator.constraints.Email;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.Set;
 
@@ -20,9 +23,12 @@ public class Order extends NamedEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<OrderItem> orderItems;
+    @Size(max = 500)
     private String description;
     private double totalPrice;
+    @Email
     private String customerMail;
+    @DateTimeFormat(pattern = "yyyy.MM.dd")
     private String orderDate;
     private int paymentStatus = Statuses.OPENED.value();
 

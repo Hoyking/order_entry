@@ -12,6 +12,4 @@ public class OfferDto extends NamedDto {
     private String description;
     private boolean available;
 
-    public OfferDto() {}
-
 }

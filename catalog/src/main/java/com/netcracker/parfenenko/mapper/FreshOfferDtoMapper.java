@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FreshOfferDtoMapper extends GenericDtoMapper<Offer, FreshOfferDto> {
 
-    protected FreshOfferDtoMapper() {
+    public FreshOfferDtoMapper() {
         super(Offer.class, FreshOfferDto.class);
     }
 

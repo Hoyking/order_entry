@@ -1,6 +1,8 @@
 package com.netcracker.parfenenko.service;
 
+import com.netcracker.parfenenko.dao.CategoryDAO;
 import com.netcracker.parfenenko.dao.OfferDAO;
+import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
@@ -25,6 +27,7 @@ public class OfferService {
     private static final Logger LOGGER = LogManager.getLogger(OfferService.class);
 
     private OfferDAO offerDAO;
+    private CategoryDAO categoryDAO;
 
     private String started = "Operation of {} started";
     private String finished = "Operation of {} finished";
@@ -47,12 +50,19 @@ public class OfferService {
     private String removeTagFromOffer = "removing tag from the offer with id %s";
 
     @Autowired
-    public OfferService(OfferDAO offerDAO) {
+    public OfferService(OfferDAO offerDAO, CategoryDAO categoryDAO) {
         this.offerDAO = offerDAO;
+        this.categoryDAO = categoryDAO;
     }
 
     public Offer save(Offer offer) throws PersistenceMethodException {
         LOGGER.info(started, save);
+        try {
+            Category category = categoryDAO.findById(offer.getCategory().getId());
+            offer.setCategory(category);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("Wrong category");
+        }
         offer = offerDAO.save(offer);
         LOGGER.info(finished, save);
         return offer;
