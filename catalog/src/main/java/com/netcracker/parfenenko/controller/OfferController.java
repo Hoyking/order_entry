@@ -2,11 +2,12 @@ package com.netcracker.parfenenko.controller;
 
 import com.netcracker.parfenenko.dto.FreshOfferDto;
 import com.netcracker.parfenenko.dto.OfferDto;
-import com.netcracker.parfenenko.entities.Offer;
+import com.netcracker.parfenenko.dto.UpdateOfferDto;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.mapper.FreshOfferDtoMapper;
 import com.netcracker.parfenenko.mapper.OfferDtoMapper;
+import com.netcracker.parfenenko.mapper.UpdateOfferDtoMapper;
 import com.netcracker.parfenenko.service.OfferService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -27,17 +28,20 @@ public class OfferController {
     private OfferService offerService;
     private OfferDtoMapper offerMapper;
     private FreshOfferDtoMapper freshOfferMapper;
+    private UpdateOfferDtoMapper updateOfferMapper;
 
     @Autowired
-    public OfferController(OfferService offerService, OfferDtoMapper offerDtoMapper, FreshOfferDtoMapper freshOfferDtoMapper) {
+    public OfferController(OfferService offerService, OfferDtoMapper offerDtoMapper, FreshOfferDtoMapper freshOfferDtoMapper,
+                           UpdateOfferDtoMapper updateOfferDtoMapper) {
         this.offerService = offerService;
         this.offerMapper = offerDtoMapper;
         this.freshOfferMapper = freshOfferDtoMapper;
+        this.updateOfferMapper = updateOfferDtoMapper;
     }
 
     @ApiOperation(httpMethod = "POST",
             value = "Saving a new offer",
-             response = OfferDto.class,
+            response = OfferDto.class,
             code = 201)
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong")
@@ -52,7 +56,7 @@ public class OfferController {
 
     @ApiOperation(httpMethod = "GET",
             value = "Searching for an offer by id",
-             response = OfferDto.class)
+            response = OfferDto.class)
     @ApiResponses({
             @ApiResponse(code = 404, message = "There is no offer with such id"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
@@ -64,7 +68,7 @@ public class OfferController {
 
     @ApiOperation(httpMethod = "GET",
             value = "Searching for an offer by name",
-             response = OfferDto.class)
+            response = OfferDto.class)
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 404, message = "There is no offer with such name")
@@ -101,14 +105,17 @@ public class OfferController {
 
     @ApiOperation(httpMethod = "PUT",
             value = "Updating an existing offer",
-             response = OfferDto.class)
+            response = OfferDto.class)
     @ApiResponses({
             @ApiResponse(code = 404, message = "Offer doesn't exist"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<OfferDto> updateOffer(@RequestBody Offer offer) {
-        return new ResponseEntity<>(offerMapper.mapEntity(offerService.update(offer)), HttpStatus.OK) ;
+    public ResponseEntity<OfferDto> updateOffer(@RequestBody UpdateOfferDto offer) {
+        return new ResponseEntity<>(offerMapper
+                .mapEntity(offerService
+                        .update(updateOfferMapper.mapDto(offer))),
+                HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "DELETE",
@@ -126,7 +133,7 @@ public class OfferController {
 
     @ApiOperation(httpMethod = "POST",
             value = "Searching for offers with some filters",
-             response = OfferDto.class,
+            response = OfferDto.class,
             responseContainer = "List")
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong"),

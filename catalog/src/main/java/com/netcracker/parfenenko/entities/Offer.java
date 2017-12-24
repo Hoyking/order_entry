@@ -1,6 +1,8 @@
 package com.netcracker.parfenenko.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.Set;
 
@@ -34,12 +36,15 @@ import java.util.Set;
 })
 public class Offer extends NamedEntity {
 
+    @NotNull
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     private Price price;
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     private Category category;
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     private Set<Tag> tags;
+    @Size(max = 500)
     private String description;
     private boolean available = true;
 

@@ -1,11 +1,15 @@
 package com.netcracker.parfenenko.entities;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
 public class Price extends IdentifiedEntity {
 
+    @NotNull
+    @Min(0)
     private double value;
 
     public Price() {}

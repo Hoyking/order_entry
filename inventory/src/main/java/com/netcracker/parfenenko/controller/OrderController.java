@@ -2,10 +2,11 @@ package com.netcracker.parfenenko.controller;
 
 import com.netcracker.parfenenko.dto.FreshOrderDto;
 import com.netcracker.parfenenko.dto.OrderDto;
-import com.netcracker.parfenenko.entities.Order;
+import com.netcracker.parfenenko.dto.UpdateOrderDto;
 import com.netcracker.parfenenko.entities.OrderItem;
 import com.netcracker.parfenenko.mapper.FreshOrderDtoMapper;
 import com.netcracker.parfenenko.mapper.OrderDtoMapper;
+import com.netcracker.parfenenko.mapper.UpdateOrderDtoMapper;
 import com.netcracker.parfenenko.service.OrderService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -26,12 +27,15 @@ public class OrderController {
     private OrderService orderService;
     private OrderDtoMapper orderMapper;
     private FreshOrderDtoMapper freshOrderMapper;
+    private UpdateOrderDtoMapper updateOrderMapper;
 
     @Autowired
-    public OrderController(OrderService orderService, OrderDtoMapper orderMapper, FreshOrderDtoMapper freshOrderMapper) {
+    public OrderController(OrderService orderService, OrderDtoMapper orderMapper, FreshOrderDtoMapper freshOrderMapper,
+                           UpdateOrderDtoMapper updateOrderDtoMapper) {
         this.orderService = orderService;
         this.orderMapper = orderMapper;
         this.freshOrderMapper = freshOrderMapper;
+        this.updateOrderMapper = updateOrderDtoMapper;
     }
 
     @ApiOperation(httpMethod = "POST",
@@ -91,8 +95,11 @@ public class OrderController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<OrderDto> updateOrder(@RequestBody Order order) {
-        return new ResponseEntity<>(orderMapper.mapEntity(orderService.update(order)), HttpStatus.OK) ;
+    public ResponseEntity<OrderDto> updateOrder(@RequestBody UpdateOrderDto order) {
+        return new ResponseEntity<>(orderMapper
+                .mapEntity(orderService
+                        .update(updateOrderMapper.mapDto(order))),
+                HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "DELETE",

@@ -5,6 +5,8 @@ import org.hibernate.validator.constraints.Email;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.Set;
@@ -30,6 +32,8 @@ public class Order extends NamedEntity {
     private String customerMail;
     @DateTimeFormat(pattern = "yyyy.MM.dd")
     private String orderDate;
+    @Min(0)
+    @Max(3)
     private int paymentStatus = Statuses.OPENED.value();
 
     public Order() {}

@@ -102,7 +102,12 @@ public class OfferService {
 
     public Offer update(Offer offer) throws PersistenceMethodException, EntityNotFoundException {
         LOGGER.info(started, update);
-        offer.setTags(offerDAO.findTags(offer.getId()));
+        try {
+            Category category = categoryDAO.findById(offer.getCategory().getId());
+            offer.setCategory(category);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("Wrong category");
+        }
         offer = offerDAO.update(offer);
         LOGGER.info(finished, update);
         return offer;
