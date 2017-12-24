@@ -160,8 +160,8 @@ public class ServiceController {
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 400, message = "Wrong payment status value")
     })
-    @RequestMapping(value = "/orders/?status={status}", method = RequestMethod.GET)
-    public ResponseEntity<Order[]> findOrdersByStatus(@PathVariable int status) {
+    @RequestMapping(value = "/orders", params = {"status"}, method = RequestMethod.GET)
+    public ResponseEntity<Order[]> findOrdersByStatus(@RequestParam(name = "status") int status) {
         return orderService.findOrderByStatus(status);
     }
 
