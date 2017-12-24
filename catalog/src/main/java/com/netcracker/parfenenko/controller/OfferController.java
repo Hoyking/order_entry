@@ -9,7 +9,6 @@ import com.netcracker.parfenenko.mapper.FreshOfferDtoMapper;
 import com.netcracker.parfenenko.mapper.OfferDtoMapper;
 import com.netcracker.parfenenko.service.OfferService;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +82,7 @@ public class OfferController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(params = {"namePart"}, method = RequestMethod.GET)
-    public ResponseEntity<List<OfferDto>> findOfferByPartOfName(@ApiParam(name = "namePart") String namePart) {
+    public ResponseEntity<List<OfferDto>> findOfferByPartOfName(@RequestParam(name = "namePart") String namePart) {
         return new ResponseEntity<>(offerMapper.mapEntityCollection(offerService.findByPartOfName(namePart)),
                 HttpStatus.OK);
     }

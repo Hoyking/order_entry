@@ -15,6 +15,7 @@ public class Swagger2Config {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .enableUrlTemplating(true)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.netcracker.parfenenko.controller"))
                 .paths(PathSelectors.any())
