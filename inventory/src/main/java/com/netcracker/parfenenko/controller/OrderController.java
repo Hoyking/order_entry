@@ -8,6 +8,7 @@ import com.netcracker.parfenenko.mapper.FreshOrderDtoMapper;
 import com.netcracker.parfenenko.mapper.OrderDtoMapper;
 import com.netcracker.parfenenko.service.OrderService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +66,8 @@ public class OrderController {
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 404, message = "There is no order with such name")
     })
-    @RequestMapping(value = "/?name={name}", method = RequestMethod.GET)
-    public ResponseEntity<OrderDto> findOrderByName(@PathVariable String name) {
+    @RequestMapping(params = {"name"}, method = RequestMethod.GET)
+    public ResponseEntity<OrderDto> findOrderByName(@ApiParam(name = "name") @RequestParam(name = "name") String name) {
         return new ResponseEntity<>(orderMapper.mapEntity(orderService.findByName(name)), HttpStatus.OK);
     }
 
@@ -153,8 +154,8 @@ public class OrderController {
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 400, message = "Wrong payment status value")
     })
-    @RequestMapping(value = "?status={status}", method = RequestMethod.GET)
-    public ResponseEntity<List<OrderDto>> findOrdersByPaymentStatus(@PathVariable int status) {
+    @RequestMapping(params = {"status"}, method = RequestMethod.GET)
+    public ResponseEntity<List<OrderDto>> findOrdersByPaymentStatus(@RequestParam(name = "status") int status) {
         return new ResponseEntity<>(orderMapper.mapEntityCollection(orderService.findOrdersByPaymentStatus(status)),
                 HttpStatus.OK);
     }

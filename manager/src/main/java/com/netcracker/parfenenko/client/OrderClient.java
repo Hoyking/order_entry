@@ -49,7 +49,7 @@ public class OrderClient {
     }
 
     public ResponseEntity<Order[]> findOrderByStatus(int status) {
-        return requestManager.getRequest(String.format(uriProvider.get(URN, "orders/?status=%s"), status),
+        return requestManager.getRequest(String.format(uriProvider.get(URN, "orders?status=%s"), status),
                 Order[].class);
     }
 

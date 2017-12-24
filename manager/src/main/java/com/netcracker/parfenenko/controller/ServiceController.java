@@ -50,9 +50,9 @@ public class ServiceController {
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
-    @RequestMapping(value = "/offers?namePart={part}", method = RequestMethod.GET)
-    public ResponseEntity<Offer[]> findOffersByPartOfName(@PathVariable String part) {
-        return offerService.findOffersByPartOfName(part);
+    @RequestMapping(value = "/offers", params = {"namePart"}, method = RequestMethod.GET)
+    public ResponseEntity<Offer[]> findOffersByPartOfName(@RequestParam(name = "namePart") String namePart) {
+        return offerService.findOffersByPartOfName(namePart);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -99,8 +99,8 @@ public class ServiceController {
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 404, message = "There is no order with such name")
     })
-    @RequestMapping(value = "/orders/?name={name}", method = RequestMethod.GET)
-    public ResponseEntity<Order> findOrderByName(@PathVariable String name) {
+    @RequestMapping(value = "/orders", params = {"name"}, method = RequestMethod.GET)
+    public ResponseEntity<Order> findOrderByName(@RequestParam(name = "name") String name) {
         return orderService.findOrderByName(name);
     }
 
