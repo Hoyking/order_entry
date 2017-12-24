@@ -12,25 +12,25 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 500000
+            timeoutInMilliseconds: 70000
 
 ribbon:
-  ReadTimeout: 500000
-  ConnectTimeout: 500000
+  ReadTimeout: 70000
+  ConnectTimeout: 70000
 
 zuul:
   routes:
-    catalog:
+    catalog-service:
       path: /catalog/**
-      serviceId: catalog
+      serviceId: catalog-service
       stripPrefix: false
       sensitiveHeaders:
-    inventory:
+    inventory-service:
       path: /inventory/**
-      serviceId: inventory
+      serviceId: inventory-service
       stripPrefix: false
       sensitiveHeaders:
-    manager:
+    manager-service:
       path: /manager/**
       serviceId: manager
       stripPrefix: false
