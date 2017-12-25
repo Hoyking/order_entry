@@ -12,7 +12,6 @@ import com.netcracker.parfenenko.mapper.OrderItemDtoMapper;
 import com.netcracker.parfenenko.mapper.UpdateOrderDtoMapper;
 import com.netcracker.parfenenko.service.OrderService;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +75,7 @@ public class OrderController {
             @ApiResponse(code = 204, message = "There is no order with such name")
     })
     @RequestMapping(params = {"name"}, method = RequestMethod.GET)
-    public ResponseEntity<OrderDto> findOrderByName(@ApiParam(name = "name") @RequestParam(name = "name") String name) {
+    public ResponseEntity<OrderDto> findOrderByName(@RequestParam(name = "name") String name) {
         return new ResponseEntity<>(orderMapper.mapEntity(orderService.findByName(name)), HttpStatus.OK);
     }
 
