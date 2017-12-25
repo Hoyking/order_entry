@@ -13,6 +13,4 @@ public interface CategoryDAO extends NamedEntityDAO<Category, Long> {
 
     Category addOffer(long categoryId, long offerId) throws PersistenceMethodException, EntityNotFoundException;
 
-    Category removeOffer(long categoryId, long offerId) throws PersistenceMethodException, EntityNotFoundException;
-
 }

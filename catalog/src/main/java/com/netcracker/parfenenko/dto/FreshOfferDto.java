@@ -9,8 +9,9 @@ import java.util.Set;
 @EqualsAndHashCode
 public class FreshOfferDto {
 
-    private PriceDto price;
-    private CategoryDto category;
+    private String name;
+    private FreshPriceDto price;
+    private OfferCategoryDto category;
     private Set<TagDto> tags;
     private String description;
 

@@ -7,6 +7,4 @@ public abstract class IdentifiedDto {
 
     protected long id;
 
-    public IdentifiedDto() {}
-
 }

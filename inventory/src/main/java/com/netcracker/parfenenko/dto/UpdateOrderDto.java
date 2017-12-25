@@ -5,8 +5,10 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode
-public class FreshPriceDto {
+public class UpdateOrderDto {
 
-    private double value;
+    private long id;
+    private String description;
+    private String customerMail;
 
 }

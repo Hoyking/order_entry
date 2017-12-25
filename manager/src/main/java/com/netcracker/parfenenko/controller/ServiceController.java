@@ -166,18 +166,6 @@ public class ServiceController {
     }
 
     @ApiOperation(httpMethod = "PUT",
-            value = "Counting total price of the order",
-            response = Order.class)
-    @ApiResponses({
-            @ApiResponse(code = 500, message = "Oops, something went wrong"),
-            @ApiResponse(code = 404, message = "Order doesn't exist")
-    })
-    @RequestMapping(value = "/orders/{id}/price", method = RequestMethod.PUT)
-    public ResponseEntity<Order> countTotalPrice(@PathVariable long id) {
-        return orderService.countTotalPrice(id);
-    }
-
-    @ApiOperation(httpMethod = "PUT",
             value = "Order payment",
             response = Order.class)
     @ApiResponses({

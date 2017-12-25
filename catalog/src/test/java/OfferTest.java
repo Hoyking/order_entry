@@ -287,7 +287,7 @@ public class OfferTest {
         Price price = new Price();
         price.setValue(PRICE_VALUE_2);
 
-        offer = offerService.updatePrice(offer.getId(), price);
+        offer = offerService.updatePrice(offer.getId(), price.getValue());
 
         Assert.assertEquals(PRICE_VALUE_2, offer.getPrice().getValue(), 0);
     }
@@ -357,7 +357,7 @@ public class OfferTest {
 
         Assert.assertEquals(1, offerService.findTags(loadedOffer.getId()).size());
 
-        loadedOffer = offerService.addTagToOffer(loadedOffer.getId(), tag2);
+        loadedOffer = offerService.addTagToOffer(loadedOffer.getId(), tag2.getName());
 
         Assert.assertEquals(2, offerService.findTags(loadedOffer.getId()).size());
 
@@ -385,7 +385,7 @@ public class OfferTest {
 
         Assert.assertEquals(2, offerService.findTags(loadedOffer.getId()).size());
 
-        loadedOffer = offerService.removeTagFromOffer(loadedOffer.getId(), tag2);
+        loadedOffer = offerService.removeTagFromOffer(loadedOffer.getId(), tag2.getName());
 
         Assert.assertEquals(1, offerService.findTags(loadedOffer.getId()).size());
 

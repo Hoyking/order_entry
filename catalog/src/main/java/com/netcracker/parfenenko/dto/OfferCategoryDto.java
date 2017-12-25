@@ -4,9 +4,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode
-public class FreshPriceDto {
-
-    private double value;
-
+@EqualsAndHashCode(callSuper = true)
+public class OfferCategoryDto extends IdentifiedDto {
 }
