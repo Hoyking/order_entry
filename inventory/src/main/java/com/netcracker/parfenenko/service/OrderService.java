@@ -161,7 +161,7 @@ public class OrderService {
     }
 
     public Order updateStatus(long id, int status) throws UpdateStatusException, PersistenceMethodException,
-            EntityNotFoundException {
+            EntityNotFoundException, StatusSignException {
         LOGGER.info(started, String.format(updateStatus, id));
         Order order = null;
         try {
@@ -171,7 +171,7 @@ public class OrderService {
             order = orderDAO.update(order);
             LOGGER.info(finished, String.format(updateStatus, id));
             return order;
-        } catch (Exception e) {
+        } catch (PersistenceMethodException e) {
             if (order != null) {
                 order.setPaymentStatus(Statuses.REJECTED_PAYMENT.value());
                 update(order);

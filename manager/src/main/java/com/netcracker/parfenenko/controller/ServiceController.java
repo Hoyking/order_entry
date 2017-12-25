@@ -160,21 +160,9 @@ public class ServiceController {
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 400, message = "Wrong payment status value")
     })
-    @RequestMapping(value = "/orders/?status={status}", method = RequestMethod.GET)
-    public ResponseEntity<Order[]> findOrdersByStatus(@PathVariable int status) {
+    @RequestMapping(value = "/orders", params = {"status"}, method = RequestMethod.GET)
+    public ResponseEntity<Order[]> findOrdersByStatus(@RequestParam(name = "status") int status) {
         return orderService.findOrderByStatus(status);
-    }
-
-    @ApiOperation(httpMethod = "PUT",
-            value = "Counting total price of the order",
-            response = Order.class)
-    @ApiResponses({
-            @ApiResponse(code = 500, message = "Oops, something went wrong"),
-            @ApiResponse(code = 404, message = "Order doesn't exist")
-    })
-    @RequestMapping(value = "/orders/{id}/price", method = RequestMethod.PUT)
-    public ResponseEntity<Order> countTotalPrice(@PathVariable long id) {
-        return orderService.countTotalPrice(id);
     }
 
     @ApiOperation(httpMethod = "PUT",
