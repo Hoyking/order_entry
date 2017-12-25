@@ -3,6 +3,7 @@ package com.netcracker.parfenenko.service;
 import com.netcracker.parfenenko.dao.OrderDAO;
 import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
+import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import com.netcracker.parfenenko.exception.StatusSignException;
 import com.netcracker.parfenenko.exception.UpdateStatusException;
@@ -64,7 +65,13 @@ public class OrderService {
     @Transactional(readOnly = true)
     public Order findById(long id) throws PersistenceMethodException, EntityNotFoundException {
         LOGGER.info(started, String.format(findById, id));
-        Order order = orderDAO.findById(id);
+        Order order;
+        try {
+            order = orderDAO.findById(id);
+        } catch (EntityNotFoundException e) {
+            LOGGER.info(finished, String.format(findById, id));
+            throw new NoContentException();
+        }
         LOGGER.info(finished, String.format(findById, id));
         return order;
     }
@@ -72,7 +79,13 @@ public class OrderService {
     @Transactional(readOnly = true)
     public Order findByName(String name) throws PersistenceMethodException, EntityNotFoundException {
         LOGGER.info(started, String.format(findByName, name));
-        Order order = orderDAO.findByName(name);
+        Order order;
+        try {
+            order = orderDAO.findByName(name);
+        } catch (EntityNotFoundException e) {
+            LOGGER.info(finished, String.format(findByName, name));
+            throw new NoContentException();
+        }
         LOGGER.info(finished, String.format(findByName, name));
         return order;
     }
@@ -87,16 +100,18 @@ public class OrderService {
 
     public Order update(Order order) throws PersistenceMethodException, EntityNotFoundException {
         LOGGER.info(started, update);
-        order.setOrderItems(orderDAO.findOrderItems(order.getId()));
-        order = orderDAO.update(order);
+        Order existedOrder = orderDAO.findById(order.getId());
+        existedOrder.setCustomerMail(order.getCustomerMail());
+        existedOrder.setDescription(order.getDescription());
+        existedOrder = orderDAO.update(existedOrder);
         LOGGER.info(finished, update);
-        return order;
+        return existedOrder;
     }
 
     public void delete(long id) throws PersistenceMethodException, EntityNotFoundException {
-        LOGGER.info(started, delete, id);
+        LOGGER.info(started, String.format(delete, id));
         orderDAO.delete(id);
-        LOGGER.info(finished, delete, id);
+        LOGGER.info(finished, String.format(delete, id));
     }
 
     @Transactional(readOnly = true)
@@ -109,7 +124,12 @@ public class OrderService {
 
     public Order addOrderItem(long orderId, OrderItem orderItem) throws PersistenceMethodException, EntityNotFoundException {
         LOGGER.info(started, String.format(addOrderITem, orderId));
-        Order order = orderDAO.findById(orderId);
+        Order order;
+        try {
+            order = orderDAO.findById(orderId);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("There is no order with id " + orderId);
+        }
         orderItem.setId(0);
         order.getOrderItems().add(orderItem);
         order = orderDAO.update(order);
@@ -119,7 +139,13 @@ public class OrderService {
 
     public Order removeOrderItem(long orderId, long orderItemId) throws PersistenceMethodException, EntityNotFoundException {
         LOGGER.info(started, String.format(removeOrderItem, orderId));
-        Order order = orderDAO.removeOrderItem(orderId, orderItemId);
+        Order order;
+        try {
+            order = orderDAO.findById(orderId);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("There is no order with id " + orderId);
+        }
+        order = orderDAO.removeOrderItem(orderId, orderItemId);
         LOGGER.info(finished, String.format(removeOrderItem, orderId));
         return order;
     }

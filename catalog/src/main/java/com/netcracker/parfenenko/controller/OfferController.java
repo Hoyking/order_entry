@@ -71,7 +71,7 @@ public class OfferController {
             response = OfferDto.class)
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
-            @ApiResponse(code = 404, message = "There is no offer with such name")
+            @ApiResponse(code = 204, message = "There is no offer with such name")
     })
     @RequestMapping(params = {"name"}, method = RequestMethod.GET)
     public ResponseEntity<OfferDto> findOfferByName(@RequestParam(name = "name") String name) {

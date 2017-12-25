@@ -64,8 +64,6 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     private String validationErrorMessage(ConstraintViolationException e) {
         StringBuilder message = new StringBuilder();
         e.getConstraintViolations().forEach(constraintViolation -> {
-            Class clazz = constraintViolation.getRootBeanClass();
-            String name = constraintViolation.getRootBeanClass().getName();
             String[] splittedEntityName = constraintViolation.getRootBeanClass().getName().split("\\.");
             message
                     .append(splittedEntityName[splittedEntityName.length - 1])

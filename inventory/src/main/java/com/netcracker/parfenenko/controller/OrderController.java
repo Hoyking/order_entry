@@ -2,10 +2,13 @@ package com.netcracker.parfenenko.controller;
 
 import com.netcracker.parfenenko.dto.FreshOrderDto;
 import com.netcracker.parfenenko.dto.OrderDto;
+import com.netcracker.parfenenko.dto.OrderItemDto;
 import com.netcracker.parfenenko.dto.UpdateOrderDto;
+import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
 import com.netcracker.parfenenko.mapper.FreshOrderDtoMapper;
 import com.netcracker.parfenenko.mapper.OrderDtoMapper;
+import com.netcracker.parfenenko.mapper.OrderItemDtoMapper;
 import com.netcracker.parfenenko.mapper.UpdateOrderDtoMapper;
 import com.netcracker.parfenenko.service.OrderService;
 import io.swagger.annotations.ApiOperation;
@@ -28,14 +31,16 @@ public class OrderController {
     private OrderDtoMapper orderMapper;
     private FreshOrderDtoMapper freshOrderMapper;
     private UpdateOrderDtoMapper updateOrderMapper;
+    private OrderItemDtoMapper orderItemMapper;
 
     @Autowired
     public OrderController(OrderService orderService, OrderDtoMapper orderMapper, FreshOrderDtoMapper freshOrderMapper,
-                           UpdateOrderDtoMapper updateOrderDtoMapper) {
+                           UpdateOrderDtoMapper updateOrderDtoMapper, OrderItemDtoMapper orderItemDtoMapper) {
         this.orderService = orderService;
         this.orderMapper = orderMapper;
         this.freshOrderMapper = freshOrderMapper;
         this.updateOrderMapper = updateOrderDtoMapper;
+        this.orderItemMapper = orderItemDtoMapper;
     }
 
     @ApiOperation(httpMethod = "POST",
@@ -55,7 +60,7 @@ public class OrderController {
             value = "Searching for an order by id",
             response = OrderDto.class)
     @ApiResponses({
-            @ApiResponse(code = 404, message = "There is no order with such id"),
+            @ApiResponse(code = 204, message = "There is no order with such id"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -68,7 +73,7 @@ public class OrderController {
             response = OrderDto.class)
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
-            @ApiResponse(code = 404, message = "There is no order with such name")
+            @ApiResponse(code = 204, message = "There is no order with such name")
     })
     @RequestMapping(params = {"name"}, method = RequestMethod.GET)
     public ResponseEntity<OrderDto> findOrderByName(@ApiParam(name = "name") @RequestParam(name = "name") String name) {
@@ -130,27 +135,26 @@ public class OrderController {
 
     @ApiOperation(httpMethod = "POST",
             value = "Adding order item to existing order",
-            response = OrderDto.class)
+            response = Order.class)
     @ApiResponses({
             @ApiResponse(code = 404, message = "Order doesn't exist"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/{id}/orderItem", method = RequestMethod.POST)
-    public ResponseEntity<OrderDto> addOrderItemToOrder(@PathVariable long id, @RequestBody OrderItem orderItem) {
-        return new ResponseEntity<>(orderMapper.mapEntity(orderService.addOrderItem(id, orderItem)),
-                HttpStatus.OK);
+    public ResponseEntity<Order> addOrderItemToOrder(@PathVariable long id, @RequestBody OrderItemDto orderItem) {
+        return new ResponseEntity<>(orderService.addOrderItem(id, orderItemMapper.mapDto(orderItem)), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "DELETE",
             value = "Removing order item from existing order",
-            response = OrderDto.class)
+            response = Order.class)
     @ApiResponses({
             @ApiResponse(code = 404, message = "Order doesn't exist"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/{id}/orderItem", method = RequestMethod.DELETE)
-    public ResponseEntity<OrderDto> removeOrderItemFromOrder(@PathVariable long id, @RequestBody long orderItemId) {
-        return new ResponseEntity<>(orderMapper.mapEntity(orderService.removeOrderItem(id, orderItemId)), HttpStatus.OK);
+    public ResponseEntity<Order> removeOrderItemFromOrder(@PathVariable long id, @RequestBody long orderItemId) {
+        return new ResponseEntity<>(orderService.removeOrderItem(id, orderItemId), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "GET",
@@ -167,8 +171,8 @@ public class OrderController {
                 HttpStatus.OK);
     }
 
-    @ApiOperation(httpMethod = "GET",
-            value = "Payment for the order",
+    @ApiOperation(httpMethod = "PUT",
+            value = "Update order status",
             response = OrderDto.class,
             responseContainer = "List")
     @ApiResponses({
