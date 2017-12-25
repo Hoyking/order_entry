@@ -10,7 +10,7 @@ public abstract class NamedEntity extends IdentifiedEntity {
 
     @Column(unique = true)
     @NotNull
-    @Size(min = 3, max = 30)
+    @Size(min = 3, max = 50)
     protected String name;
 
     public NamedEntity() {}

@@ -137,7 +137,7 @@ public class OfferTest {
 
     @Test
     public void findByPartOfNameTest() {
-        int currentNum = offerService.findByPartOfName("Test").size();
+        int currentNum = offerService.findByPartOfName("Test offer").size();
 
         Category category = categoryService.findById(categoryId);
 
@@ -152,7 +152,7 @@ public class OfferTest {
         offer = offerService.save(offer);
         long testOfferId = offer.getId();
 
-        Assert.assertEquals(currentNum + 1, offerService.findByPartOfName("Test").size());
+        Assert.assertEquals(currentNum + 1, offerService.findByPartOfName("Test offer").size());
 
         offerService.delete(testOfferId);
     }

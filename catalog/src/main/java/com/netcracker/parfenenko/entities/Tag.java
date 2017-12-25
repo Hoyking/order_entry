@@ -17,7 +17,7 @@ public class Tag extends NamedEntity {
 
     public Tag() {}
 
-    @Size(min = 2, max = 10)
+    @Size(min = 2, max = 25)
     @Column(unique = false)
     @Override
     public String getName() {
