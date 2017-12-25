@@ -1,6 +1,7 @@
 import com.netcracker.parfenenko.InventoryApplication;
 import com.netcracker.parfenenko.entities.Order;
 import com.netcracker.parfenenko.entities.OrderItem;
+import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.service.OrderService;
 import com.netcracker.parfenenko.util.Statuses;
 import org.junit.After;
@@ -24,44 +25,30 @@ public class OrderTest {
     private OrderService orderService;
 
     private long orderId;
-    private final String NAME_1 = "Test Order 1";
-    private final String NAME_2 = "Test Order 2";
-    private final String NAME_3 = "Updated test Order 1";
+    private String orderName;
+
     private final String DESCRIPTION_1 = "Test description 1";
     private final String DESCRIPTION_2 = "Test description 2";
     private final String DESCRIPTION_3 = "Updated test description 1";
-    private final double TOTAL_PRICE = 0.99;
-    private final double UPDATED_TOTAL_PRICE = 1.99;
-    private final String MAIL = "Test mail";
-    private final String DATE = "Test date";
+    private final String MAIL_1 = "test@test.com";
+    private final String MAIL_2 = "test1@test.com";
 
     private final String ORDER_ITEM_NAME_1 = "Test OrderItem 1";
     private final String ORDER_ITEM_NAME_2 = "Test OrderItem 2";
-    private final String ORDER_ITEM_NAME_3 = "Test OrderItem 3";
-    private final String ORDER_ITEM_DESCRIPTION_3 = "Test OrderItem description 3";
     private final String ORDER_ITEM_DESCRIPTION_1 = "Test OrderItem description 1";
     private final String ORDER_ITEM_DESCRIPTION_2 = "Test OrderItem description 2";
+    private final String CATEGORY = "Test Category";
+    private final double PRICE = 3.99;
 
     @Before
     public void initOrder() {
-        OrderItem orderItem1 = new OrderItem();
-        orderItem1.setName(ORDER_ITEM_NAME_1);
-        orderItem1.setDescription(ORDER_ITEM_DESCRIPTION_1);
-
-        OrderItem orderItem2 = new OrderItem();
-        orderItem2.setName(ORDER_ITEM_NAME_2);
-        orderItem2.setDescription(ORDER_ITEM_DESCRIPTION_2);
-
         Order order = new Order();
-        order.setName(NAME_1);
         order.setDescription(DESCRIPTION_1);
-        order.setTotalPrice(TOTAL_PRICE);
-        order.setCustomerMail(MAIL);
-        order.setOrderDate(DATE);
-        order.setOrderItems(new HashSet<>(Arrays.asList(orderItem1, orderItem2)));
+        order.setCustomerMail(MAIL_1);
 
         order = orderService.save(order);
         orderId = order.getId();
+        orderName = order.getName();
     }
 
     @After
@@ -71,33 +58,17 @@ public class OrderTest {
 
     @Test
     public void saveTest() {
-        OrderItem orderItem1 = new OrderItem();
-        orderItem1.setName(ORDER_ITEM_NAME_1);
-        orderItem1.setDescription(ORDER_ITEM_DESCRIPTION_1);
-
-        OrderItem orderItem2 = new OrderItem();
-        orderItem2.setName(ORDER_ITEM_NAME_2);
-        orderItem2.setDescription(ORDER_ITEM_DESCRIPTION_2);
-
         Order order = new Order();
-        order.setName(NAME_2);
         order.setDescription(DESCRIPTION_2);
-        order.setTotalPrice(TOTAL_PRICE);
-        order.setCustomerMail(MAIL);
-        order.setOrderDate(DATE);
-        order.setOrderItems(new HashSet<>(Arrays.asList(orderItem1, orderItem2)));
+        order.setCustomerMail(MAIL_1);
         order = orderService.save(order);
         long testOrderId = order.getId();
 
         Order loadedOrder = orderService.findById(testOrderId);
 
         Assert.assertEquals(testOrderId, loadedOrder.getId());
-        Assert.assertEquals(NAME_2, loadedOrder.getName());
         Assert.assertEquals(DESCRIPTION_2, loadedOrder.getDescription());
-        Assert.assertEquals(TOTAL_PRICE, loadedOrder.getTotalPrice(), 0);
-        Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
-        Assert.assertEquals(DATE, loadedOrder.getOrderDate());
-        Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
+        Assert.assertEquals(MAIL_1, loadedOrder.getCustomerMail());
 
         orderService.delete(loadedOrder.getId());
     }
@@ -107,25 +78,17 @@ public class OrderTest {
         Order loadedOrder = orderService.findById(orderId);
 
         Assert.assertEquals(orderId, loadedOrder.getId());
-        Assert.assertEquals(NAME_1, loadedOrder.getName());
         Assert.assertEquals(DESCRIPTION_1, loadedOrder.getDescription());
-        Assert.assertEquals(TOTAL_PRICE, loadedOrder.getTotalPrice(), 0);
-        Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
-        Assert.assertEquals(DATE, loadedOrder.getOrderDate());
-        Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
+        Assert.assertEquals(MAIL_1, loadedOrder.getCustomerMail());
     }
 
     @Test
     public void findByNameTest() {
-        Order loadedOrder = orderService.findByName(NAME_1);
+        Order loadedOrder = orderService.findByName(orderName);
 
         Assert.assertEquals(orderId, loadedOrder.getId());
-        Assert.assertEquals(NAME_1, loadedOrder.getName());
         Assert.assertEquals(DESCRIPTION_1, loadedOrder.getDescription());
-        Assert.assertEquals(TOTAL_PRICE, loadedOrder.getTotalPrice(), 0);
-        Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
-        Assert.assertEquals(DATE, loadedOrder.getOrderDate());
-        Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
+        Assert.assertEquals(MAIL_1, loadedOrder.getCustomerMail());
     }
 
     @Test
@@ -133,11 +96,8 @@ public class OrderTest {
         int currentSize = orderService.findAll().size();
 
         Order order = new Order();
-        order.setName(NAME_2);
         order.setDescription(DESCRIPTION_2);
-        order.setTotalPrice(TOTAL_PRICE);
-        order.setCustomerMail(MAIL);
-        order.setOrderDate(DATE);
+        order.setCustomerMail(MAIL_1);
         order = orderService.save(order);
         long testOrderId = order.getId();
 
@@ -149,130 +109,120 @@ public class OrderTest {
     @Test
     public void updateTest() {
         Order order = orderService.findById(orderId);
-        order.setName(NAME_3);
-        order.setDescription(DESCRIPTION_3);
-        order.setTotalPrice(UPDATED_TOTAL_PRICE);
+        order.setDescription(DESCRIPTION_2);
+        order.setCustomerMail(MAIL_2);
         order = orderService.update(order);
 
         Order loadedOrder = orderService.findById(orderId);
 
         Assert.assertEquals(order.getId(), loadedOrder.getId());
-        Assert.assertEquals(NAME_3, loadedOrder.getName());
-        Assert.assertEquals(DESCRIPTION_3, loadedOrder.getDescription());
-        Assert.assertEquals(UPDATED_TOTAL_PRICE, loadedOrder.getTotalPrice(), 0);
-        Assert.assertEquals(MAIL, loadedOrder.getCustomerMail());
-        Assert.assertEquals(DATE, loadedOrder.getOrderDate());
-        Assert.assertEquals(2, orderService.findOrderItems(loadedOrder.getId()).size());
+        Assert.assertEquals(DESCRIPTION_2, loadedOrder.getDescription());
+        Assert.assertEquals(MAIL_2, loadedOrder.getCustomerMail());
+        Assert.assertEquals(orderName, loadedOrder.getName());
     }
 
     @Test
     public void deleteTest() {
-        OrderItem orderItem1 = new OrderItem();
-        orderItem1.setName(ORDER_ITEM_NAME_1);
-        orderItem1.setDescription(ORDER_ITEM_DESCRIPTION_1);
-
-        OrderItem orderItem2 = new OrderItem();
-        orderItem2.setName(ORDER_ITEM_NAME_2);
-        orderItem2.setDescription(ORDER_ITEM_DESCRIPTION_2);
-
         Order order = new Order();
-        order.setName(NAME_2);
         order.setDescription(DESCRIPTION_2);
-        order.setTotalPrice(TOTAL_PRICE);
-        order.setCustomerMail(MAIL);
-        order.setOrderDate(DATE);
-        order.setOrderItems(new HashSet<>(Arrays.asList(orderItem1, orderItem2)));
+        order.setCustomerMail(MAIL_1);
 
         order = orderService.save(order);
         long testOrderId = order.getId();
         orderService.delete(testOrderId);
 
-        Assert.assertNull(orderService.findById(testOrderId));
+        try {
+            order = orderService.findById(testOrderId);
+        } catch (NoContentException e) {
+            order = null;
+        }
+        Assert.assertNull(order);
+    }
+
+    @Test
+    public void findOrderItemsTest() {
+        OrderItem orderItem1 = new OrderItem();
+        orderItem1.setName(ORDER_ITEM_NAME_1);
+        orderItem1.setDescription(ORDER_ITEM_DESCRIPTION_1);
+        orderItem1.setCategory(CATEGORY);
+        orderItem1.setPrice(PRICE);
+
+        OrderItem orderItem2 = new OrderItem();
+        orderItem2.setName(ORDER_ITEM_NAME_2);
+        orderItem2.setDescription(ORDER_ITEM_DESCRIPTION_2);
+        orderItem2.setCategory(CATEGORY);
+        orderItem2.setPrice(PRICE);
+
+        orderService.addOrderItem(orderId, orderItem1);
+        orderService.addOrderItem(orderId, orderItem2);
+
+        Assert.assertEquals(2, orderService.findOrderItems(orderId).size());
     }
 
     @Test
     public void addOrderItemTest() {
         OrderItem orderItem = new OrderItem();
-        orderItem.setName(ORDER_ITEM_NAME_3);
-        orderItem.setDescription(ORDER_ITEM_DESCRIPTION_3);
+        orderItem.setName(ORDER_ITEM_NAME_1);
+        orderItem.setDescription(ORDER_ITEM_DESCRIPTION_1);
+        orderItem.setCategory(CATEGORY);
+        orderItem.setPrice(PRICE);
 
         Order order = orderService.addOrderItem(orderId, orderItem);
 
-        Assert.assertEquals(3, order.getOrderItems().size());
+        Assert.assertEquals(1, order.getOrderItems().size());
     }
 
     @Test
     public void removeOrderItemTest() {
         OrderItem orderItem = new OrderItem();
-        orderItem.setName(ORDER_ITEM_NAME_3);
-        orderItem.setDescription(ORDER_ITEM_DESCRIPTION_3);
+        orderItem.setName(ORDER_ITEM_NAME_1);
+        orderItem.setDescription(ORDER_ITEM_DESCRIPTION_1);
+        orderItem.setCategory(CATEGORY);
+        orderItem.setPrice(PRICE);
 
         Order order = orderService.addOrderItem(orderId, orderItem);
 
-        Assert.assertEquals(3, order.getOrderItems().size());
+        Assert.assertEquals(1, order.getOrderItems().size());
 
         order = orderService.removeOrderItem(orderId, order.getOrderItems().iterator().next().getId());
 
-        Assert.assertEquals(2, order.getOrderItems().size());
+        Assert.assertEquals(0, order.getOrderItems().size());
     }
 
     @Test
     public void findOrdersByPaymentStatusTest() {
         int currentPaidOrders = orderService.findOrdersByPaymentStatus(Statuses.PAID.value()).size();
-        int currentUnpaidOrders = orderService.findOrdersByPaymentStatus(Statuses.OPENED.value()).size();
-
-        OrderItem orderItem1 = new OrderItem();
-        orderItem1.setName(ORDER_ITEM_NAME_1);
-        orderItem1.setDescription(ORDER_ITEM_DESCRIPTION_1);
-
-        OrderItem orderItem2 = new OrderItem();
-        orderItem2.setName(ORDER_ITEM_NAME_2);
-        orderItem2.setDescription(ORDER_ITEM_DESCRIPTION_2);
-
-        OrderItem orderItem3 = new OrderItem();
-        orderItem3.setName(ORDER_ITEM_NAME_1);
-        orderItem3.setDescription(ORDER_ITEM_DESCRIPTION_1);
-
-        OrderItem orderItem4 = new OrderItem();
-        orderItem4.setName(ORDER_ITEM_NAME_2);
-        orderItem4.setDescription(ORDER_ITEM_DESCRIPTION_2);
+        int currentOpenedOrders = orderService.findOrdersByPaymentStatus(Statuses.OPENED.value()).size();
 
         Order order1 = new Order();
-        order1.setName(NAME_2);
         order1.setDescription(DESCRIPTION_2);
-        order1.setTotalPrice(TOTAL_PRICE);
-        order1.setCustomerMail(MAIL);
-        order1.setOrderDate(DATE);
-        order1.setOrderItems(new HashSet<>(Arrays.asList(orderItem1, orderItem2)));
-        orderService.save(order1);
+        order1.setCustomerMail(MAIL_1);
+        order1 = orderService.save(order1);
 
         Order order2 = new Order();
-        order2.setName(NAME_3);
         order2.setDescription(DESCRIPTION_3);
-        order2.setTotalPrice(TOTAL_PRICE);
-        order2.setCustomerMail(MAIL);
-        order2.setOrderDate(DATE);
-        order2.setPaymentStatus(Statuses.PAID.value());
-        order2.setOrderItems(new HashSet<>(Arrays.asList(orderItem3, orderItem4)));
-        orderService.save(order2);
+        order2.setCustomerMail(MAIL_1);
+        order2 = orderService.save(order2);
+
+        orderService.updateStatus(order2.getId(), Statuses.PAID.value());
 
         List<Order> paidOrders = orderService.findOrdersByPaymentStatus(Statuses.PAID.value());
         List<Order> unpaidOrders = orderService.findOrdersByPaymentStatus(Statuses.OPENED.value());
 
         Assert.assertEquals(currentPaidOrders + 1, paidOrders.size());
-        Assert.assertEquals(currentUnpaidOrders + 1, unpaidOrders.size());
+        Assert.assertEquals(currentOpenedOrders + 1, unpaidOrders.size());
 
         orderService.delete(order1.getId());
         orderService.delete(order2.getId());
     }
 
     @Test
-    public void payForOrderTest() {
+    public void updateStatusTest() {
         Order order = new Order();
         order.setDescription(DESCRIPTION_2);
-        order.setCustomerMail(MAIL);
+        order.setCustomerMail(MAIL_1);
         order = orderService.save(order);
-        orderService.updateStatus(order.getId(), Statuses.PAID.value());
+        order = orderService.updateStatus(order.getId(), Statuses.PAID.value());
 
         Assert.assertEquals(Statuses.PAID.value(), order.getPaymentStatus());
 

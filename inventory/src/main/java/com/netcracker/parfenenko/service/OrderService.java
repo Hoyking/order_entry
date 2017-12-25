@@ -141,7 +141,7 @@ public class OrderService {
         LOGGER.info(started, String.format(removeOrderItem, orderId));
         Order order;
         try {
-            order = orderDAO.findById(orderId);
+            orderDAO.findById(orderId);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException("There is no order with id " + orderId);
         }
