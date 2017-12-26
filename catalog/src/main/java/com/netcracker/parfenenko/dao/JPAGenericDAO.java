@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
-    
+
     protected PersistenceMethodsProvider persistenceMethodsProvider;
     private Class persistenceClass;
 
-    protected JPAGenericDAO() {}
+    protected JPAGenericDAO() {
+    }
 
     protected Class getPersistenceClass() {
         return persistenceClass;
@@ -30,8 +32,8 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
     @Override
     public T save(T entity) throws PersistenceMethodException {
         return (T) persistenceMethodsProvider.functionalMethod(entityManager -> {
-                    entityManager.persist(entity);
-                    return entity;
+            entityManager.persist(entity);
+            return entity;
         });
     }
 
@@ -45,7 +47,8 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
     public List<T> findAll() throws PersistenceMethodException, EntityNotFoundException {
         return (List<T>) persistenceMethodsProvider.functionalMethod(entityManager ->
                 (List<T>) entityManager.createQuery("SELECT e FROM " +
-                        persistenceClass.getName() + " e").getResultList());
+                        persistenceClass.getName() + " e").getResultList()
+        );
     }
 
     @Override
@@ -56,8 +59,8 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
     @Override
     public void delete(ID id) throws PersistenceMethodException, EntityNotFoundException {
         persistenceMethodsProvider.consumerMethod(entityManager -> {
-                    T entity = (T) entityManager.find(persistenceClass, id);
-                    entityManager.remove(entity);
+            T entity = (T) entityManager.find(persistenceClass, id);
+            entityManager.remove(entity);
         });
     }
 

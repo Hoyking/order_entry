@@ -8,7 +8,8 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public abstract class JPANamedEntityDAO<T, ID> extends JPAGenericDAO<T, ID> implements NamedEntityDAO<T, ID> {
 
-    protected JPANamedEntityDAO() {}
+    protected JPANamedEntityDAO() {
+    }
 
     @Override
     public T findByName(String name) throws PersistenceMethodException, EntityNotFoundException {

@@ -1,8 +1,11 @@
-import com.netcracker.parfenenko.Application;
+import com.netcracker.parfenenko.CatalogApplication;
 import com.netcracker.parfenenko.entities.Category;
 import com.netcracker.parfenenko.entities.Offer;
+import com.netcracker.parfenenko.entities.Price;
+import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.service.CategoryService;
 import com.netcracker.parfenenko.service.OfferService;
+import org.hibernate.exception.DataException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = CatalogApplication.class)
 public class CategoryTest {
 
     @Autowired
@@ -32,6 +35,10 @@ public class CategoryTest {
     private final String OFFER_NAME_1 = "Test offer 1";
     private final String OFFER_NAME_2 = "Test offer 2";
     private final String OFFER_NAME_3 = "Test offer 3";
+
+    private final String OFFER_DESCRIPTION = "Test offer description";
+
+    private final double PRICE = 3.99;
 
     @Before
     public void initCategory() {
@@ -80,12 +87,24 @@ public class CategoryTest {
     }
 
     @Test
+    public void findByPartOfNameTest() {
+        int currentNum = categoryService.findByPartOfName("Test category").size();
+
+        Category category = new Category();
+        category.setName(NAME_2);
+        category = categoryService.save(category);
+
+        Assert.assertEquals(currentNum + 1, categoryService.findByPartOfName("Test category").size());
+
+        categoryService.delete(category.getId());
+    }
+
+    @Test
     public void findAllTest() {
         int currentSize = categoryService.findAll().size();
 
         Category category = new Category();
         category.setName(NAME_2);
-
         category = categoryService.save(category);
         long testCategoryId = category.getId();
 
@@ -96,9 +115,8 @@ public class CategoryTest {
 
     @Test
     public void updateTest() {
-        Category category = new Category();
+        Category category = categoryService.findById(categoryId);
         category.setName(UPDATED_NAME);
-        category.setId(categoryId);
 
         category = categoryService.update(category);
         Category loadedCategory = categoryService.findById(categoryId);
@@ -111,12 +129,17 @@ public class CategoryTest {
     public void deleteTest() {
         Category category = new Category();
         category.setName(NAME_2);
-
         category = categoryService.save(category);
+
         long testCategoryId = category.getId();
         categoryService.delete(testCategoryId);
 
-        Assert.assertNull(categoryService.findById(testCategoryId));
+        try {
+            category = categoryService.findById(testCategoryId);
+        } catch (NoContentException e) {
+            category = null;
+        }
+        Assert.assertNull(category);
     }
 
     @Test
@@ -129,26 +152,41 @@ public class CategoryTest {
         category2.setName(NAME_3);
         category2 = categoryService.save(category2);
 
+        Price price1 = new Price();
+        price1.setValue(PRICE);
+
+        Price price2 = new Price();
+        price2.setValue(PRICE);
+
+        Price price3 = new Price();
+        price3.setValue(PRICE);
+
         Offer offer1 = new Offer();
         offer1.setName(OFFER_NAME_1);
+        offer1.setDescription(OFFER_DESCRIPTION);
+        offer1.setPrice(price1);
         offer1.setCategory(category1);
         offer1 = offerService.save(offer1);
 
         Offer offer2 = new Offer();
         offer2.setName(OFFER_NAME_2);
+        offer2.setDescription(OFFER_DESCRIPTION);
+        offer2.setPrice(price2);
         offer2.setCategory(category1);
         offer2 = offerService.save(offer2);
 
         Offer offer3 = new Offer();
         offer3.setName(OFFER_NAME_3);
+        offer3.setDescription(OFFER_DESCRIPTION);
+        offer3.setPrice(price3);
         offer3.setCategory(category2);
         offer3 = offerService.save(offer3);
 
-        List<Offer> offers = categoryService.findCategoryOffers(category1.getId());
+        List<Offer> offers1 = categoryService.findCategoryOffers(category1.getId());
+        List<Offer> offers2 = categoryService.findCategoryOffers(category2.getId());
 
-        Assert.assertEquals(2, offers.size());
-        Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
-        Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
+        Assert.assertEquals(2, offers1.size());
+        Assert.assertEquals(1, offers2.size());
 
         offerService.delete(offer1.getId());
         offerService.delete(offer2.getId());
@@ -161,57 +199,37 @@ public class CategoryTest {
     public void addOfferToCategoryTest() {
         Category category = categoryService.findById(categoryId);
 
+        Price price1 = new Price();
+        price1.setValue(PRICE);
+
+        Price price2 = new Price();
+        price2.setValue(PRICE);
+
         Offer offer1 = new Offer();
         offer1.setName(OFFER_NAME_1);
+        offer1.setDescription(OFFER_DESCRIPTION);
+        offer1.setPrice(price1);
         offer1.setCategory(category);
         offer1 = offerService.save(offer1);
+
+        Category category1 = new Category();
+        category1.setName(NAME_2);
+        category1 = categoryService.save(category1);
 
         List<Offer> offers = categoryService.findCategoryOffers(categoryId);
 
         Assert.assertEquals(1, offers.size());
 
-        Offer offer2 = new Offer();
-        offer2.setName(OFFER_NAME_2);
-        offer2 = offerService.save(offer2);
-        categoryService.addOffer(category.getId(), offer2.getId());
+        categoryService.addOffer(category1.getId(), offer1.getId());
 
         offers = categoryService.findCategoryOffers(categoryId);
+        Assert.assertEquals(0, offers.size());
 
-        Assert.assertEquals(2, offers.size());
-        Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
-        Assert.assertEquals(OFFER_NAME_2, offers.get(1).getName());
-
-        offerService.delete(offer1.getId());
-        offerService.delete(offer2.getId());
-}
-
-    @Test
-    public void removeOfferFromCategoryTest() {
-        Category category = categoryService.findById(categoryId);
-
-        Offer offer1 = new Offer();
-        offer1.setName(OFFER_NAME_1);
-        offer1.setCategory(category);
-        offer1 = offerService.save(offer1);
-
-        Offer offer2 = new Offer();
-        offer2.setName(OFFER_NAME_2);
-        offer2.setCategory(category);
-        offer2 = offerService.save(offer2);
-
-        List<Offer> offers = categoryService.findCategoryOffers(categoryId);
-
-        Assert.assertEquals(2, offers.size());
-
-        categoryService.removeOffer(categoryId, offer2.getId());
-
-        offers = categoryService.findCategoryOffers(categoryId);
-
+        offers = categoryService.findCategoryOffers(category1.getId());
         Assert.assertEquals(1, offers.size());
-        Assert.assertEquals(OFFER_NAME_1, offers.get(0).getName());
 
         offerService.delete(offer1.getId());
-        offerService.delete(offer2.getId());
+        categoryService.delete(category1.getId());
     }
 
 }

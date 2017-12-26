@@ -1,4 +1,4 @@
-import com.netcracker.parfenenko.Application;
+import com.netcracker.parfenenko.CatalogApplication;
 import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.service.PriceService;
 import org.junit.*;
@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.EntityNotFoundException;
+
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = CatalogApplication.class)
 public class PriceTest {
 
     @Autowired
@@ -74,9 +76,8 @@ public class PriceTest {
 
     @Test
     public void updateTest() {
-        Price price = new Price();
+        Price price = priceService.findById(priceId);
         price.setValue(UPDATED_PRICE);
-        price.setId(priceId);
 
         price = priceService.update(price);
         Price loadedPrice = priceService.findById(priceId);
@@ -94,7 +95,13 @@ public class PriceTest {
         long testPriceId = price.getId();
         priceService.delete(testPriceId);
 
-        Assert.assertNull(priceService.findById(testPriceId));
+        try {
+            price = priceService.findById(testPriceId);
+        } catch (EntityNotFoundException e) {
+            price = null;
+        }
+
+        Assert.assertNull(price);
     }
 
 }

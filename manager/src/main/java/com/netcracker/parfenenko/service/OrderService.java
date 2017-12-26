@@ -1,5 +1,6 @@
 package com.netcracker.parfenenko.service;
 
+import com.netcracker.parfenenko.client.OfferClient;
 import com.netcracker.parfenenko.client.OrderClient;
 import com.netcracker.parfenenko.entity.FreshOrder;
 import com.netcracker.parfenenko.entity.Offer;
@@ -7,6 +8,8 @@ import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.exception.UpdateOrderException;
 import com.netcracker.parfenenko.util.Statuses;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,31 +20,48 @@ import java.util.List;
 @Service
 public class OrderService {
 
+    private static final Logger logger = LogManager.getLogger(OrderService.class);
+
     private OrderClient orderClient;
-    private OfferService offerService;
+    private OfferClient offerClient;
 
     @Autowired
-    public OrderService(OrderClient orderClient, OfferService offerService) {
+    public OrderService(OrderClient orderClient, OfferClient offerClient) {
         this.orderClient = orderClient;
-        this.offerService = offerService;
+        this.offerClient = offerClient;
     }
 
     public ResponseEntity<Order> createOrder(FreshOrder freshOrder, List<Long> offers) {
+        String operation = "creating a new order";
+        logger.info("START OPERATION: " + operation);
         Order order = orderClient.createOrder(freshOrder).getBody();
         final long orderId = order.getId();
         offers.forEach(id -> addOrderItem(orderId, id));
-        return findOrderById(orderId);
+        ResponseEntity<Order> response = findOrderById(orderId);
+        logger.info("END OF OPERATION: " + operation);
+        return response;
     }
 
     public ResponseEntity<Order> findOrderById(long orderId) {
-        return orderClient.findOrderById(orderId);
+        String operation = String.format("searching for an order by id %s", orderId);
+        logger.info("START OPERATION: " + operation);
+        ResponseEntity<Order> response = orderClient.findOrderById(orderId);
+        logger.error("END OF OPERATION: " + operation);
+        return response;
     }
 
     public ResponseEntity<Order> findOrderByName(String name) {
-        return orderClient.findOrderByName(name);
+        String operation = "searching for order with name " + name;
+        logger.info("START OPERATION: " + operation);
+        ResponseEntity<Order> response = orderClient.findOrderByName(name);
+        logger.error("END OF OPERATION: " + operation);
+        return response;
     }
 
     public ResponseEntity<Order> addOrderItem(long orderId, long offerId) throws UpdateOrderException, EntityNotFoundException {
+        String operation = "adding order item based on the offer with id " + offerId +
+                " to the order with id " + orderId;
+        logger.info("START OPERATION: " + operation);
         Order order = findOrderById(orderId).getBody();
         if (order.getPaymentStatus() == Statuses.PAID.value()) {
             throw new UpdateOrderException("Failed to add new order item to the paid order");
@@ -49,15 +69,20 @@ public class OrderService {
         if (order.getPaymentStatus() == Statuses.CANCELED.value()) {
             throw new UpdateOrderException("Fail to add order item to the canceled order");
         }
-        Offer offer = offerService.findOfferById(offerId).getBody();
+        Offer offer = offerClient.findOfferById(offerId).getBody();
         if (offer == null) {
             throw new EntityNotFoundException("Can't find Offer entity with id " + offerId);
         }
         orderClient.addOrderItem(orderId, convertFromOffer(offer));
-        return countTotalPrice(orderId);
+        ResponseEntity<Order> response = countTotalPrice(orderId);
+        logger.info("END OF OPERATION: " + operation);
+        return response;
     }
 
     public ResponseEntity<Order> removeOrderItem(long orderId, long orderItemId) throws UpdateOrderException {
+        String operation = "removing order item with id " + orderItemId +
+                " from the order with id " + orderId;
+        logger.info("START OPERATION: " + operation);
         Order order = findOrderById(orderId).getBody();
         if (order.getPaymentStatus() == Statuses.PAID.value()) {
             throw new UpdateOrderException("Fail to remove order item from the paid order");
@@ -66,18 +91,30 @@ public class OrderService {
             throw new UpdateOrderException("Fail to remove order item from the canceled order");
         }
         orderClient.removeOrderItem(orderId, orderItemId);
-        return countTotalPrice(orderId);
+        ResponseEntity<Order> response = countTotalPrice(orderId);
+        logger.info("END OF OPERATION: " + operation);
+        return response;
     }
 
     public ResponseEntity<Order[]> findAll() {
-        return orderClient.findAll();
+        String operation = "searching for all orders";
+        logger.info("START OPERATION: " + operation);
+        ResponseEntity<Order[]> response = orderClient.findAll();
+        logger.error("END OF OPERATION: " + operation);
+        return response;
     }
 
     public ResponseEntity<Order[]> findOrderByStatus(int status) {
-        return orderClient.findOrderByStatus(status);
+        String operation = "searching for orders by payment status " + status;
+        logger.info("START OPERATION: " + operation);
+        ResponseEntity<Order[]> response = orderClient.findOrderByStatus(status);
+        logger.error("END OF OPERATION: " + operation);
+        return response;
     }
 
-    public ResponseEntity<Order> countTotalPrice(long orderId) throws EntityNotFoundException {
+    private ResponseEntity<Order> countTotalPrice(long orderId) throws EntityNotFoundException {
+        String operation = "counting total price of the order with id " + orderId;
+        logger.info("START OPERATION: " + operation);
         Order order = findOrderById(orderId).getBody();
         try {
             order.setTotalPrice(0);
@@ -91,11 +128,19 @@ public class OrderService {
     }
 
     public ResponseEntity<Order> updateStatus(long orderId, int status) {
-        return orderClient.updateStatus(orderId, status);
+        String operation = "changing status to " + status + " in the order with id " + orderId;
+        logger.info("START OPERATION: " + operation);
+        ResponseEntity<Order> response = orderClient.updateStatus(orderId, status);
+        logger.error("END OF OPERATION: " + operation);
+        return response;
     }
 
     public ResponseEntity<OrderItem[]> findOrderItems(long orderId) {
-        return orderClient.findOrderItems(orderId);
+        String operation = "searching for order items of the order with id " + orderId;
+        logger.info("START OPERATION: " + operation);
+        ResponseEntity<OrderItem[]> response = orderClient.findOrderItems(orderId);
+        logger.error("END OF OPERATION: " + operation);
+        return response;
     }
 
     private OrderItem convertFromOffer(Offer offer) {

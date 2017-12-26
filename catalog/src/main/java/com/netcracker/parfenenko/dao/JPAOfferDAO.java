@@ -1,9 +1,10 @@
 package com.netcracker.parfenenko.dao;
 
 import com.netcracker.parfenenko.entities.Offer;
-import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -13,7 +14,6 @@ import javax.persistence.criteria.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Repository
 public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements OfferDAO {
@@ -24,11 +24,12 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
 
     @Override
     public Offer save(Offer entity) throws PersistenceMethodException, EntityNotFoundException {
-        if(entity.getTags() != null) {
-            for(Tag tag: entity.getTags()) {
+        if (entity.getTags() != null) {
+            for (Tag tag : entity.getTags()) {
                 tag.setId(0);
             }
         }
+        entity.setAvailable(true);
         return super.save(entity);
     }
 
@@ -45,60 +46,25 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     }
 
     @Override
-    public Offer changeAvailability(long id) throws PersistenceMethodException, EntityNotFoundException {
-        Offer offer = findById(id);
-        offer.setAvailable(!offer.isAvailable());
-        return update(offer);
-    }
-
-    @Override
-    public List<Offer> findOffersByTags(List<Tag> tags) throws PersistenceMethodException, EntityNotFoundException {
-        return findAll().stream().filter(offer -> checkTagsEntrance(offer, tags)).collect(Collectors.toList());
+    public List<Offer> findByTags(List<String> tags) throws PersistenceMethodException, EntityNotFoundException {
+        return persistenceMethodsProvider.functionalMethod(entityManager ->
+                entityManager
+                        .createNamedQuery("findByTags", Offer.class)
+                        .setParameter("tags", tags)
+                        .getResultList()
+        );
     }
 
     @Override
     public List<Offer> findAvailableOffers() throws PersistenceMethodException, EntityNotFoundException {
-        return persistenceMethodsProvider.functionalMethod(this::availableOffers);
-    }
-
-    @Override
-    public Offer addPriceToOffer(long id, Price price) throws PersistenceMethodException, EntityNotFoundException {
-        Offer offer = findById(id);
-        offer.setPrice(price);
-        return update(offer);
+        return persistenceMethodsProvider.functionalMethod(this::availableOffersQuery);
     }
 
     @Override
     public List<Offer> findOffersOfPriceInterval(double fromPrice, double toPrice) throws PersistenceMethodException,
             EntityNotFoundException {
         return persistenceMethodsProvider
-                .functionalMethod(entityManager -> offersOfPriceInterval(entityManager, fromPrice, toPrice));
-    }
-
-    @Override
-    public Offer addTagToOffer(long id, Tag tag) throws PersistenceMethodException, EntityNotFoundException {
-        Offer offer = findById(id);
-        tag.setId(0);
-        offer.getTags().add(tag);
-        return update(offer);
-    }
-
-    @Override
-    public Offer removeTagFromOffer(long id, Tag tag) throws PersistenceMethodException, EntityNotFoundException {
-        Offer offer = findById(id);
-        offer.getTags().remove(tag);
-        return update(offer);
-    }
-
-    private boolean checkTagsEntrance(Offer offer, List<Tag> tags) {
-        Set<Tag> offerTags;
-        try {
-            offerTags = findTags(offer.getId());
-        } catch (PersistenceMethodException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return offerTags.containsAll(tags);
+                .functionalMethod(entityManager -> offersOfPriceIntervalQuery(entityManager, fromPrice, toPrice));
     }
 
     private List<Offer> findByFiltersQuery(EntityManager entityManager, List<Long> categories, List<String> tags,
@@ -141,7 +107,7 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
                 .getResultList());
     }
 
-    private List<Offer> availableOffers(EntityManager entityManager) {
+    private List<Offer> availableOffersQuery(EntityManager entityManager) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Offer> criteriaQuery = criteriaBuilder.createQuery(Offer.class);
         Root<Offer> root = criteriaQuery.from(Offer.class);
@@ -151,7 +117,7 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
         return query.getResultList();
     }
 
-    private List<Offer> offersOfPriceInterval(EntityManager entityManager, double fromPrice, double toPrice) {
+    private List<Offer> offersOfPriceIntervalQuery(EntityManager entityManager, double fromPrice, double toPrice) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Offer> criteriaQuery = criteriaBuilder.createQuery(Offer.class);
         Root<Offer> root = criteriaQuery.from(Offer.class);

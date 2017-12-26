@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
 
     protected PersistenceMethodsProvider persistenceMethodsProvider;
     private Class persistenceClass;
 
-    protected JPAGenericDAO() {}
+    protected JPAGenericDAO() {
+    }
 
     protected Class getPersistenceClass() {
         return persistenceClass;
@@ -45,7 +47,8 @@ public abstract class JPAGenericDAO<T, ID> implements GenericDAO<T, ID> {
     public List<T> findAll() throws PersistenceMethodException, EntityNotFoundException {
         return (List<T>) persistenceMethodsProvider.functionalMethod(entityManager ->
                 (List<T>) entityManager.createQuery("SELECT e FROM " +
-                        persistenceClass.getName() + " e").getResultList());
+                        persistenceClass.getName() + " e").getResultList()
+        );
     }
 
     @Override

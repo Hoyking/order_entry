@@ -1,18 +1,21 @@
 package com.netcracker.parfenenko.entities;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import java.util.List;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
 public class OrderItem extends NamedEntity {
 
+    @NotNull
+    @Min(0)
     private double price;
+    @NotNull
     private String category;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> tags;
+    @Size(max = 500)
+    @NotNull
     private String description;
 
     public OrderItem() {}
@@ -31,14 +34,6 @@ public class OrderItem extends NamedEntity {
 
     public void setCategory(String category) {
         this.category = category;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
     }
 
     public String getDescription() {

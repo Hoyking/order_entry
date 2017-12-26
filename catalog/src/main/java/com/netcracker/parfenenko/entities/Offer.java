@@ -1,10 +1,13 @@
 package com.netcracker.parfenenko.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 @NamedQueries({
         @NamedQuery(name = "findTags",
                 query = "SELECT e.tags FROM Offer e WHERE e.id = ?1"
@@ -27,16 +30,23 @@ import java.util.Set;
         @NamedQuery(name = "findByPrice",
                 query = "SELECT DISTINCT o FROM Offer o WHERE o.price.value >= :fromPrice " +
                         "AND o.price.value <= :toPrice"
+        ),
+        @NamedQuery(name = "findByTags",
+                query = "SELECT DISTINCT o FROM Offer o JOIN Tag t ON (t.name IN :tags AND t MEMBER OF o.tags)"
         )
 })
 public class Offer extends NamedEntity {
 
+    @NotNull
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     private Price price;
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     private Category category;
     @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     private Set<Tag> tags;
+    @NotNull
+    @Size(max = 500)
     private String description;
     private boolean available = true;
 

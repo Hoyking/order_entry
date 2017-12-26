@@ -62,34 +62,21 @@ public class TagController {
             @ApiResponse(code = 404, message = "There is no tag with such name"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
-    @RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
-    public ResponseEntity<TagDto> findTagByName(@PathVariable String name) {
+    @RequestMapping(params = {"name"}, method = RequestMethod.GET)
+    public ResponseEntity<TagDto> findTagByName(@RequestParam(name = "name") String name) {
         return new ResponseEntity<>(tagMapper.mapEntity(tagService.findByName(name)), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "GET",
-            value = "Searching for tags by part of name",
-            response = TagDto.class,
-            responseContainer = "List")
-    @ApiResponses({
-            @ApiResponse(code = 500, message = "Oops, something went wrong")
-    })
-    @RequestMapping(value = "/name/part/{part}", method = RequestMethod.GET)
-    public ResponseEntity<List<TagDto>> findTagsByPartOfName(@PathVariable String part) {
-        return new ResponseEntity<>(tagMapper.mapEntityCollection(tagService.findByPartOfName(part)),
-                HttpStatus.OK);
-    }
-
-    @ApiOperation(httpMethod = "GET",
             value = "Searching for all tags",
-            response = TagDto.class,
+            response = Tag.class,
             responseContainer = "List")
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<TagDto>> findAllTags() {
-        return new ResponseEntity<>(tagMapper.mapEntityCollection(tagService.findAll()), HttpStatus.OK);
+    public ResponseEntity<List<Tag>> findAllTags() {
+        return new ResponseEntity<>(tagService.findAll(), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "PUT",
@@ -124,9 +111,9 @@ public class TagController {
             @ApiResponse(code = 404, message = "Tag not found"),
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
-    @RequestMapping(value = "/name/{name}/offers", method = RequestMethod.GET)
-    public ResponseEntity<List<OfferDto>> findTagOffers(@PathVariable String name) {
-        return new ResponseEntity<>(offerMapper.mapEntityCollection(tagService.findTagOffers(name)), HttpStatus.OK);
+    @RequestMapping(value = "/offers", params = {"tagName"}, method = RequestMethod.GET)
+    public ResponseEntity<List<OfferDto>> findTagOffers(@RequestParam(name = "tagName") String tagName) {
+        return new ResponseEntity<>(offerMapper.mapEntityCollection(tagService.findTagOffers(tagName)), HttpStatus.OK);
     }
 
 }

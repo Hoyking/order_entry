@@ -9,6 +9,4 @@ public class PriceDto extends IdentifiedDto {
 
     private double value;
 
-    public PriceDto() {}
-
 }
