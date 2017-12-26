@@ -146,17 +146,24 @@ public class OfferService {
     public List<Offer> findByFilter(Map<String, List<String>> offerFilter) throws PersistenceMethodException,
             EntityNotFoundException, IllegalArgumentException {
         LOGGER.info(started, findByFilter);
+        List<Offer> offers;
         filtersValidation(offerFilter);
+
         List<String> categories = offerFilter.get("categories");
         List<Long> categoriesId = null;
         if (categories != null) {
             categoriesId = parseLong(categories);
         }
+
         List<String> tags = offerFilter.get("tags");
         List<String> price = offerFilter.get("price");
-        double from = Double.parseDouble(price.get(0));
-        double to = Double.parseDouble(price.get(1));
-        List<Offer> offers = offerDAO.findByFilters(categoriesId, tags, from, to);
+        if (price == null) {
+            offers = offerDAO.findByCategoriesAndTags(categoriesId, tags);
+        } else {
+            double from = Double.parseDouble(price.get(0));
+            double to = Double.parseDouble(price.get(1));
+            offers = offerDAO.findByFilters(categoriesId, tags, from, to);
+        }
         LOGGER.info(started, findByFilter);
         return offers;
     }
@@ -251,22 +258,20 @@ public class OfferService {
         }
 
         List<String> price = filters.get("price");
-        if (price == null) {
-            price = new ArrayList<>(2);
-            price.add("0");
-            price.add("0");
-            filters.put("price", price);
-        } else if (price.size() != 2) {
-            throw new IllegalArgumentException("Wrong filters");
-        } else {
-            String fromValueString = price.get(0);
-            String toValueString = price.get(1);
-            try {
-                double from = Double.parseDouble(fromValueString);
-                double to = Double.parseDouble(toValueString);
-                priceValueValidation(from, to);
-            } catch (NumberFormatException e) {
+
+        if (price != null) {
+            if (price.size() != 2) {
                 throw new IllegalArgumentException("Wrong filters");
+            } else {
+                String fromValueString = price.get(0);
+                String toValueString = price.get(1);
+                try {
+                    double from = Double.parseDouble(fromValueString);
+                    double to = Double.parseDouble(toValueString);
+                    priceValueValidation(from, to);
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException("Wrong filters");
+                }
             }
         }
     }

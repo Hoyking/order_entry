@@ -3,8 +3,6 @@ package com.netcracker.parfenenko.dao;
 import com.netcracker.parfenenko.entities.Offer;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -36,8 +34,15 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     @Override
     public List<Offer> findByFilters(List<Long> categories, List<String> tags, double from, double to)
             throws PersistenceMethodException, EntityNotFoundException {
-        return persistenceMethodsProvider.
-                functionalMethod(entityManager -> findByFiltersQuery(entityManager, categories, tags, from, to));
+        return persistenceMethodsProvider
+                .functionalMethod(entityManager -> findByFiltersQuery(entityManager, categories, tags, from, to));
+    }
+
+    @Override
+    public List<Offer> findByCategoriesAndTags(List<Long> categories, List<String> tags) throws PersistenceMethodException,
+            EntityNotFoundException {
+        return persistenceMethodsProvider
+                .functionalMethod(entityManager -> findByCategoriesAndTagsQuery(entityManager, categories, tags));
     }
 
     @Override
@@ -96,6 +101,28 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
                 .setParameter("tags", tags)
                 .setParameter("fromPrice", from)
                 .setParameter("toPrice", to)
+                .getResultList();
+    }
+
+    private List<Offer> findByCategoriesAndTagsQuery(EntityManager entityManager, List<Long> categories,
+                                                     List<String> tags) {
+        if (categories == null && tags == null) {
+            return findAll();
+        } else if (categories == null) {
+            return entityManager
+                    .createNamedQuery("findByTags", Offer.class)
+                    .setParameter("tags", tags)
+                    .getResultList();
+        } else if (tags == null) {
+            return entityManager
+                    .createNamedQuery("findByCategories", Offer.class)
+                    .setParameter("categories", categories)
+                    .getResultList();
+        }
+        return entityManager
+                .createNamedQuery("findByCategoriesAndTags", Offer.class)
+                .setParameter("categories", categories)
+                .setParameter("tags", tags)
                 .getResultList();
     }
 

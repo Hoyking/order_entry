@@ -33,6 +33,14 @@ import java.util.Set;
         ),
         @NamedQuery(name = "findByTags",
                 query = "SELECT DISTINCT o FROM Offer o JOIN Tag t ON (t.name IN :tags AND t MEMBER OF o.tags)"
+        ),
+        @NamedQuery(name = "findByCategories",
+                query = "SELECT DISTINCT o FROM Offer o WHERE o.category.id IN :categories "
+        ),
+        @NamedQuery(name = "findByCategoriesAndTags",
+                query = "SELECT DISTINCT o FROM Offer o JOIN Tag t " +
+                        "ON (t.name IN :tags AND t MEMBER OF o.tags) " +
+                        "WHERE o.category.id IN :categories "
         )
 })
 public class Offer extends NamedEntity {

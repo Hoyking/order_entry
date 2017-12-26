@@ -14,6 +14,9 @@ public interface OfferDAO extends NamedEntityDAO<Offer, Long> {
     List<Offer> findByFilters(List<Long> categories, List<String> tags, double from, double to)
             throws PersistenceMethodException, EntityNotFoundException;
 
+    List<Offer> findByCategoriesAndTags(List<Long> categories, List<String> tags) throws PersistenceMethodException,
+            EntityNotFoundException;
+
     Set<Tag> findTags(long offerId) throws PersistenceMethodException, EntityNotFoundException;
 
     List<Offer> findByTags(List<String> tags) throws PersistenceMethodException, EntityNotFoundException;
