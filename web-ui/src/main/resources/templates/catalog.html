@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head (head)">
+    <meta charset="UTF-8" />
+    <title th:text="${head}">Easy Order</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" href="../static/css/bootstrap.css" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap-grid.css}" href="../static/css/bootstrap-grid.css" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap-reboot.css}" href="../static/css/bootstrap-reboot.css" />
+    <link rel="stylesheet" th:href="@{/css/main.css}" href="../static/css/main.css" />
+</head>
+<body>
+
+<nav class="navbar navbar-toggleable-md navbar-light bg-info">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="#">Easy order</a>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            <a class="nav-item nav-link active" href="#">Catalog <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="#">Current orders</a>
+            <a class="nav-item nav-link" href="#">Create order</a>
+            <a class="nav-item nav-link" href="#">Find offers</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="category">
+        <div class="category-name"><p>Some category</p></div>
+    </div>
+    <div class="offer-area">
+        <div class="offer"></div>
+        <div class="offer"></div>
+        <div class="offer"></div>
+        <div class="offer"></div>
+        <div class="offer"></div>
+        <div class="offer"></div>
+        <div class="offer"></div>
+    </div>
+</div>
+
+
+<script th:src="@{/js/jquery-3.2.1.min.js}" src="../static/js/jquery-3.2.1.js"></script>
+<script th:src="@{/js/bootstrap.js}" src="../static/js/bootstrap.js"></script>
+<script th:src="@{/js/bootstrap.bundle.js}" src="../static/js/bootstrap.bundle.js"></script>
+
+</body>
+
+</html>
