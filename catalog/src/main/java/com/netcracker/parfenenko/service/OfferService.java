@@ -160,7 +160,7 @@ public class OfferService {
         List<String> tags = offerFilter.get("tags");
 
         offers = offerDAO.findByFilters(categoriesId, tags, from, to);
-        LOGGER.info(started, findByFilter);
+        LOGGER.info(finished, findByFilter);
         return offers;
     }
 
@@ -263,6 +263,9 @@ public class OfferService {
                 throw new IllegalArgumentException("Wrong filters");
             } else {
                 from = Double.parseDouble(fromList.get(0));
+                if (from < 0) {
+                    throw new IllegalArgumentException("From price should not be less then 0");
+                }
             }
         }
         if (toList != null) {
@@ -270,6 +273,9 @@ public class OfferService {
                 throw new IllegalArgumentException("Wrong filters");
             } else {
                 to = Double.parseDouble(toList.get(0));
+                if (to < 0) {
+                    throw new IllegalArgumentException("To price should not be less then 0");
+                }
             }
         }
         if (from != null && to != null) {

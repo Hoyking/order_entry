@@ -19,10 +19,10 @@
     <a class="navbar-brand" href="/api/v1/">Easy order</a>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-            <a class="nav-item nav-link active" href="/api/v1/catalog">Catalog <span class="sr-only">(current)</span></a>
-            <a class="nav-item nav-link" href="#">Current orders</a>
-            <a class="nav-item nav-link" href="#">Create order</a>
-            <a class="nav-item nav-link" href="/api/v1/search">Find offers</a>
+            <a class="nav-item nav-link nav-color active" href="/api/v1/catalog">Catalog <span class="sr-only">(current)</span></a>
+            <!--<a class="nav-item nav-link" href="#">Current orders</a>
+            <a class="nav-item nav-link" href="#">Create order</a>-->
+            <a class="nav-item nav-color nav-link" href="/api/v1/search">Find offers</a>
         </div>
     </div>
 </nav>
@@ -40,11 +40,11 @@
             </div>
             <div class="form-group">
                 <label for="from-price-field">From price</label>
-                <input type="email" class="form-control" id="from-price-field" placeholder="0" />
+                <input type="email" class="form-control" id="from-price-field" />
             </div>
             <div class="form-group">
                 <label for="to-price-field">To price</label>
-                <input type="email" class="form-control" id="to-price-field" placeholder="0" />
+                <input type="email" class="form-control" id="to-price-field" />
             </div>
         </form>
         <button type="submit" class="btn btn-primary" id="search-btn">Search</button>

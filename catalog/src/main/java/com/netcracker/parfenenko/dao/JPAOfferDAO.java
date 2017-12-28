@@ -73,30 +73,25 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
         final String BY_CATEGORIES = " o.category.id IN %s";
         final String BY_FROM = " o.price.value >= %s";
         final String BY_TO = " o.price.value <= %s";
+        final String AVAILABLE = " o.available = true";
         final String WHERE = " WHERE";
         final String AND = " AND";
-
-        int last;
 
         if (tags != null) {
             query.append(String.format(BY_TAGS, getStringParamStr(tags)));
         }
         query.append(WHERE);
-        last = WHERE.length();
         if (categories != null) {
             query.append(String.format(BY_CATEGORIES, getLongParamStr(categories))).append(AND);
-            last = AND.length();
         }
         if (from != null) {
             query.append(String.format(BY_FROM, from)).append(AND);
-            last = AND.length();
         }
         if (to != null) {
             query.append(String.format(BY_TO, to)).append(AND);
-            last = AND.length();
         }
-        System.out.println(query.substring(0, query.length() - last));
-        return query.substring(0, query.length() - last);
+        query.append(AVAILABLE);
+        return query.toString();
     }
 
     private String getStringParamStr(List<String> list) {

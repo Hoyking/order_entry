@@ -11,6 +11,7 @@ import com.netcracker.parfenenko.util.Statuses;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -63,15 +64,19 @@ public class OrderService {
                 " to the order with id " + orderId;
         logger.info("START OPERATION: " + operation);
         Order order = findOrderById(orderId).getBody();
-        if (order.getPaymentStatus() == Statuses.PAID.value()) {
+        if (order.getPaymentStatus().equals(Statuses.PAID.value())) {
             throw new UpdateOrderException("Failed to add new order item to the paid order");
         }
-        if (order.getPaymentStatus() == Statuses.CANCELED.value()) {
+        if (order.getPaymentStatus().equals(Statuses.CANCELED.value())) {
             throw new UpdateOrderException("Fail to add order item to the canceled order");
         }
         Offer offer = offerClient.findOfferById(offerId).getBody();
         if (offer == null) {
             throw new EntityNotFoundException("Can't find Offer entity with id " + offerId);
+        }
+        if (!offer.isAvailable()) {
+            logger.info("END OF OPERATION: " + operation + ". Unavailable offer has not been added");
+            return new ResponseEntity<>(order, HttpStatus.OK);
         }
         orderClient.addOrderItem(orderId, convertFromOffer(offer));
         ResponseEntity<Order> response = countTotalPrice(orderId);
@@ -84,10 +89,10 @@ public class OrderService {
                 " from the order with id " + orderId;
         logger.info("START OPERATION: " + operation);
         Order order = findOrderById(orderId).getBody();
-        if (order.getPaymentStatus() == Statuses.PAID.value()) {
+        if (order.getPaymentStatus().equals(Statuses.PAID.value())) {
             throw new UpdateOrderException("Fail to remove order item from the paid order");
         }
-        if (order.getPaymentStatus() == Statuses.CANCELED.value()) {
+        if (order.getPaymentStatus().equals(Statuses.CANCELED.value())) {
             throw new UpdateOrderException("Fail to remove order item from the canceled order");
         }
         orderClient.removeOrderItem(orderId, orderItemId);

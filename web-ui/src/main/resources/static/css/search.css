@@ -10,7 +10,6 @@ body {
     padding-top: 56px;
     display: flex;
     justify-content: space-between;
-    /*height: 100vh;*/
 }
 
 .search-area {

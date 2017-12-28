@@ -13,6 +13,6 @@ public class OrderDto {
     private double totalPrice;
     private String customerMail;
     private String orderDate;
-    private int paymentStatus;
+    private String paymentStatus;
 
 }

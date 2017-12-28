@@ -55,6 +55,7 @@ public class OrderService {
         order.setOrderItems(new HashSet<>(0));
         order.setTotalPrice(0);
         order.setOrderDate(new SimpleDateFormat("yyyy.MM.dd").format(Calendar.getInstance().getTime()));
+        order.setName("temp");
         order = orderDAO.save(order);
         order.setName("Order #" + order.getId());
         order = orderDAO.update(order);

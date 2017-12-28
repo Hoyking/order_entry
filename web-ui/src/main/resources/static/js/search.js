@@ -36,8 +36,6 @@ function findOffers() {
         dataType: "json",
         success: function (offers) {
             $(offers).each(function (k, v) {
-                console.log(createOffer(v));
-                /*$("#offer-area").append*/
                 container += createOffer(v);
             });
             container += '</div>';
@@ -47,6 +45,11 @@ function findOffers() {
         },
         error: function (error) {
             console.log(error);
+            if (error.statusText === "parsererror") {
+                alert("Some fields has wrong values");
+            } else {
+                alert(error.responseText);
+            }
         }
     };
     var promise = $.ajax(settings);
@@ -56,6 +59,8 @@ function createOfferFilter() {
     var categories = [];
     var tags = [];
     var price = [];
+    var to = [];
+    var from = [];
     $("#categories-list").find("option:selected").each(function (k, v) {
         categories.push(v.getAttribute("id").substr(8));
     });
@@ -66,16 +71,10 @@ function createOfferFilter() {
             tags.push(tag);
         }
     });
-    var from = $("#from-price-field").val();
-    var to = $("#to-price-field").val();
-    if (from.length === 0) {
-        from = "0";
-    }
-    if (to.length === 0) {
-        to = "0";
-    }
-    price.push(from);
-    price.push(to);
+    var fromVal = $("#from-price-field").val();
+    var toVal = $("#to-price-field").val();
+    from.push(fromVal);
+    to.push(toVal);
     var filter = {};
     if (tags.length !== 0) {
         filter["tags"] = tags;
@@ -83,7 +82,12 @@ function createOfferFilter() {
     if (categories.length !== 0) {
         filter["categories"] = categories;
     }
-    filter["price"] = price;
+    if (fromVal !== "") {
+        filter["from"] = from;
+    }
+    if (toVal !== "") {
+        filter["to"] = to;
+    }
     return filter;
 }
 
