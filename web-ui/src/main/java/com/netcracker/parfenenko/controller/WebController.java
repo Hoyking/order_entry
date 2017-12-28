@@ -9,8 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class WebController {
 
     @GetMapping("/")
+    public String home() {
+        return "redirect:/api/v1/catalog";
+    }
+
+    @GetMapping("/catalog")
     public String catalog() {
         return "catalog";
     }
+
 
 }
