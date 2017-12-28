@@ -32,17 +32,12 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
     }
 
     @Override
-    public List<Offer> findByFilters(List<Long> categories, List<String> tags, double from, double to)
+    public List<Offer> findByFilters(List<Long> categories, List<String> tags, Double from, Double to)
             throws PersistenceMethodException, EntityNotFoundException {
-        return persistenceMethodsProvider
-                .functionalMethod(entityManager -> findByFiltersQuery(entityManager, categories, tags, from, to));
-    }
-
-    @Override
-    public List<Offer> findByCategoriesAndTags(List<Long> categories, List<String> tags) throws PersistenceMethodException,
-            EntityNotFoundException {
-        return persistenceMethodsProvider
-                .functionalMethod(entityManager -> findByCategoriesAndTagsQuery(entityManager, categories, tags));
+        return persistenceMethodsProvider.functionalMethod(entityManager ->
+                entityManager
+                        .createQuery(findByFiltersQuery(categories, tags, from, to), Offer.class)
+                        .getResultList());
     }
 
     @Override
@@ -72,58 +67,62 @@ public class JPAOfferDAO extends JPANamedEntityDAO<Offer, Long> implements Offer
                 .functionalMethod(entityManager -> offersOfPriceIntervalQuery(entityManager, fromPrice, toPrice));
     }
 
-    private List<Offer> findByFiltersQuery(EntityManager entityManager, List<Long> categories, List<String> tags,
-                                           double from, double to) {
-        if (categories == null && tags == null) {
-            return entityManager
-                    .createNamedQuery("findByPrice", Offer.class)
-                    .setParameter("fromPrice", from)
-                    .setParameter("toPrice", to)
-                    .getResultList();
-        } else if (categories == null) {
-            return entityManager
-                    .createNamedQuery("findByTagsAndPrice", Offer.class)
-                    .setParameter("tags", tags)
-                    .setParameter("fromPrice", from)
-                    .setParameter("toPrice", to)
-                    .getResultList();
-        } else if (tags == null) {
-            return entityManager
-                    .createNamedQuery("findByCategoriesAndPrice", Offer.class)
-                    .setParameter("categories", categories)
-                    .setParameter("fromPrice", from)
-                    .setParameter("toPrice", to)
-                    .getResultList();
+    private String findByFiltersQuery(List<Long> categories, List<String> tags, Double from, Double to) {
+        StringBuilder query = new StringBuilder("SELECT DISTINCT o FROM Offer o");
+        final String BY_TAGS = " JOIN Tag t ON (t.name IN %s AND t MEMBER OF o.tags)";
+        final String BY_CATEGORIES = " o.category.id IN %s";
+        final String BY_FROM = " o.price.value >= %s";
+        final String BY_TO = " o.price.value <= %s";
+        final String WHERE = " WHERE";
+        final String AND = " AND";
+
+        int last;
+
+        if (tags != null) {
+            query.append(String.format(BY_TAGS, getStringParamStr(tags)));
         }
-        return entityManager
-                .createNamedQuery("findByAllFilters", Offer.class)
-                .setParameter("categories", categories)
-                .setParameter("tags", tags)
-                .setParameter("fromPrice", from)
-                .setParameter("toPrice", to)
-                .getResultList();
+        query.append(WHERE);
+        last = WHERE.length();
+        if (categories != null) {
+            query.append(String.format(BY_CATEGORIES, getLongParamStr(categories))).append(AND);
+            last = AND.length();
+        }
+        if (from != null) {
+            query.append(String.format(BY_FROM, from)).append(AND);
+            last = AND.length();
+        }
+        if (to != null) {
+            query.append(String.format(BY_TO, to)).append(AND);
+            last = AND.length();
+        }
+        System.out.println(query.substring(0, query.length() - last));
+        return query.substring(0, query.length() - last);
     }
 
-    private List<Offer> findByCategoriesAndTagsQuery(EntityManager entityManager, List<Long> categories,
-                                                     List<String> tags) {
-        if (categories == null && tags == null) {
-            return findAll();
-        } else if (categories == null) {
-            return entityManager
-                    .createNamedQuery("findByTags", Offer.class)
-                    .setParameter("tags", tags)
-                    .getResultList();
-        } else if (tags == null) {
-            return entityManager
-                    .createNamedQuery("findByCategories", Offer.class)
-                    .setParameter("categories", categories)
-                    .getResultList();
+    private String getStringParamStr(List<String> list) {
+        StringBuilder str = new StringBuilder("(");
+        list.forEach(item -> str
+                .append("'")
+                .append(item)
+                .append("'")
+                .append(", "));
+        if (list.size() != 0) {
+            str.setLength(str.length() - 2);
         }
-        return entityManager
-                .createNamedQuery("findByCategoriesAndTags", Offer.class)
-                .setParameter("categories", categories)
-                .setParameter("tags", tags)
-                .getResultList();
+        str.append(")");
+        return str.toString();
+    }
+
+    private String getLongParamStr(List<Long> list) {
+        StringBuilder str = new StringBuilder("(");
+        list.forEach(item -> str
+                .append(item)
+                .append(", "));
+        if (list.size() != 0) {
+            str.setLength(str.length() - 2);
+        }
+        str.append(")");
+        return str.toString();
     }
 
     private Set<Tag> findTagsQuery(EntityManager entityManager, long offerId) {

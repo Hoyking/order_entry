@@ -42,17 +42,17 @@ public class JPAOrderDAO extends JPANamedEntityDAO<Order, Long> implements Order
     }
 
     @Override
-    public List<Order> findOrdersByPaymentStatus(int paymentStatus) throws StatusSignException, PersistenceMethodException,
+    public List<Order> findOrdersByPaymentStatus(String paymentStatus) throws StatusSignException, PersistenceMethodException,
             EntityNotFoundException {
         return persistenceMethodsProvider
                 .functionalMethod(entityManager -> ordersWithPaymentStatusCriteriaQuery(entityManager, paymentStatus));
     }
 
-    private List<Order> ordersWithPaymentStatusCriteriaQuery(EntityManager entityManager, int paymentStatus) {
+    private List<Order> ordersWithPaymentStatusCriteriaQuery(EntityManager entityManager, String paymentStatus) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Order> query = criteriaBuilder.createQuery(Order.class);
         Root<Order> root = query.from(Order.class);
-        ParameterExpression<Integer> parameter = criteriaBuilder.parameter(Integer.class);
+        ParameterExpression<String> parameter = criteriaBuilder.parameter(String.class);
         query.select(root).where(criteriaBuilder.equal(root.get("paymentStatus"), parameter));
 
         TypedQuery<Order> typedQuery = entityManager.createQuery(query);

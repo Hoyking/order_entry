@@ -35,9 +35,7 @@ public class Order extends NamedEntity {
     private String customerMail;
     @DateTimeFormat(pattern = "yyyy.MM.dd")
     private String orderDate;
-    @Min(0)
-    @Max(3)
-    private int paymentStatus = Statuses.OPENED.value();
+    private String paymentStatus = Statuses.OPENED.value();
 
     public Order() {}
 
@@ -81,11 +79,11 @@ public class Order extends NamedEntity {
         this.description = description;
     }
 
-    public int getPaymentStatus() {
+    public String getPaymentStatus() {
         return paymentStatus;
     }
 
-    public void setPaymentStatus(int paymentStatus) {
+    public void setPaymentStatus(String paymentStatus) {
         this.paymentStatus = paymentStatus;
     }
 

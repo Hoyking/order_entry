@@ -147,7 +147,9 @@ public class OfferService {
             EntityNotFoundException, IllegalArgumentException {
         LOGGER.info(started, findByFilter);
         List<Offer> offers;
-        filtersValidation(offerFilter);
+        Double[] price = filtersValidation(offerFilter);
+        Double from = price[0];
+        Double to = price[1];
 
         List<String> categories = offerFilter.get("categories");
         List<Long> categoriesId = null;
@@ -156,14 +158,8 @@ public class OfferService {
         }
 
         List<String> tags = offerFilter.get("tags");
-        List<String> price = offerFilter.get("price");
-        if (price == null) {
-            offers = offerDAO.findByCategoriesAndTags(categoriesId, tags);
-        } else {
-            double from = Double.parseDouble(price.get(0));
-            double to = Double.parseDouble(price.get(1));
-            offers = offerDAO.findByFilters(categoriesId, tags, from, to);
-        }
+
+        offers = offerDAO.findByFilters(categoriesId, tags, from, to);
         LOGGER.info(started, findByFilter);
         return offers;
     }
@@ -250,30 +246,39 @@ public class OfferService {
         return offer;
     }
 
-    private void filtersValidation(Map<String, List<String>> filters) throws IllegalArgumentException {
+    private Double[] filtersValidation(Map<String, List<String>> filters) throws IllegalArgumentException {
         for (String key : filters.keySet()) {
-            if (!key.equals("categories") && !key.equals("tags") && !key.equals("price")) {
+            if (!key.equals("categories") && !key.equals("tags") && !key.equals("from") && !key.equals("to")) {
                 throw new IllegalArgumentException("Wrong filters");
             }
         }
 
-        List<String> price = filters.get("price");
+        List<String> fromList = filters.get("from");
+        List<String> toList = filters.get("to");
+        Double from = null;
+        Double to = null;
 
-        if (price != null) {
-            if (price.size() != 2) {
+        if (fromList != null) {
+            if (fromList.size() != 1) {
                 throw new IllegalArgumentException("Wrong filters");
             } else {
-                String fromValueString = price.get(0);
-                String toValueString = price.get(1);
-                try {
-                    double from = Double.parseDouble(fromValueString);
-                    double to = Double.parseDouble(toValueString);
-                    priceValueValidation(from, to);
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException("Wrong filters");
-                }
+                from = Double.parseDouble(fromList.get(0));
             }
         }
+        if (toList != null) {
+            if (toList.size() != 1) {
+                throw new IllegalArgumentException("Wrong filters");
+            } else {
+                to = Double.parseDouble(toList.get(0));
+            }
+        }
+        if (from != null && to != null) {
+            if (to < from) {
+                throw new IllegalArgumentException("To price should not be less then from price");
+            }
+        }
+
+        return new Double[] {from, to};
     }
 
     private void priceValueValidation(double from, double to) throws NumberFormatException {

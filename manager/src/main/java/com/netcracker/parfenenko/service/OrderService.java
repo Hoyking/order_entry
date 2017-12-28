@@ -127,7 +127,7 @@ public class OrderService {
         return orderClient.updateOrder(order);
     }
 
-    public ResponseEntity<Order> updateStatus(long orderId, int status) {
+    public ResponseEntity<Order> updateStatus(long orderId, String status) {
         String operation = "changing status to " + status + " in the order with id " + orderId;
         logger.info("START OPERATION: " + operation);
         ResponseEntity<Order> response = orderClient.updateStatus(orderId, status);

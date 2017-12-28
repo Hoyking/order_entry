@@ -13,8 +13,8 @@ import java.util.Set;
                 query = "SELECT e.tags FROM Offer e WHERE e.id = ?1"
         ),
         @NamedQuery(name = "findByAllFilters",
-                query = "SELECT DISTINCT o FROM Offer o JOIN Tag t " +
-                        "ON (t.name IN :tags AND t MEMBER OF o.tags) " +
+                query = "SELECT DISTINCT o FROM Offer o " +
+                        "JOIN Tag t ON (t.name IN :tags AND t MEMBER OF o.tags) " +
                         "WHERE o.category.id IN :categories " +
                         "AND o.price.value >= :fromPrice AND o.price.value <= :toPrice"
         ),

@@ -151,7 +151,7 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<Order> findOrdersByPaymentStatus(int paymentStatus) throws StatusSignException, PersistenceMethodException,
+    public List<Order> findOrdersByPaymentStatus(String paymentStatus) throws StatusSignException, PersistenceMethodException,
             EntityNotFoundException {
         LOGGER.info(started, String.format(findOrdersByPaymentStatus, paymentStatus));
         isValidStatus(paymentStatus);
@@ -160,7 +160,7 @@ public class OrderService {
         return orders;
     }
 
-    public Order updateStatus(long id, int status) throws UpdateStatusException, PersistenceMethodException,
+    public Order updateStatus(long id, String status) throws UpdateStatusException, PersistenceMethodException,
             EntityNotFoundException, StatusSignException {
         LOGGER.info(started, String.format(updateStatus, id));
         Order order = null;
@@ -180,39 +180,39 @@ public class OrderService {
         }
     }
 
-    private void isValidStatus(int status) throws StatusSignException {
+    private void isValidStatus(String status) throws StatusSignException {
         if (!Statuses.consists(status)) {
             throw new StatusSignException();
         }
     }
 
-    private void isValidStatus(int currentStatus, int newStatus) throws StatusSignException {
+    private void isValidStatus(String currentStatus, String newStatus) throws StatusSignException {
         isValidStatus(newStatus);
 
-        final int OPENED = Statuses.OPENED.value();
-        final int PAID = Statuses.PAID.value();
-        final int CANCELED = Statuses.CANCELED.value();
-        final int REJECTED = Statuses.REJECTED_PAYMENT.value();
+        final String OPENED = Statuses.OPENED.value();
+        final String PAID = Statuses.PAID.value();
+        final String CANCELED = Statuses.CANCELED.value();
+        final String REJECTED = Statuses.REJECTED_PAYMENT.value();
 
         final String OPENED_MESSAGE = "Opened order can be changed either to paid or canceled";
         final String REJECTED_MESSAGE = "Rejected payment can be changed either to paid or canceled";
         final String CANCELED_MESSAGE = "Canceled order can't be changed";
         final String PAID_MESSAGE = "Paid order can't be changed";
 
-        if (currentStatus == OPENED) {
-            if (newStatus == OPENED || newStatus == REJECTED) {
+        if (currentStatus.equals(OPENED)) {
+            if (newStatus.equals(OPENED) || newStatus.equals(REJECTED)) {
                 throw new StatusSignException(OPENED_MESSAGE);
             }
         }
-        if (currentStatus == REJECTED) {
-            if (newStatus == OPENED || newStatus == REJECTED) {
+        if (currentStatus.equals(REJECTED)) {
+            if (newStatus.equals(OPENED) || newStatus.equals(REJECTED)) {
                 throw new StatusSignException(REJECTED_MESSAGE);
             }
         }
-        if (currentStatus == PAID) {
+        if (currentStatus.equals(PAID)) {
             throw new StatusSignException(PAID_MESSAGE);
         }
-        if (currentStatus == CANCELED) {
+        if (currentStatus.equals(CANCELED)) {
             throw new StatusSignException(CANCELED_MESSAGE);
         }
     }

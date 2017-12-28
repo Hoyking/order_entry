@@ -63,7 +63,7 @@ public class OrderClient {
                 new HttpEntity<>(orderItemId), Order.class);
     }
 
-    public ResponseEntity<Order> updateStatus(long orderId, int status) {
+    public ResponseEntity<Order> updateStatus(long orderId, String status) {
         return requestManager.putRequest(String.format(uriProvider.get(URN, "orders/%s/status"), orderId),
                 new HttpEntity<>(status), Order.class);
     }

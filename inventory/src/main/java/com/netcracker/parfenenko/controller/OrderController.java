@@ -165,7 +165,7 @@ public class OrderController {
             @ApiResponse(code = 400, message = "Wrong payment status value")
     })
     @RequestMapping(params = {"status"}, method = RequestMethod.GET)
-    public ResponseEntity<List<OrderDto>> findOrdersByPaymentStatus(@RequestParam(name = "status") int status) {
+    public ResponseEntity<List<OrderDto>> findOrdersByPaymentStatus(@RequestParam(name = "status") String status) {
         return new ResponseEntity<>(orderMapper.mapEntityCollection(orderService.findOrdersByPaymentStatus(status)),
                 HttpStatus.OK);
     }
@@ -180,7 +180,7 @@ public class OrderController {
             @ApiResponse(code = 400, message = "Wrong payment status")
     })
     @RequestMapping(value = "/{id}/status", method = RequestMethod.PUT)
-    public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable long id, @RequestBody int status) {
+    public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable long id, @RequestBody String status) {
         return new ResponseEntity<>(orderMapper.mapEntity(orderService.updateStatus(id, status)), HttpStatus.OK);
     }
 
