@@ -73,4 +73,9 @@ public class OrderClient {
                 OrderItem[].class);
     }
 
+    public ResponseEntity<Order> countTotalPrice(long orderId) {
+        return requestManager.putRequest(String.format(uriProvider.get(URN, "orders/%s/totalPrice"), orderId),
+                Order.class);
+    }
+
 }

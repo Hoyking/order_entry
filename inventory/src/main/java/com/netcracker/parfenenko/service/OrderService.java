@@ -30,20 +30,21 @@ public class OrderService {
 
     private OrderDAO orderDAO;
 
-    private String started = "Operation of {} started";
-    private String finished = "Operation of {} finished";
+    private final String started = "Operation of {} started";
+    private final String finished = "Operation of {} finished";
 
-    private String save = "saving order";
-    private String findById = "searching for order with id %s";
-    private String findByName = "searching for order with name %s";
-    private String findAll = "searching for all orders";
-    private String update = "updating an order";
-    private String delete = "deleting an order with id %s";
-    private String findOrderItems = "searching for order items of an order with id %s";
-    private String addOrderITem = "adding order item to the order with id %s";
-    private String removeOrderItem = "removing order item from the order with id %s";
-    private String findOrdersByPaymentStatus = "searching for orders with payment status %s";
-    private String updateStatus = "updating payment status of the order with id %s";
+    private final String save = "saving order";
+    private final String findById = "searching for order with id %s";
+    private final String findByName = "searching for order with name %s";
+    private final String findAll = "searching for all orders";
+    private final String update = "updating an order";
+    private final String delete = "deleting an order with id %s";
+    private final String findOrderItems = "searching for order items of an order with id %s";
+    private final String addOrderITem = "adding order item to the order with id %s";
+    private final String removeOrderItem = "removing order item from the order with id %s";
+    private final String findOrdersByPaymentStatus = "searching for orders with payment status %s";
+    private final String updateStatus = "updating payment status of the order with id %s";
+    private final String countTotalPrice = "counting total price of the order with id %s";
 
     @Autowired
     public OrderService(OrderDAO orderDAO) {
@@ -179,6 +180,17 @@ public class OrderService {
             }
             throw new UpdateStatusException("Fail to update status of the order with id " + id, e);
         }
+    }
+
+    public Order countTotalPrice(long orderId) {
+        LOGGER.info(started, String.format(countTotalPrice, orderId));
+        Order order = findById(orderId);
+        for(OrderItem orderItem: orderDAO.findOrderItems(orderId)) {
+            order.setTotalPrice(order.getTotalPrice() + orderItem.getPrice());
+        }
+        order = orderDAO.update(order);
+        LOGGER.info(finished, String.format(countTotalPrice, orderId));
+        return order;
     }
 
     private void isValidStatus(String status) throws StatusSignException {

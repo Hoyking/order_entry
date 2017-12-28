@@ -172,8 +172,8 @@ public class OrderController {
 
     @ApiOperation(httpMethod = "PUT",
             value = "Update order status",
-            response = OrderDto.class,
-            responseContainer = "List")
+            response = OrderDto.class
+    )
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
             @ApiResponse(code = 404, message = "Order doesn't exist"),
@@ -182,6 +182,19 @@ public class OrderController {
     @RequestMapping(value = "/{id}/status", method = RequestMethod.PUT)
     public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable long id, @RequestBody String status) {
         return new ResponseEntity<>(orderMapper.mapEntity(orderService.updateStatus(id, status)), HttpStatus.OK);
+    }
+
+    @ApiOperation(httpMethod = "PUT",
+            value = "Update order status",
+            response = OrderDto.class,
+            responseContainer = "List")
+    @ApiResponses({
+            @ApiResponse(code = 500, message = "Oops, something went wrong"),
+            @ApiResponse(code = 404, message = "Order doesn't exist")
+    })
+    @RequestMapping(value = "/{id}/totalPrice", method = RequestMethod.PUT)
+    public ResponseEntity<OrderDto> countTotalPrice(@PathVariable long id) {
+        return new ResponseEntity<>(orderMapper.mapEntity(orderService.countTotalPrice(id)), HttpStatus.OK);
     }
 
 }

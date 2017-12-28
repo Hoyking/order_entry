@@ -120,16 +120,9 @@ public class OrderService {
     private ResponseEntity<Order> countTotalPrice(long orderId) throws EntityNotFoundException {
         String operation = "counting total price of the order with id " + orderId;
         logger.info("START OPERATION: " + operation);
-        Order order = findOrderById(orderId).getBody();
-        try {
-            order.setTotalPrice(0);
-        } catch (NullPointerException e) {
-            throw new EntityNotFoundException("There is no order with such id");
-        }
-        for(OrderItem orderItem: findOrderItems(order.getId()).getBody()) {
-            order.setTotalPrice(order.getTotalPrice() + orderItem.getPrice());
-        }
-        return orderClient.updateOrder(order);
+        ResponseEntity<Order> order = orderClient.countTotalPrice(orderId);
+        logger.info("END OF OPERATION: " + operation);
+        return order;
     }
 
     public ResponseEntity<Order> updateStatus(long orderId, String status) {

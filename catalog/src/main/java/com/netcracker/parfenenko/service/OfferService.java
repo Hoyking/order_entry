@@ -131,6 +131,7 @@ public class OfferService {
         } catch (EntityNotFoundException | NullPointerException e) {
             throw new IllegalArgumentException("Wrong category");
         }
+        offer.setTags(offerDAO.findTags(offer.getId()));
         offer = offerDAO.update(offer);
         LOGGER.info(finished, update);
         return offer;
