@@ -1,6 +1,8 @@
+$(document).ready(findCategories);
+
 function findCategories() {
     var settings = {
-        url: "http://localhost:8765/catalog-service/api/v1/categories",
+        url: "http://localhost:8765/manager-service/api/v1/categories",
         type: "GET",
         dataType: "json",
         success: function (data) {
@@ -62,5 +64,3 @@ function createOffer(offer) {
     }
     return offerHTML;
 }
-
-findCategories();

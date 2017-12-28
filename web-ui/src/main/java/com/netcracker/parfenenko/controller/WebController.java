@@ -18,5 +18,10 @@ public class WebController {
         return "catalog";
     }
 
+    @GetMapping("/search")
+    public String search() {
+        return "search";
+    }
+
 
 }
