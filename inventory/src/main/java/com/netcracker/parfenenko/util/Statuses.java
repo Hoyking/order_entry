@@ -2,23 +2,23 @@ package com.netcracker.parfenenko.util;
 
 public enum Statuses {
 
-    OPENED(0),
-    PAID(1),
-    CANCELED(2),
-    REJECTED_PAYMENT(3);
+    OPENED("OPENED"),
+    PAID("PAID"),
+    CANCELED("CANCELED"),
+    REJECTED_PAYMENT("REJECTED_PAYMENT");
 
-    private final int VALUE;
+    private final String VALUE;
 
-    Statuses(int value) {
+    Statuses(String value) {
         this.VALUE = value;
     }
 
-    public int value() {
+    public String value() {
         return VALUE;
     }
 
-    public static boolean consists(int value) {
-        return value == OPENED.VALUE || value == PAID.VALUE || value == CANCELED.VALUE || value == REJECTED_PAYMENT.VALUE;
+    public static boolean consists(String value) {
+        return value.equals(OPENED.VALUE) || value.equals(PAID.VALUE) || value.equals(CANCELED.VALUE) || value.equals(REJECTED_PAYMENT.VALUE);
     }
 
 }

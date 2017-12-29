@@ -15,7 +15,7 @@ public interface OrderDAO extends NamedEntityDAO<Order, Long> {
 
     Order removeOrderItem(long orderId, long orderItemId) throws PersistenceMethodException, EntityNotFoundException;
 
-    List<Order> findOrdersByPaymentStatus(int paymentStatus) throws StatusSignException, PersistenceMethodException,
+    List<Order> findOrdersByPaymentStatus(String paymentStatus) throws StatusSignException, PersistenceMethodException,
             EntityNotFoundException;
 
 }

@@ -1,7 +1,6 @@
 package com.netcracker.parfenenko.dao;
 
 import com.netcracker.parfenenko.entities.Offer;
-import com.netcracker.parfenenko.entities.Price;
 import com.netcracker.parfenenko.entities.Tag;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 
@@ -11,7 +10,7 @@ import java.util.Set;
 
 public interface OfferDAO extends NamedEntityDAO<Offer, Long> {
 
-    List<Offer> findByFilters(List<Long> categories, List<String> tags, double from, double to)
+    List<Offer> findByFilters(List<Long> categories, List<String> tags, Double from, Double to)
             throws PersistenceMethodException, EntityNotFoundException;
 
     Set<Tag> findTags(long offerId) throws PersistenceMethodException, EntityNotFoundException;

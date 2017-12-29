@@ -165,9 +165,23 @@ public class OrderController {
             @ApiResponse(code = 400, message = "Wrong payment status value")
     })
     @RequestMapping(params = {"status"}, method = RequestMethod.GET)
-    public ResponseEntity<List<OrderDto>> findOrdersByPaymentStatus(@RequestParam(name = "status") int status) {
+    public ResponseEntity<List<OrderDto>> findOrdersByPaymentStatus(@RequestParam(name = "status") String status) {
         return new ResponseEntity<>(orderMapper.mapEntityCollection(orderService.findOrdersByPaymentStatus(status)),
                 HttpStatus.OK);
+    }
+
+    @ApiOperation(httpMethod = "PUT",
+            value = "Update order status",
+            response = OrderDto.class
+    )
+    @ApiResponses({
+            @ApiResponse(code = 500, message = "Oops, something went wrong"),
+            @ApiResponse(code = 404, message = "Order doesn't exist"),
+            @ApiResponse(code = 400, message = "Wrong payment status")
+    })
+    @RequestMapping(value = "/{id}/status", method = RequestMethod.PUT)
+    public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable long id, @RequestBody String status) {
+        return new ResponseEntity<>(orderMapper.mapEntity(orderService.updateStatus(id, status)), HttpStatus.OK);
     }
 
     @ApiOperation(httpMethod = "PUT",
@@ -176,12 +190,11 @@ public class OrderController {
             responseContainer = "List")
     @ApiResponses({
             @ApiResponse(code = 500, message = "Oops, something went wrong"),
-            @ApiResponse(code = 404, message = "Order doesn't exist"),
-            @ApiResponse(code = 400, message = "Wrong payment status")
+            @ApiResponse(code = 404, message = "Order doesn't exist")
     })
-    @RequestMapping(value = "/{id}/status", method = RequestMethod.PUT)
-    public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable long id, @RequestBody int status) {
-        return new ResponseEntity<>(orderMapper.mapEntity(orderService.updateStatus(id, status)), HttpStatus.OK);
+    @RequestMapping(value = "/{id}/totalPrice", method = RequestMethod.PUT)
+    public ResponseEntity<OrderDto> countTotalPrice(@PathVariable long id) {
+        return new ResponseEntity<>(orderMapper.mapEntity(orderService.countTotalPrice(id)), HttpStatus.OK);
     }
 
 }

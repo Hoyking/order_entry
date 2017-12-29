@@ -27,8 +27,4 @@ public class OfferService {
         return offerClient.findOffersByPartOfName(part);
     }
 
-    public ResponseEntity<Offer> findOfferById(long offerId) {
-        return offerClient.findOfferById(offerId);
-    }
-
 }

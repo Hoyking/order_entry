@@ -30,20 +30,21 @@ public class OrderService {
 
     private OrderDAO orderDAO;
 
-    private String started = "Operation of {} started";
-    private String finished = "Operation of {} finished";
+    private final String started = "Operation of {} started";
+    private final String finished = "Operation of {} finished";
 
-    private String save = "saving order";
-    private String findById = "searching for order with id %s";
-    private String findByName = "searching for order with name %s";
-    private String findAll = "searching for all orders";
-    private String update = "updating an order";
-    private String delete = "deleting an order with id %s";
-    private String findOrderItems = "searching for order items of an order with id %s";
-    private String addOrderITem = "adding order item to the order with id %s";
-    private String removeOrderItem = "removing order item from the order with id %s";
-    private String findOrdersByPaymentStatus = "searching for orders with payment status %s";
-    private String updateStatus = "updating payment status of the order with id %s";
+    private final String save = "saving order";
+    private final String findById = "searching for order with id %s";
+    private final String findByName = "searching for order with name %s";
+    private final String findAll = "searching for all orders";
+    private final String update = "updating an order";
+    private final String delete = "deleting an order with id %s";
+    private final String findOrderItems = "searching for order items of an order with id %s";
+    private final String addOrderITem = "adding order item to the order with id %s";
+    private final String removeOrderItem = "removing order item from the order with id %s";
+    private final String findOrdersByPaymentStatus = "searching for orders with payment status %s";
+    private final String updateStatus = "updating payment status of the order with id %s";
+    private final String countTotalPrice = "counting total price of the order with id %s";
 
     @Autowired
     public OrderService(OrderDAO orderDAO) {
@@ -55,6 +56,7 @@ public class OrderService {
         order.setOrderItems(new HashSet<>(0));
         order.setTotalPrice(0);
         order.setOrderDate(new SimpleDateFormat("yyyy.MM.dd").format(Calendar.getInstance().getTime()));
+        order.setName("temp");
         order = orderDAO.save(order);
         order.setName("Order #" + order.getId());
         order = orderDAO.update(order);
@@ -151,7 +153,7 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public List<Order> findOrdersByPaymentStatus(int paymentStatus) throws StatusSignException, PersistenceMethodException,
+    public List<Order> findOrdersByPaymentStatus(String paymentStatus) throws StatusSignException, PersistenceMethodException,
             EntityNotFoundException {
         LOGGER.info(started, String.format(findOrdersByPaymentStatus, paymentStatus));
         isValidStatus(paymentStatus);
@@ -160,7 +162,7 @@ public class OrderService {
         return orders;
     }
 
-    public Order updateStatus(long id, int status) throws UpdateStatusException, PersistenceMethodException,
+    public Order updateStatus(long id, String status) throws UpdateStatusException, PersistenceMethodException,
             EntityNotFoundException, StatusSignException {
         LOGGER.info(started, String.format(updateStatus, id));
         Order order = null;
@@ -180,39 +182,50 @@ public class OrderService {
         }
     }
 
-    private void isValidStatus(int status) throws StatusSignException {
+    public Order countTotalPrice(long orderId) {
+        LOGGER.info(started, String.format(countTotalPrice, orderId));
+        Order order = findById(orderId);
+        for(OrderItem orderItem: orderDAO.findOrderItems(orderId)) {
+            order.setTotalPrice(order.getTotalPrice() + orderItem.getPrice());
+        }
+        order = orderDAO.update(order);
+        LOGGER.info(finished, String.format(countTotalPrice, orderId));
+        return order;
+    }
+
+    private void isValidStatus(String status) throws StatusSignException {
         if (!Statuses.consists(status)) {
             throw new StatusSignException();
         }
     }
 
-    private void isValidStatus(int currentStatus, int newStatus) throws StatusSignException {
+    private void isValidStatus(String currentStatus, String newStatus) throws StatusSignException {
         isValidStatus(newStatus);
 
-        final int OPENED = Statuses.OPENED.value();
-        final int PAID = Statuses.PAID.value();
-        final int CANCELED = Statuses.CANCELED.value();
-        final int REJECTED = Statuses.REJECTED_PAYMENT.value();
+        final String OPENED = Statuses.OPENED.value();
+        final String PAID = Statuses.PAID.value();
+        final String CANCELED = Statuses.CANCELED.value();
+        final String REJECTED = Statuses.REJECTED_PAYMENT.value();
 
         final String OPENED_MESSAGE = "Opened order can be changed either to paid or canceled";
         final String REJECTED_MESSAGE = "Rejected payment can be changed either to paid or canceled";
         final String CANCELED_MESSAGE = "Canceled order can't be changed";
         final String PAID_MESSAGE = "Paid order can't be changed";
 
-        if (currentStatus == OPENED) {
-            if (newStatus == OPENED || newStatus == REJECTED) {
+        if (currentStatus.equals(OPENED)) {
+            if (newStatus.equals(OPENED) || newStatus.equals(REJECTED)) {
                 throw new StatusSignException(OPENED_MESSAGE);
             }
         }
-        if (currentStatus == REJECTED) {
-            if (newStatus == OPENED || newStatus == REJECTED) {
+        if (currentStatus.equals(REJECTED)) {
+            if (newStatus.equals(OPENED) || newStatus.equals(REJECTED)) {
                 throw new StatusSignException(REJECTED_MESSAGE);
             }
         }
-        if (currentStatus == PAID) {
+        if (currentStatus.equals(PAID)) {
             throw new StatusSignException(PAID_MESSAGE);
         }
-        if (currentStatus == CANCELED) {
+        if (currentStatus.equals(CANCELED)) {
             throw new StatusSignException(CANCELED_MESSAGE);
         }
     }

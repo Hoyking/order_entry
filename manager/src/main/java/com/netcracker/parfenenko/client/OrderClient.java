@@ -63,7 +63,7 @@ public class OrderClient {
                 new HttpEntity<>(orderItemId), Order.class);
     }
 
-    public ResponseEntity<Order> updateStatus(long orderId, int status) {
+    public ResponseEntity<Order> updateStatus(long orderId, String status) {
         return requestManager.putRequest(String.format(uriProvider.get(URN, "orders/%s/status"), orderId),
                 new HttpEntity<>(status), Order.class);
     }
@@ -71,6 +71,11 @@ public class OrderClient {
     public ResponseEntity<OrderItem[]> findOrderItems(long orderId) {
         return requestManager.getRequest(String.format(uriProvider.get(URN, "orders/%s/orderItems"), orderId),
                 OrderItem[].class);
+    }
+
+    public ResponseEntity<Order> countTotalPrice(long orderId) {
+        return requestManager.putRequest(String.format(uriProvider.get(URN, "orders/%s/totalPrice"), orderId),
+                Order.class);
     }
 
 }
