@@ -1,8 +1,10 @@
+package integration;
+
 import com.netcracker.parfenenko.CatalogApplication;
-import com.netcracker.parfenenko.entities.Category;
-import com.netcracker.parfenenko.entities.Offer;
-import com.netcracker.parfenenko.entities.Price;
-import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.entity.Category;
+import com.netcracker.parfenenko.entity.Offer;
+import com.netcracker.parfenenko.entity.Price;
+import com.netcracker.parfenenko.entity.Tag;
 import com.netcracker.parfenenko.service.CategoryService;
 import com.netcracker.parfenenko.service.OfferService;
 import com.netcracker.parfenenko.service.TagService;
@@ -22,7 +24,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CatalogApplication.class)
-public class TagTest {
+public class TagIntegrationTest {
 
     @Autowired
     private TagService tagService;

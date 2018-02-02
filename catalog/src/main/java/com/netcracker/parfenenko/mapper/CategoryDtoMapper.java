@@ -1,7 +1,7 @@
 package com.netcracker.parfenenko.mapper;
 
 import com.netcracker.parfenenko.dto.CategoryDto;
-import com.netcracker.parfenenko.entities.Category;
+import com.netcracker.parfenenko.entity.Category;
 import org.springframework.stereotype.Component;
 
 @Component

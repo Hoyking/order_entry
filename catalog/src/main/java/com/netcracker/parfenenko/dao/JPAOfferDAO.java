@@ -1,7 +1,7 @@
 package com.netcracker.parfenenko.dao;
 
-import com.netcracker.parfenenko.entities.Offer;
-import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.entity.Offer;
+import com.netcracker.parfenenko.entity.Tag;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.springframework.stereotype.Repository;
 

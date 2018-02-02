@@ -1,7 +1,7 @@
 package com.netcracker.parfenenko.dao;
 
-import com.netcracker.parfenenko.entities.Order;
-import com.netcracker.parfenenko.entities.OrderItem;
+import com.netcracker.parfenenko.entity.Order;
+import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import com.netcracker.parfenenko.exception.StatusSignException;
 import org.springframework.stereotype.Repository;

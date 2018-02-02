@@ -1,5 +1,7 @@
+package integration;
+
 import com.netcracker.parfenenko.CatalogApplication;
-import com.netcracker.parfenenko.entities.Price;
+import com.netcracker.parfenenko.entity.Price;
 import com.netcracker.parfenenko.service.PriceService;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -11,7 +13,7 @@ import javax.persistence.EntityNotFoundException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CatalogApplication.class)
-public class PriceTest {
+public class PriceIntegrationTest {
 
     @Autowired
     private PriceService priceService;

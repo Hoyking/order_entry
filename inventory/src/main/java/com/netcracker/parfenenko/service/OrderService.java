@@ -1,8 +1,8 @@
 package com.netcracker.parfenenko.service;
 
 import com.netcracker.parfenenko.dao.OrderDAO;
-import com.netcracker.parfenenko.entities.Order;
-import com.netcracker.parfenenko.entities.OrderItem;
+import com.netcracker.parfenenko.entity.Order;
+import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import com.netcracker.parfenenko.exception.StatusSignException;

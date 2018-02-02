@@ -1,9 +1,10 @@
-package com.netcracker.parfenenko.entities;
+package com.netcracker.parfenenko.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
@@ -19,6 +20,7 @@ public class Tag extends NamedEntity {
 
     @Size(min = 2, max = 25)
     @Column(unique = false)
+    @NotNull
     @Override
     public String getName() {
         return name;

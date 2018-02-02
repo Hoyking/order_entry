@@ -1,4 +1,4 @@
-package com.netcracker.parfenenko.entities;
+package com.netcracker.parfenenko.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

@@ -1,11 +1,12 @@
+package integration;
+
 import com.netcracker.parfenenko.CatalogApplication;
-import com.netcracker.parfenenko.entities.Category;
-import com.netcracker.parfenenko.entities.Offer;
-import com.netcracker.parfenenko.entities.Price;
+import com.netcracker.parfenenko.entity.Category;
+import com.netcracker.parfenenko.entity.Offer;
+import com.netcracker.parfenenko.entity.Price;
 import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.service.CategoryService;
 import com.netcracker.parfenenko.service.OfferService;
-import org.hibernate.exception.DataException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,9 +18,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
+@SuppressWarnings("FieldCanBeLocal")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CatalogApplication.class)
-public class CategoryTest {
+public class CategoryIntegrationTest {
 
     @Autowired
     private CategoryService categoryService;

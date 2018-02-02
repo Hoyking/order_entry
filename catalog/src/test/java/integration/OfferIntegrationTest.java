@@ -1,8 +1,10 @@
+package integration;
+
 import com.netcracker.parfenenko.CatalogApplication;
-import com.netcracker.parfenenko.entities.Category;
-import com.netcracker.parfenenko.entities.Offer;
-import com.netcracker.parfenenko.entities.Price;
-import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.entity.Category;
+import com.netcracker.parfenenko.entity.Offer;
+import com.netcracker.parfenenko.entity.Price;
+import com.netcracker.parfenenko.entity.Tag;
 import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.service.CategoryService;
 import com.netcracker.parfenenko.service.OfferService;
@@ -17,9 +19,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
 
+@SuppressWarnings("FieldCanBeLocal")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CatalogApplication.class)
-public class OfferTest {
+public class OfferIntegrationTest {
 
     @Autowired
     private OfferService offerService;
@@ -234,7 +237,8 @@ public class OfferTest {
         Map<String, List<String>> filters = new HashMap<>();
         filters.put("categories", Collections.singletonList(categoryId + ""));
         filters.put("tags", Collections.singletonList(TAG_NAME_1));
-        filters.put("price", Arrays.asList((PRICE_VALUE_1 - 1) + "", (PRICE_VALUE_1 + 1) + ""));
+        filters.put("from", Collections.singletonList((PRICE_VALUE_1 - 1) + ""));
+        filters.put("to", Collections.singletonList((PRICE_VALUE_1 + 1) + ""));
 
         List<Offer> offers = offerService.findByFilter(filters);
 

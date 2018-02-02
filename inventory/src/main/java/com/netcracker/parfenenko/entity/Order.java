@@ -1,12 +1,10 @@
-package com.netcracker.parfenenko.entities;
+package com.netcracker.parfenenko.entity;
 
 import com.netcracker.parfenenko.util.Statuses;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
@@ -16,7 +14,7 @@ import java.util.Set;
 @Table(name = "inventory_order", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 @NamedQueries({
         @NamedQuery(name = "findOrderItems",
-                query = "SELECT e.orderItems FROM com.netcracker.parfenenko.entities.Order e WHERE e.id = ?1"
+                query = "SELECT e.orderItems FROM com.netcracker.parfenenko.entity.Order e WHERE e.id = ?1"
         ),
         @NamedQuery(name = "findOrderItem",
                 query = "SELECT e FROM OrderItem e WHERE e.id = ?1"

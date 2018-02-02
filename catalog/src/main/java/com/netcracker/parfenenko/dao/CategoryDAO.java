@@ -1,7 +1,7 @@
 package com.netcracker.parfenenko.dao;
 
-import com.netcracker.parfenenko.entities.Category;
-import com.netcracker.parfenenko.entities.Offer;
+import com.netcracker.parfenenko.entity.Category;
+import com.netcracker.parfenenko.entity.Offer;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 
 import javax.persistence.EntityNotFoundException;

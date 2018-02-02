@@ -1,8 +1,8 @@
 package com.netcracker.parfenenko.service;
 
 import com.netcracker.parfenenko.dao.CategoryDAO;
-import com.netcracker.parfenenko.entities.Category;
-import com.netcracker.parfenenko.entities.Offer;
+import com.netcracker.parfenenko.entity.Category;
+import com.netcracker.parfenenko.entity.Offer;
 import com.netcracker.parfenenko.exception.EntityCreationException;
 import com.netcracker.parfenenko.exception.EntityDeletingException;
 import com.netcracker.parfenenko.exception.NoContentException;

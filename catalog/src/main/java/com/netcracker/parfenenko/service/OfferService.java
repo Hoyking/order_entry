@@ -3,10 +3,10 @@ package com.netcracker.parfenenko.service;
 import com.netcracker.parfenenko.dao.CategoryDAO;
 import com.netcracker.parfenenko.dao.OfferDAO;
 import com.netcracker.parfenenko.dao.PriceDAO;
-import com.netcracker.parfenenko.entities.Category;
-import com.netcracker.parfenenko.entities.Offer;
-import com.netcracker.parfenenko.entities.Price;
-import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.entity.Category;
+import com.netcracker.parfenenko.entity.Offer;
+import com.netcracker.parfenenko.entity.Price;
+import com.netcracker.parfenenko.entity.Tag;
 import com.netcracker.parfenenko.exception.EntityCreationException;
 import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
@@ -33,25 +33,25 @@ public class OfferService {
     private CategoryDAO categoryDAO;
     private PriceDAO priceDAO;
 
-    private String started = "Operation of {} started";
-    private String finished = "Operation of {} finished";
+    private final String STARTED = "Operation of {} STARTED";
+    private final String FINISHED = "Operation of {} FINISHED";
 
-    private String save = "saving offer";
-    private String findById = "searching for offer with id %s";
-    private String findByName = "searching for offer with name %s";
-    private String findByPartOfName = "searching for offers which name consist %s";
-    private String findAll = "searching for all offers";
-    private String update = "updating an offer";
-    private String delete = "deleting an offer with id %s";
-    private String findByFilter = "searching for offers by filters";
-    private String findTags = "searching for tags of the offer with id %s";
-    private String changeAvailability = "changing availability of the offer with id %s";
-    private String findByTags = "searching for offers by tags";
-    private String findAvailableOffers = "searching for available offers";
-    private String updatePrice = "updating price of the offer with id %s";
-    private String findOffersOfPriceInterval = "searching for offers of price interval (%s, %s)";
-    private String addTagToOffer = "adding tag to the offer with id %s";
-    private String removeTagFromOffer = "removing tag from the offer with id %s";
+    private final String SAVE = "saving offer";
+    private final String FIND_BY_ID = "searching for offer with id %s";
+    private final String FIND_BY_NAME = "searching for offer with name %s";
+    private final String FIND_BY_PART_OF_NAME = "searching for offers which name consist %s";
+    private final String FIND_ALL = "searching for all offers";
+    private final String UPDATE = "updating an offer";
+    private final String DELETE = "deleting an offer with id %s";
+    private final String FIND_BY_FILTER = "searching for offers by filters";
+    private final String FIND_TAGS = "searching for tags of the offer with id %s";
+    private final String CHANGE_AVAILABILITY = "changing availability of the offer with id %s";
+    private final String FIND_BY_TAGS = "searching for offers by tags";
+    private final String FIND_AVAILABLE_OFFERS = "searching for available offers";
+    private final String UPDATE_PRICE = "updating price of the offer with id %s";
+    private final String FIND_OFFERS_OF_PRICE_INTERVAL = "searching for offers of price interval (%s, %s)";
+    private final String ADD_TAG_TO_OFFER = "adding tag to the offer with id %s";
+    private final String REMOVE_TAG_FROM_OFFER = "removing tag from the offer with id %s";
 
     @Autowired
     public OfferService(OfferDAO offerDAO, CategoryDAO categoryDAO, PriceDAO priceDAO) {
@@ -62,7 +62,7 @@ public class OfferService {
 
     @SuppressWarnings("Duplicates")
     public Offer save(Offer offer) throws PersistenceMethodException {
-        LOGGER.info(started, save);
+        LOGGER.info(STARTED, SAVE);
         try {
             Category category = categoryDAO.findById(offer.getCategory().getId());
             offer.setCategory(category);
@@ -73,7 +73,7 @@ public class OfferService {
             offerDAO.findByName(offer.getName());
         } catch (EntityNotFoundException e) {
             offer = offerDAO.save(offer);
-            LOGGER.info(finished, save);
+            LOGGER.info(FINISHED, SAVE);
             return offer;
         }
         throw new EntityCreationException("Offer with such name already exists");
@@ -81,50 +81,50 @@ public class OfferService {
 
     @Transactional(readOnly = true)
     public Offer findById(long id) throws PersistenceMethodException, EntityNotFoundException, NoContentException {
-        LOGGER.info(started, String.format(findById, id));
+        LOGGER.info(STARTED, String.format(FIND_BY_ID, id));
         Offer offer;
         try {
             offer = offerDAO.findById(id);
         } catch (EntityNotFoundException e) {
-            LOGGER.info(finished, String.format(findById, id));
+            LOGGER.info(FINISHED, String.format(FIND_BY_ID, id));
             throw new NoContentException();
         }
-        LOGGER.info(finished, String.format(findById, id));
+        LOGGER.info(FINISHED, String.format(FIND_BY_ID, id));
         return offer;
     }
 
     @Transactional(readOnly = true)
     public Offer findByName(String name) throws PersistenceMethodException, EntityNotFoundException, NoContentException {
-        LOGGER.info(started, String.format(findByName, name));
+        LOGGER.info(STARTED, String.format(FIND_BY_NAME, name));
         Offer offer;
         try {
             offer = offerDAO.findByName(name);
         } catch (EntityNotFoundException e) {
-            LOGGER.info(finished, String.format(findByName, name));
+            LOGGER.info(FINISHED, String.format(FIND_BY_NAME, name));
             throw new NoContentException();
         }
-        LOGGER.info(finished, String.format(findByName, name));
+        LOGGER.info(FINISHED, String.format(FIND_BY_NAME, name));
         return offer;
     }
 
     @Transactional(readOnly = true)
     public List<Offer> findByPartOfName(String part) throws PersistenceMethodException {
-        LOGGER.info(started, String.format(findByPartOfName, part));
+        LOGGER.info(STARTED, String.format(FIND_BY_PART_OF_NAME, part));
         List<Offer> offers = offerDAO.findByPartOfName(part);
-        LOGGER.info(finished, String.format(findByPartOfName, part));
+        LOGGER.info(FINISHED, String.format(FIND_BY_PART_OF_NAME, part));
         return offers;
     }
 
     @Transactional(readOnly = true)
     public List<Offer> findAll() throws PersistenceMethodException, EntityNotFoundException {
-        LOGGER.info(started, findAll);
+        LOGGER.info(STARTED, FIND_ALL);
         List<Offer> offers = offerDAO.findAll();
-        LOGGER.info(finished, findAll);
+        LOGGER.info(FINISHED, FIND_ALL);
         return offers;
     }
 
     public Offer update(Offer offer) throws PersistenceMethodException, EntityNotFoundException {
-        LOGGER.info(started, update);
+        LOGGER.info(STARTED, UPDATE);
         try {
             Category category = categoryDAO.findById(offer.getCategory().getId());
             offer.setCategory(category);
@@ -133,20 +133,20 @@ public class OfferService {
         }
         offer.setTags(offerDAO.findTags(offer.getId()));
         offer = offerDAO.update(offer);
-        LOGGER.info(finished, update);
+        LOGGER.info(FINISHED, UPDATE);
         return offer;
     }
 
     public void delete(long id) throws PersistenceMethodException, EntityNotFoundException {
-        LOGGER.info(started, String.format(delete, id));
+        LOGGER.info(STARTED, String.format(DELETE, id));
         offerDAO.delete(id);
-        LOGGER.info(finished, String.format(delete, id));
+        LOGGER.info(FINISHED, String.format(DELETE, id));
     }
 
     @Transactional(readOnly = true)
     public List<Offer> findByFilter(Map<String, List<String>> offerFilter) throws PersistenceMethodException,
             EntityNotFoundException, IllegalArgumentException {
-        LOGGER.info(started, findByFilter);
+        LOGGER.info(STARTED, FIND_BY_FILTER);
         List<Offer> offers;
         Double[] price = filtersValidation(offerFilter);
         Double from = price[0];
@@ -161,45 +161,45 @@ public class OfferService {
         List<String> tags = offerFilter.get("tags");
 
         offers = offerDAO.findByFilters(categoriesId, tags, from, to);
-        LOGGER.info(finished, findByFilter);
+        LOGGER.info(FINISHED, FIND_BY_FILTER);
         return offers;
     }
 
     @Transactional(readOnly = true)
     public Set<Tag> findTags(long offerId) throws PersistenceMethodException, EntityNotFoundException {
-        LOGGER.info(started, String.format(findTags, offerId));
+        LOGGER.info(STARTED, String.format(FIND_TAGS, offerId));
         Set<Tag> tags = offerDAO.findTags(offerId);
-        LOGGER.info(finished, String.format(findTags, offerId));
+        LOGGER.info(FINISHED, String.format(FIND_TAGS, offerId));
         return tags;
     }
 
     public Offer changeAvailability(long id) throws PersistenceMethodException, EntityNotFoundException {
-        LOGGER.info(started, String.format(changeAvailability, id));
+        LOGGER.info(STARTED, String.format(CHANGE_AVAILABILITY, id));
         Offer offer = offerDAO.findById(id);
         offer.setAvailable(!offer.isAvailable());
         offer = offerDAO.update(offer);
-        LOGGER.info(finished, String.format(changeAvailability, id));
+        LOGGER.info(FINISHED, String.format(CHANGE_AVAILABILITY, id));
         return offer;
     }
 
     @Transactional(readOnly = true)
     public List<Offer> findByTags(List<String> tags) throws PersistenceMethodException, EntityNotFoundException {
-        LOGGER.info(started, findByTags);
+        LOGGER.info(STARTED, FIND_BY_TAGS);
         List<Offer> offers = offerDAO.findByTags(tags);
-        LOGGER.info(finished, findByTags);
+        LOGGER.info(FINISHED, FIND_BY_TAGS);
         return offers;
     }
 
     @Transactional(readOnly = true)
     public List<Offer> findAvailableOffers() throws PersistenceMethodException, EntityNotFoundException {
-        LOGGER.info(started, findAvailableOffers);
+        LOGGER.info(STARTED, FIND_AVAILABLE_OFFERS);
         List<Offer> offers = offerDAO.findAvailableOffers();
-        LOGGER.info(finished, findAvailableOffers);
+        LOGGER.info(FINISHED, FIND_AVAILABLE_OFFERS);
         return offers;
     }
 
     public Offer updatePrice(long id, double value) throws PersistenceMethodException, EntityNotFoundException {
-        LOGGER.info(started, String.format(updatePrice, id));
+        LOGGER.info(STARTED, String.format(UPDATE_PRICE, id));
         Offer offer = offerDAO.findById(id);
         Price currentPrice = offer.getPrice();
         Price price = new Price();
@@ -207,43 +207,43 @@ public class OfferService {
         offer.setPrice(price);
         offer = offerDAO.update(offer);
         priceDAO.delete(currentPrice.getId());
-        LOGGER.info(finished, String.format(updatePrice, id));
+        LOGGER.info(FINISHED, String.format(UPDATE_PRICE, id));
         return offer;
     }
 
     @Transactional(readOnly = true)
     public List<Offer> findOffersOfPriceInterval(double fromPrice, double toPrice) throws PersistenceMethodException,
             EntityNotFoundException, IllegalArgumentException {
-        LOGGER.info(started, String.format(findOffersOfPriceInterval, fromPrice, toPrice));
+        LOGGER.info(STARTED, String.format(FIND_OFFERS_OF_PRICE_INTERVAL, fromPrice, toPrice));
         try {
             priceValueValidation(fromPrice, toPrice);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
         List<Offer> offers = offerDAO.findOffersOfPriceInterval(fromPrice, toPrice);
-        LOGGER.info(finished, String.format(findOffersOfPriceInterval, fromPrice, toPrice));
+        LOGGER.info(FINISHED, String.format(FIND_OFFERS_OF_PRICE_INTERVAL, fromPrice, toPrice));
         return offers;
     }
 
     public Offer addTagToOffer(long id, String tagName) throws PersistenceMethodException, EntityNotFoundException {
-        LOGGER.info(started, String.format(addTagToOffer, id));
+        LOGGER.info(STARTED, String.format(ADD_TAG_TO_OFFER, id));
         Offer offer = offerDAO.findById(id);
         Tag tag = new Tag();
         tag.setName(tagName);
         offer.getTags().add(tag);
         offer = offerDAO.update(offer);
-        LOGGER.info(finished, String.format(addTagToOffer, id));
+        LOGGER.info(FINISHED, String.format(ADD_TAG_TO_OFFER, id));
         return offer;
     }
 
     public Offer removeTagFromOffer(long id, String tagName) throws PersistenceMethodException, EntityNotFoundException {
-        LOGGER.info(started, String.format(removeTagFromOffer, id));
+        LOGGER.info(STARTED, String.format(REMOVE_TAG_FROM_OFFER, id));
         Offer offer = offerDAO.findById(id);
         Tag tag = new Tag();
         tag.setName(tagName);
         offer.getTags().remove(tag);
         offer = offerDAO.update(offer);
-        LOGGER.info(finished, String.format(removeTagFromOffer, id));
+        LOGGER.info(FINISHED, String.format(REMOVE_TAG_FROM_OFFER, id));
         return offer;
     }
 

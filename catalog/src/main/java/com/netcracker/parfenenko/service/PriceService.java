@@ -1,7 +1,7 @@
 package com.netcracker.parfenenko.service;
 
 import com.netcracker.parfenenko.dao.PriceDAO;
-import com.netcracker.parfenenko.entities.Price;
+import com.netcracker.parfenenko.entity.Price;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,6 +1,6 @@
 package com.netcracker.parfenenko.dao;
 
-import com.netcracker.parfenenko.entities.Price;
+import com.netcracker.parfenenko.entity.Price;
 import org.springframework.stereotype.Repository;
 
 @Repository

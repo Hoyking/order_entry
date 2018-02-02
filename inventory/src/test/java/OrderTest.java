@@ -1,6 +1,6 @@
 import com.netcracker.parfenenko.InventoryApplication;
-import com.netcracker.parfenenko.entities.Order;
-import com.netcracker.parfenenko.entities.OrderItem;
+import com.netcracker.parfenenko.entity.Order;
+import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.service.OrderService;
 import com.netcracker.parfenenko.util.Statuses;
@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 @RunWith(SpringRunner.class)

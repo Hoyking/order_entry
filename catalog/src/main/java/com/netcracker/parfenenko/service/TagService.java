@@ -1,8 +1,8 @@
 package com.netcracker.parfenenko.service;
 
 import com.netcracker.parfenenko.dao.TagDAO;
-import com.netcracker.parfenenko.entities.Offer;
-import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.entity.Offer;
+import com.netcracker.parfenenko.entity.Tag;
 import com.netcracker.parfenenko.exception.EntityDeletingException;
 import com.netcracker.parfenenko.exception.PersistenceMethodException;
 import org.apache.logging.log4j.LogManager;
