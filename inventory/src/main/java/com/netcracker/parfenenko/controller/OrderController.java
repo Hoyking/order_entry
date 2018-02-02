@@ -10,7 +10,7 @@ import com.netcracker.parfenenko.mapper.FreshOrderDtoMapper;
 import com.netcracker.parfenenko.mapper.OrderDtoMapper;
 import com.netcracker.parfenenko.mapper.OrderItemDtoMapper;
 import com.netcracker.parfenenko.mapper.UpdateOrderDtoMapper;
-import com.netcracker.parfenenko.service.OrderService;
+import com.netcracker.parfenenko.service.JPAOrderService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -26,14 +26,14 @@ import java.util.Set;
 @RequestMapping(value = "/api/v1/orders")
 public class OrderController {
 
-    private OrderService orderService;
+    private JPAOrderService orderService;
     private OrderDtoMapper orderMapper;
     private FreshOrderDtoMapper freshOrderMapper;
     private UpdateOrderDtoMapper updateOrderMapper;
     private OrderItemDtoMapper orderItemMapper;
 
     @Autowired
-    public OrderController(OrderService orderService, OrderDtoMapper orderMapper, FreshOrderDtoMapper freshOrderMapper,
+    public OrderController(JPAOrderService orderService, OrderDtoMapper orderMapper, FreshOrderDtoMapper freshOrderMapper,
                            UpdateOrderDtoMapper updateOrderDtoMapper, OrderItemDtoMapper orderItemDtoMapper) {
         this.orderService = orderService;
         this.orderMapper = orderMapper;
