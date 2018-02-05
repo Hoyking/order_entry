@@ -6,6 +6,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
 @EnableEurekaClient
+//@EnableMongoRepositories
 public class InventoryApplication {
 
     public static void main(String[] args) {

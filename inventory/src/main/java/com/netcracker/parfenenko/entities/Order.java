@@ -2,29 +2,18 @@ package com.netcracker.parfenenko.entities;
 
 import com.netcracker.parfenenko.util.Statuses;
 import org.hibernate.validator.constraints.Email;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
-@Table(name = "inventory_order", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
-@NamedQueries({
-        @NamedQuery(name = "findOrderItems",
-                query = "SELECT e.orderItems FROM com.netcracker.parfenenko.entities.Order e WHERE e.id = ?1"
-        ),
-        @NamedQuery(name = "findOrderItem",
-                query = "SELECT e FROM OrderItem e WHERE e.id = ?1"
-        )
-})
+@Document(collection = "orders")
 public class Order extends NamedEntity {
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+
     private Set<OrderItem> orderItems;
     @Size(max = 100)
     @NotNull

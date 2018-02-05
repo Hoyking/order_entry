@@ -1,12 +1,10 @@
 package com.netcracker.parfenenko.entities;
 
-import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-@Entity
 public class OrderItem extends NamedEntity {
 
     @NotNull

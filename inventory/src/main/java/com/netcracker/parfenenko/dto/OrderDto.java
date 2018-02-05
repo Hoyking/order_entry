@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class OrderDto {
 
-    private long id;
+    private String id;
     private String name;
     private String description;
     private double totalPrice;
