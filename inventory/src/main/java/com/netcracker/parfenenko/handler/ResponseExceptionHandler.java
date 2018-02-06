@@ -23,7 +23,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(ResponseExceptionHandler.class);
 
-    @ExceptionHandler(value = {UpdateStatusException.class,
+    @ExceptionHandler(value = {UpdateStatusException.class, DocumentNotFoundException.class,
             StatusSignException.class, TransactionSystemException.class, NoContentException.class})
     public final ResponseEntity<Object> handleConflict(Exception e, WebRequest request) {
         ResponseEntity<Object> responseEntity = null;

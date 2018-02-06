@@ -6,6 +6,7 @@ import com.netcracker.parfenenko.exception.DocumentNotFoundException;
 import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.exception.StatusSignException;
 import com.netcracker.parfenenko.exception.UpdateStatusException;
+import com.netcracker.parfenenko.repository.MongoTemplateOrderRepository;
 import com.netcracker.parfenenko.repository.OrderRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("Duplicates")
 @Service
@@ -26,7 +24,7 @@ public class SpringDataOrderService extends OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
-    public SpringDataOrderService(OrderRepository orderRepository) {
+    public SpringDataOrderService(MongoTemplateOrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
@@ -39,7 +37,7 @@ public class SpringDataOrderService extends OrderService {
         order.setName("temp");
         order = orderRepository.save(order);
         order.setName("Order #" + order.getId());
-        order = orderRepository.save(order);
+        order = orderRepository.update(order);
         LOGGER.info(FINISHED, SAVE);
         return order;
     }
@@ -83,7 +81,7 @@ public class SpringDataOrderService extends OrderService {
         }
         existedOrder.setCustomerMail(order.getCustomerMail());
         existedOrder.setDescription(order.getDescription());
-        existedOrder = orderRepository.save(existedOrder);
+        existedOrder = orderRepository.update(existedOrder);
         LOGGER.info(FINISHED, UPDATE);
         return existedOrder;
     }
@@ -117,8 +115,9 @@ public class SpringDataOrderService extends OrderService {
         if (order == null) {
             throw new DocumentNotFoundException();
         }
+        orderItem.setId(UUID.randomUUID().toString());
         order.getOrderItems().add(orderItem);
-        order = orderRepository.save(order);
+        order = orderRepository.update(order);
         LOGGER.info(FINISHED, String.format(ADD_ORDER_ITEM, orderId));
         return order;
     }
@@ -153,7 +152,7 @@ public class SpringDataOrderService extends OrderService {
         }
         isValidStatus(order.getPaymentStatus(), status);
         order.setPaymentStatus(status);
-        order = orderRepository.save(order);
+        order = orderRepository.update(order);
         LOGGER.info(FINISHED, String.format(UPDATE_STATUS, id));
         return order;
     }
@@ -165,10 +164,11 @@ public class SpringDataOrderService extends OrderService {
         if (order == null) {
             throw new DocumentNotFoundException();
         }
+        order.setTotalPrice(0);
         for(OrderItem orderItem: orderRepository.findOrderItems(orderId)) {
             order.setTotalPrice(order.getTotalPrice() + orderItem.getPrice());
         }
-        order = orderRepository.save(order);
+        order = orderRepository.update(order);
         LOGGER.info(FINISHED, String.format(COUNT_TOTAL_PRICE, orderId));
         return order;
     }
