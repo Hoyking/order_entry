@@ -1,7 +1,7 @@
 package com.netcracker.parfenenko.mapper;
 
 import com.netcracker.parfenenko.dto.TagDto;
-import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.entity.Tag;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,6 +1,6 @@
 import com.netcracker.parfenenko.InventoryApplication;
-import com.netcracker.parfenenko.entities.Order;
-import com.netcracker.parfenenko.entities.OrderItem;
+import com.netcracker.parfenenko.entity.Order;
+import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.exception.NoContentException;
 import com.netcracker.parfenenko.service.SpringDataOrderService;
 import com.netcracker.parfenenko.util.Statuses;

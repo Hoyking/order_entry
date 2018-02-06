@@ -1,7 +1,7 @@
 package com.netcracker.parfenenko.mapper;
 
 import com.netcracker.parfenenko.dto.UpdateOrderDto;
-import com.netcracker.parfenenko.entities.Order;
+import com.netcracker.parfenenko.entity.Order;
 import org.springframework.stereotype.Component;
 
 @Component

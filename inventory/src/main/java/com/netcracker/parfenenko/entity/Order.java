@@ -1,4 +1,4 @@
-package com.netcracker.parfenenko.entities;
+package com.netcracker.parfenenko.entity;
 
 import com.netcracker.parfenenko.util.Statuses;
 import org.hibernate.validator.constraints.Email;

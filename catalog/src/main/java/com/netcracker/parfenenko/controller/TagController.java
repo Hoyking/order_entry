@@ -2,7 +2,7 @@ package com.netcracker.parfenenko.controller;
 
 import com.netcracker.parfenenko.dto.OfferDto;
 import com.netcracker.parfenenko.dto.TagDto;
-import com.netcracker.parfenenko.entities.Tag;
+import com.netcracker.parfenenko.entity.Tag;
 import com.netcracker.parfenenko.mapper.OfferDtoMapper;
 import com.netcracker.parfenenko.mapper.TagDtoMapper;
 import com.netcracker.parfenenko.service.TagService;

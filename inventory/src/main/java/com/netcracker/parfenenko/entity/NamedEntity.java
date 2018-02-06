@@ -1,4 +1,4 @@
-package com.netcracker.parfenenko.entities;
+package com.netcracker.parfenenko.entity;
 
 public abstract class NamedEntity extends IdentifiedEntity {
 

@@ -1,4 +1,4 @@
-package com.netcracker.parfenenko.entities;
+package com.netcracker.parfenenko.entity;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

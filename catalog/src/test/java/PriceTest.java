@@ -1,5 +1,5 @@
 import com.netcracker.parfenenko.CatalogApplication;
-import com.netcracker.parfenenko.entities.Price;
+import com.netcracker.parfenenko.entity.Price;
 import com.netcracker.parfenenko.service.PriceService;
 import org.junit.*;
 import org.junit.runner.RunWith;

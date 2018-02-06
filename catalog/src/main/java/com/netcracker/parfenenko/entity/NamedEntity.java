@@ -1,4 +1,4 @@
-package com.netcracker.parfenenko.entities;
+package com.netcracker.parfenenko.entity;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;

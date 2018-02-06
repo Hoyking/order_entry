@@ -3,7 +3,7 @@ package com.netcracker.parfenenko.controller;
 import com.netcracker.parfenenko.dto.CategoryDto;
 import com.netcracker.parfenenko.dto.FreshCategoryDto;
 import com.netcracker.parfenenko.dto.OfferDto;
-import com.netcracker.parfenenko.entities.Category;
+import com.netcracker.parfenenko.entity.Category;
 import com.netcracker.parfenenko.mapper.CategoryDtoMapper;
 import com.netcracker.parfenenko.mapper.FreshCategoryDtoMapper;
 import com.netcracker.parfenenko.mapper.OfferDtoMapper;

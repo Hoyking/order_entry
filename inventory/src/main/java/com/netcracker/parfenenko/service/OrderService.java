@@ -1,7 +1,7 @@
 package com.netcracker.parfenenko.service;
 
-import com.netcracker.parfenenko.entities.Order;
-import com.netcracker.parfenenko.entities.OrderItem;
+import com.netcracker.parfenenko.entity.Order;
+import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.exception.StatusSignException;
 import com.netcracker.parfenenko.exception.UpdateStatusException;
 import com.netcracker.parfenenko.util.Statuses;
