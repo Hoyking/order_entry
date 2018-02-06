@@ -1,24 +1,19 @@
 package com.netcracker.parfenenko.entity;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import org.springframework.data.annotation.Id;
 
-@MappedSuperclass
 public abstract class IdentifiedEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    protected long id;
+    protected String id;
 
-    public IdentifiedEntity() {}
+    protected IdentifiedEntity() {}
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -36,14 +36,14 @@ public class OrderService {
         String operation = "creating a new order";
         logger.info("START OPERATION: " + operation);
         Order order = orderClient.createOrder(freshOrder).getBody();
-        final long orderId = order.getId();
+        final String orderId = order.getId();
         offers.forEach(id -> addOrderItem(orderId, id));
         ResponseEntity<Order> response = findOrderById(orderId);
         logger.info("END OF OPERATION: " + operation);
         return response;
     }
 
-    public ResponseEntity<Order> findOrderById(long orderId) {
+    public ResponseEntity<Order> findOrderById(String orderId) {
         String operation = String.format("searching for an order by id %s", orderId);
         logger.info("START OPERATION: " + operation);
         ResponseEntity<Order> response = orderClient.findOrderById(orderId);
@@ -59,7 +59,7 @@ public class OrderService {
         return response;
     }
 
-    public ResponseEntity<Order> addOrderItem(long orderId, long offerId) throws UpdateOrderException, EntityNotFoundException {
+    public ResponseEntity<Order> addOrderItem(String orderId, long offerId) throws UpdateOrderException, EntityNotFoundException {
         String operation = "adding order item based on the offer with id " + offerId +
                 " to the order with id " + orderId;
         logger.info("START OPERATION: " + operation);
@@ -84,7 +84,7 @@ public class OrderService {
         return response;
     }
 
-    public ResponseEntity<Order> removeOrderItem(long orderId, long orderItemId) throws UpdateOrderException {
+    public ResponseEntity<Order> removeOrderItem(String orderId, String orderItemId) throws UpdateOrderException {
         String operation = "removing order item with id " + orderItemId +
                 " from the order with id " + orderId;
         logger.info("START OPERATION: " + operation);
@@ -117,7 +117,7 @@ public class OrderService {
         return response;
     }
 
-    private ResponseEntity<Order> countTotalPrice(long orderId) throws EntityNotFoundException {
+    private ResponseEntity<Order> countTotalPrice(String orderId) throws EntityNotFoundException {
         String operation = "counting total price of the order with id " + orderId;
         logger.info("START OPERATION: " + operation);
         ResponseEntity<Order> order = orderClient.countTotalPrice(orderId);
@@ -125,7 +125,7 @@ public class OrderService {
         return order;
     }
 
-    public ResponseEntity<Order> updateStatus(long orderId, String status) {
+    public ResponseEntity<Order> updateStatus(String orderId, String status) {
         String operation = "changing status to " + status + " in the order with id " + orderId;
         logger.info("START OPERATION: " + operation);
         ResponseEntity<Order> response = orderClient.updateStatus(orderId, status);
@@ -133,7 +133,7 @@ public class OrderService {
         return response;
     }
 
-    public ResponseEntity<OrderItem[]> findOrderItems(long orderId) {
+    public ResponseEntity<OrderItem[]> findOrderItems(String orderId) {
         String operation = "searching for order items of the order with id " + orderId;
         logger.info("START OPERATION: " + operation);
         ResponseEntity<OrderItem[]> response = orderClient.findOrderItems(orderId);

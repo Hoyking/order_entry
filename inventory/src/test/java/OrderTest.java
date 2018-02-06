@@ -2,7 +2,7 @@ import com.netcracker.parfenenko.InventoryApplication;
 import com.netcracker.parfenenko.entity.Order;
 import com.netcracker.parfenenko.entity.OrderItem;
 import com.netcracker.parfenenko.exception.NoContentException;
-import com.netcracker.parfenenko.service.OrderService;
+import com.netcracker.parfenenko.service.SpringDataOrderService;
 import com.netcracker.parfenenko.util.Statuses;
 import org.junit.After;
 import org.junit.Assert;
@@ -20,9 +20,9 @@ import java.util.List;
 public class OrderTest {
 
     @Autowired
-    private OrderService orderService;
+    private SpringDataOrderService orderService;
 
-    private long orderId;
+    private String orderId;
     private String orderName;
 
     private final String DESCRIPTION_1 = "Test description 1";
@@ -60,7 +60,7 @@ public class OrderTest {
         order.setDescription(DESCRIPTION_2);
         order.setCustomerMail(MAIL_1);
         order = orderService.save(order);
-        long testOrderId = order.getId();
+        String testOrderId = order.getId();
 
         Order loadedOrder = orderService.findById(testOrderId);
 
@@ -97,7 +97,7 @@ public class OrderTest {
         order.setDescription(DESCRIPTION_2);
         order.setCustomerMail(MAIL_1);
         order = orderService.save(order);
-        long testOrderId = order.getId();
+        String testOrderId = order.getId();
 
         Assert.assertEquals(currentSize + 1, orderService.findAll().size());
 
@@ -126,7 +126,7 @@ public class OrderTest {
         order.setCustomerMail(MAIL_1);
 
         order = orderService.save(order);
-        long testOrderId = order.getId();
+        String testOrderId = order.getId();
         orderService.delete(testOrderId);
 
         try {

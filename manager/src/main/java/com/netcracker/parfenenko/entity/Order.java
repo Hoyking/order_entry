@@ -4,15 +4,33 @@ import com.netcracker.parfenenko.util.Statuses;
 
 import java.util.Objects;
 
-public class Order extends NamedEntity {
+public class Order {
 
     private String description;
     private double totalPrice;
     private String customerMail;
     private String orderDate;
     private String paymentStatus = Statuses.OPENED.value();
+    private String name;
+    private String id;
 
     public Order() {}
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public double getTotalPrice() {
         return totalPrice;
@@ -59,7 +77,7 @@ public class Order extends NamedEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return id == order.id &&
+        return id.equals(order.id) &&
                 Double.compare(order.totalPrice, totalPrice) == 0 &&
                 Objects.equals(customerMail, order.customerMail) &&
                 Objects.equals(orderDate, order.orderDate) &&

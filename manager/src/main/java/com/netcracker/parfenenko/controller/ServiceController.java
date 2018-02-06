@@ -88,7 +88,7 @@ public class ServiceController {
             @ApiResponse(code = 500, message = "Oops, something went wrong")
     })
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Order> findOrderById(@PathVariable long id) {
+    public ResponseEntity<Order> findOrderById(@PathVariable String id) {
         return orderService.findOrderById(id);
     }
 
@@ -112,7 +112,7 @@ public class ServiceController {
             @ApiResponse(code = 404, message = "There is no order with such name")
     })
     @RequestMapping(value = "/orders/{id}/orderItems", method = RequestMethod.GET)
-    public ResponseEntity<OrderItem[]> findOrderItemsOfOrder(@PathVariable long id) {
+    public ResponseEntity<OrderItem[]> findOrderItemsOfOrder(@PathVariable String id) {
         return orderService.findOrderItems(id);
     }
 
@@ -125,7 +125,7 @@ public class ServiceController {
             @ApiResponse(code = 409, message = "Failed to add new order item to the paid order")
     })
     @RequestMapping(value = "/orders/{id}/orderItem", method = RequestMethod.POST)
-    public ResponseEntity<Order> addOrderItem(@PathVariable long id, @RequestBody long offerId) {
+    public ResponseEntity<Order> addOrderItem(@PathVariable String id, @RequestBody long offerId) {
         return orderService.addOrderItem(id, offerId);
     }
 
@@ -138,7 +138,7 @@ public class ServiceController {
             @ApiResponse(code = 409, message = "Failed to remove order item from the paid order")
     })
     @RequestMapping(value = "/orders/{id}/orderItem", method = RequestMethod.DELETE)
-    public ResponseEntity<Order> removeOrderItem(@PathVariable long id, @RequestBody long orderItemId) {
+    public ResponseEntity<Order> removeOrderItem(@PathVariable String id, @RequestBody String orderItemId) {
         return orderService.removeOrderItem(id, orderItemId);
     }
 
@@ -174,7 +174,7 @@ public class ServiceController {
             @ApiResponse(code = 400, message = "Invalid payment status")
     })
     @RequestMapping(value = "/orders/{id}/pay", method = RequestMethod.PUT)
-    public ResponseEntity<Order> payForOrder(@PathVariable long id) {
+    public ResponseEntity<Order> payForOrder(@PathVariable String id) {
         return orderService.updateStatus(id, Statuses.PAID.value());
     }
 
@@ -187,7 +187,7 @@ public class ServiceController {
             @ApiResponse(code = 400, message = "Invalid payment status")
     })
     @RequestMapping(value = "/orders/{id}/cancel", method = RequestMethod.PUT)
-    public ResponseEntity<Order> cancelOrder(@PathVariable long id) {
+    public ResponseEntity<Order> cancelOrder(@PathVariable String id) {
         return orderService.updateStatus(id, Statuses.CANCELED.value());
     }
 

@@ -29,7 +29,7 @@ public class OrderClient {
                 Order.class);
     }
 
-    public ResponseEntity<Order> findOrderById(long orderId) {
+    public ResponseEntity<Order> findOrderById(String orderId) {
         return requestManager.getRequest(String.format(uriProvider.get(URN, "orders/%s"), orderId),
                 Order.class);
     }
@@ -53,27 +53,27 @@ public class OrderClient {
                 Order[].class);
     }
 
-    public ResponseEntity<Order> addOrderItem(long orderId, OrderItem orderItem) {
+    public ResponseEntity<Order> addOrderItem(String orderId, OrderItem orderItem) {
         return requestManager.postRequest(String.format(uriProvider.get(URN, "orders/%s/orderItem"), orderId),
                 new HttpEntity<>(orderItem), Order.class);
     }
 
-    public ResponseEntity<Order> removeOrderItem(long orderId, long orderItemId) {
+    public ResponseEntity<Order> removeOrderItem(String orderId, String orderItemId) {
         return requestManager.deleteRequest(String.format(uriProvider.get(URN, "orders/%s/orderItem"), orderId),
                 new HttpEntity<>(orderItemId), Order.class);
     }
 
-    public ResponseEntity<Order> updateStatus(long orderId, String status) {
+    public ResponseEntity<Order> updateStatus(String orderId, String status) {
         return requestManager.putRequest(String.format(uriProvider.get(URN, "orders/%s/status"), orderId),
                 new HttpEntity<>(status), Order.class);
     }
 
-    public ResponseEntity<OrderItem[]> findOrderItems(long orderId) {
+    public ResponseEntity<OrderItem[]> findOrderItems(String orderId) {
         return requestManager.getRequest(String.format(uriProvider.get(URN, "orders/%s/orderItems"), orderId),
                 OrderItem[].class);
     }
 
-    public ResponseEntity<Order> countTotalPrice(long orderId) {
+    public ResponseEntity<Order> countTotalPrice(String orderId) {
         return requestManager.putRequest(String.format(uriProvider.get(URN, "orders/%s/totalPrice"), orderId),
                 Order.class);
     }

@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class UpdateOrderDto {
 
-    private long id;
+    private String id;
     private String description;
     private String customerMail;
 

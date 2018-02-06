@@ -1,14 +1,12 @@
 spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/inventory
-    username: postgres
-    password: 12344321
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
-    show-sql: false
-    hibernate:
-      ddl-auto: update
+  data:
+    mongodb:
+      host: localhost
+      password: 12344321
+      port: 27017
+      database: inventory
+      repositories:
+        enabled: true
 server:
   port: 8082
 eureka:
