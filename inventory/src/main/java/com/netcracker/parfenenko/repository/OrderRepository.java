@@ -1,7 +1,7 @@
 package com.netcracker.parfenenko.repository;
 
-import com.netcracker.parfenenko.entities.Order;
-import com.netcracker.parfenenko.entities.OrderItem;
+import com.netcracker.parfenenko.entity.Order;
+import com.netcracker.parfenenko.entity.OrderItem;
 
 import java.util.List;
 import java.util.Set;
