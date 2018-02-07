@@ -1,4 +1,4 @@
-package com.example.parfenenko.filter;
+package com.netcracker.parfenenko.filter;
 
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;

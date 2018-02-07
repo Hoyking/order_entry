@@ -1,4 +1,4 @@
-package com.example.parfenenko;
+package com.netcracker.parfenenko;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
